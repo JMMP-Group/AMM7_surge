@@ -5,7 +5,8 @@
 
 ## Setting up AMM7 surge model
 
-*Add comments about how to set up model.*  
+See ``docs/AMM7_SURGE.rst``
+
 **NOTE** This recipe is a copy from `EAfrica_Surge` and `Solent_surge`. It
 is a bit of a hack job to initially get some data size estimates for a proposal.
 
