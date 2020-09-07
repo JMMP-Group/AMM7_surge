@@ -1,21 +1,22 @@
 # AMM7_surge
 7km resolution Atlantic Margin Model configuration for 2D surge model
 
+---
 
-Setting up AMM7 surge model
-===========================
+## Setting up AMM7 surge model
 
+*Add comments about how to set up model.*  
 **NOTE** This recipe is a copy from `EAfrica_Surge` and `Solent_surge`. It
 is a bit of a hack job to initially get some data size estimates for a proposal.
 
+---
 
+## File Hierarchy
 
-EXP00
-=====
+### EXP00
 
 Test ground
 
+### EXP_tideonly
 
-EXP_tideonly
-============
 FES2014 tide only simulation
