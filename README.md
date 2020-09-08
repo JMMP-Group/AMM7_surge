@@ -1,5 +1,7 @@
 # AMM7_surge
-7km resolution Atlantic Margin Model configuration for 2D surge model
+7km resolution Atlantic Margin Model configuration for 2D surge model.  
+Documentation of the configuration setup on ARCHER HPC.  
+Contributors: Jeff Polton (NOC), Anthony Wise (NOC), Clare O'Neill (Met Office)
 
 ---
 
