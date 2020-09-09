@@ -169,6 +169,3 @@ Submit a run script job from the experiment directory ::
   mkdir Restart_files
   qsub runscript
 
-
-
-/work/n01/n01/jelt/AMM7_SURGE/dev_r8814_surge_modelling_Nemo4/CONFIG/AMM7_SURGE/EXP_tideonly
