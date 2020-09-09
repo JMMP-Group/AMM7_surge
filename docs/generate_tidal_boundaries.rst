@@ -1,4 +1,6 @@
 
+.. _generate_tidal_boundaries-label:
+
 Generate tidal boundary conditions
 ==================================
 
