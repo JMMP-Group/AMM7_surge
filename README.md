@@ -15,7 +15,7 @@ This recipe forms a template of how to obtain and compile the code. Additional f
 
 ---
 
-## File Hierarchy
+## Repository File Hierarchy
 
 
 ### EXP_tideonly
