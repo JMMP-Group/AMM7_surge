@@ -10,7 +10,7 @@ This configuration recipe has be written with the [ARCHER](https://www.archer.ac
 
 See [AMM7_surge recipe](docs/AMM7_SURGE_build_and_run.rst)
 
-This recipe forms a template of how to obtain and compile the code. Additional files are required to run the code.
+This recipe forms a template of how to obtain and compile the code. Note additional files are required to run the code.
 
 
 ---
