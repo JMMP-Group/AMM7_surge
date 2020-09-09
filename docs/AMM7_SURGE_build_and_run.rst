@@ -1,5 +1,5 @@
 
-.. _AMM7_SURGE_build_and_run:
+.. _AMM7_SURGE_build_and_run-label:
 
 *****************************************
 Setting up the NEMO AMM7 surge model
