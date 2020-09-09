@@ -8,7 +8,7 @@ This configuration recipe has be written with the [ARCHER](https://www.archer.ac
 
 ## Setting up AMM7 surge model
 
-See [AMM7_surge recipe](docs/AMM7_SURGE.rst)
+See [AMM7_surge recipe](docs/AMM7_SURGE_build_and_run.rst)
 
 This recipe forms a template of how to obtain and compile the code. Additional files are required to run the code.
 
