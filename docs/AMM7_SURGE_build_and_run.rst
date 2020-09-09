@@ -6,7 +6,7 @@ Setting up the NEMO AMM7 surge model
 *****************************************
 
 This recipe principly describes how to build NEMO and XIOS approprite for a surge model.
-The method for generating the tidal boundary conditions is outlined and exhaustive details 
+The method for generating the tidal boundary conditions is outlined and exhaustive details
 on how to generate the grid and bathymetry are omitted since these require data from external sources.
 
 1) Get NEMO codebase
@@ -156,7 +156,7 @@ so some of the error checking for 3D boundary conditions is not needed but has
 to be satisfied. This is how it was done. A new version of PyNEMO now exists.
 The boundary data are stored in ``$INPUTS``
 
-See [generate_tidal_boundaries](generate_tidal_boundaries.rst)
+See `generate-tidal-boundaries-label`
 
 
 6) Run NEMO
@@ -167,4 +167,3 @@ Submit a run script job from the experiment directory ::
   cd $EXP
   mkdir Restart_files
   qsub runscript
-
