@@ -10,8 +10,8 @@ This recipe principly describes how to build NEMO and XIOS approprite for a
   outlined and exhaustive details on how to generate the grid and bathymetry
   are omitted since these require data from external sources.
 
-1) Get and build Met Surge Config
-=================================
+1) Get NEMO codebase
+====================
 
 Login to ARCHER ::
 
