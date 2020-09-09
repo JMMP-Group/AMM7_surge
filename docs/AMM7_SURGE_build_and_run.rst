@@ -151,13 +151,13 @@ described here. Obtain the file E.g. ::
 5) Generate tidal boundary conditions
 ======================================
 
-The tidal boundary conditions were generated from the FES2014 tidal model with
- a tool called PyNEMO. At this time the version of PyNEMO did not support outputting only 2D tidal forcing,
+The tidal boundary conditions were generated from the FES2014 tidal model with a tool called PyNEMO.
+At this time the version of PyNEMO did not support outputting only 2D tidal forcing,
 so some of the error checking for 3D boundary conditions is not needed but has
 to be satisfied. This is how it was done. A new version of PyNEMO now exists.
 The boundary data are stored in ``$INPUTS``
 
-See :ref:`generate_tidal_boundaries`.
+See `<generate_tidal_boundaries>`_.
 
 
 6) Run NEMO
