@@ -336,9 +336,8 @@
          <field id="erp"          long_name="Surface Water Flux: Damping"           standard_name="water_flux_out_of_sea_water_due_to_newtonian_relaxation"              unit="kg/m2/s"                        />
          <field id="taum"         long_name="wind stress module"                    standard_name="magnitude_of_surface_downward_stress"                                 unit="N/m2"                           />
          <field id="wspd"         long_name="wind speed module"                     standard_name="wind_speed"                                                           unit="m/s"                            />
-         <field id="wspd"         long_name="wind speed module"                     standard_name="wind_speed"                                                           unit="m/s"                            />
          <field id="uwnd"         long_name="u component of wind"       unit="m/s"         />
-   	 <field id="vwnd"         long_name="v component of wind"       unit="m/s"        />
+         <field id="vwnd"         long_name="v component of wind"       unit="m/s"         />
   
          <!-- * variable relative to atmospheric pressure forcing : available with ln_apr_dyn -->
          <field id="ssh_ib"       long_name="Inverse barometer sea surface height"  standard_name="sea_surface_height_correction_due_to_air_pressure_at_low_frequency"   unit="m"        />

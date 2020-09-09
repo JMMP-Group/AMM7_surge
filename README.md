@@ -1,25 +1,39 @@
 # AMM7_surge
-7km resolution Atlantic Margin Model configuration for 2D surge model.  
-Documentation of the configuration setup on ARCHER HPC.  
-Contributors: Jeff Polton (NOC), Anthony Wise (NOC), Clare O'Neill (Met Office)
+
+A 7km resolution Atlantic Margin Model 2D surge configuration using the [NEMO](https://www.nemo-ocean.eu) modelling framework.  
+
+This configuration recipe has be written with the [ARCHER](https://www.archer.ac.uk) HPC INTEL environment in mind.
 
 ---
 
 ## Setting up AMM7 surge model
 
-See [AMM7_surge recipe](docs/AMM7_SURGE.rst)
+See [AMM7_surge recipe](docs/AMM7_SURGE_build_and_run.rst)
 
-**NOTE** This recipe is a copy from `EAfrica_Surge` and `Solent_surge`. It
-is a bit of a hack job to initially get some data size estimates for a proposal.
+This recipe forms a template of how to obtain and compile the code. Note additional files are required to run the code.
+
 
 ---
 
-## File Hierarchy
+## Repository File Hierarchy
 
-### EXP00
-
-Test ground
 
 ### EXP_tideonly
 
 FES2014 tide only simulation
+
+### INPUTS
+
+Store for external forcing files and domain configuration file.
+
+### ARCH
+
+Store for architecture build files
+
+### MY_SRC
+
+Store for FORTRAN modification to NEMO checkout from NEMO repository.
+
+### DOCS
+
+Recipe on how to build and run AMM7_surge model.
