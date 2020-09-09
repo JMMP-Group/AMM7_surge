@@ -156,7 +156,7 @@ so some of the error checking for 3D boundary conditions is not needed but has
 to be satisfied. This is how it was done. A new version of PyNEMO now exists.
 The boundary data are stored in ``$INPUTS``
 
-See `generate-tidal-boundaries-label`
+See **generate tidal boundaries** page.
 
 
 6) Run NEMO
