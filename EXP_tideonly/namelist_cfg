@@ -11,7 +11,7 @@
   nn_date0    =  20180601 !  date at nit_0000 (format yyyymmdd) used if ln_rstart=F or (ln_rstart=T and nn_rstctl=0 or 1)
   nn_time0    =       0   !  initial time of day in hhmm
   nn_leapy    =       1   !  Leap year calendar (1) or not (0)
-  ln_rstart   =  .true.  !  start from rest (F) or from a restart file (T)
+  ln_rstart   =  .false.  !  start from rest (F) or from a restart file (T)
     nn_euler    =    1            !  = 0 : start with forward time step if ln_rstart=T
     nn_rstctl   =    2            !  restart control ==> activated only if ln_rstart=T
     !                             !    = 0 nn_date0 read in namelist ; nn_it000 : read in namelist
