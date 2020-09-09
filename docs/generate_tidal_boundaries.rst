@@ -107,8 +107,9 @@ this is OK to do..)::
 
 
 FES2014 tidal data is used as the tidal data source. This is clumsily set in
-``nemo_bdy_tide3.py`` before pynemo is built, though the attached ``namelist.bdy`` has redundant references to TPXO. The FES2014 files will need
-  to be  obtained from https://datastore.cls.fr/catalogues/fes2014-tide-model/
+``nemo_bdy_tide3.py`` before pynemo is built, though the attached
+``namelist.bdy`` has redundant references to TPXO. The FES2014 files will need
+to be obtained from https://datastore.cls.fr/catalogues/fes2014-tide-model/
 
 
 Run PyNEMO
