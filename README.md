@@ -17,10 +17,23 @@ This recipe forms a template of how to obtain and compile the code. Additional f
 
 ## File Hierarchy
 
-### EXP00
-
-Test ground
 
 ### EXP_tideonly
 
 FES2014 tide only simulation
+
+### INPUTS
+
+Store for external forcing files and domain configuration file.
+
+### ARCH
+
+Store for architecture build files
+
+### MY_SRC
+
+Store for FORTRAN modification to NEMO checkout from NEMO repository.
+
+### DOCS
+
+Recipe on how to build and run AMM7_surge model.
