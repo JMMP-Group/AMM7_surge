@@ -32,7 +32,7 @@ Method for installing on a centos box. NB At this time PyNEMO was briefly called
   conda install -c https://conda.anaconda.org/srikanthnagella pyjnius
 
 Find java object by doing a ``which java`` and then following the trail
-find  /usr/lib/jvm/jre-1.7.0-openjdk.x86_64/ -name libjvm.so -print
+``find  /usr/lib/jvm/jre-1.7.0-openjdk.x86_64/ -name libjvm.so -print``
 ::
 
   cd $WORK/$USER
@@ -42,6 +42,7 @@ find  /usr/lib/jvm/jre-1.7.0-openjdk.x86_64/ -name libjvm.so -print
   cd $WORK/$USER/nrct/Python
 
 For generation of FES tides need to checkout the appropriate branch ::
+
     git fetch
     git checkout Generalise-tide-input
 
@@ -95,9 +96,8 @@ Then in ipython::
 
 
 
-Make a bathymetry file from envelope bathymetry variable ``hbatt``
- (I think this is OK to do..)::
-
+Make a bathymetry file from envelope bathymetry variable ``hbatt`` (I think
+this is OK to do..)::
 
   module load nco/gcc/4.4.2.ncwa
   rm -f hbatt.nc tmp1.nc tmp2.nc
@@ -107,8 +107,7 @@ Make a bathymetry file from envelope bathymetry variable ``hbatt``
 
 
 FES2014 tidal data is used as the tidal data source. This is clumsily set in
-``nemo_bdy_tide3.py`` before pynemo is built, though the attached
- ``namelist.bdy`` has redundant references to TPXO. The FES2014 files will need
+``nemo_bdy_tide3.py`` before pynemo is built, though the attached ``namelist.bdy`` has redundant references to TPXO. The FES2014 files will need
   to be  obtained from https://datastore.cls.fr/catalogues/fes2014-tide-model/
 
 
