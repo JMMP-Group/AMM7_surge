@@ -35,9 +35,7 @@ Store for FORTRAN modification to NEMO checkout from NEMO repository.
 
 ## Setting up AMM7 surge model
 
-To run the AMM7 surge model follow the [AMM7_surge recipe](docs/AMM7_SURGE_build_and_run.rst)
-
-This recipe forms a template of how to obtain, compile and run the code.
+To run the AMM7 surge model follow the [AMM7_surge recipe](docs/AMM7_SURGE_build_and_run.rst). This recipe forms a template of how to obtain, compile and run the code.
 
 As noted additional files are required to run the code. To run a full surge model meteorological forcing is required. For simplicity this demonstration simulation is configured to run without meteorological forcing (otherwise requiring sea level pressure and 10m winds). Tidal boundary conditions are also required - these can be generated following this [recipe](docs/generate_tidal_boundaries.rst) from the [docs](docs) folder, or downloaded elsewhere. Finally a domain configuration file is required - this can be generated following NEMO guidelines or downloaded elsewhere.
 
