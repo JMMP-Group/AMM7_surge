@@ -1,13 +1,16 @@
 
 .. _AMM7_SURGE_build_and_run-label:
 
-*****************************************
-Setting up the NEMO AMM7 surge model
-*****************************************
+************************************************
+Setting up and running the NEMO AMM7 surge model
+************************************************
 
-This recipe principly describes how to build NEMO and XIOS approprite for a surge model.
-The method for generating the tidal boundary conditions is outlined and exhaustive details
-on how to generate the grid and bathymetry are omitted since these require data from external sources.
+This recipe describes how to build NEMO and XIOS appropriate for a surge model.
+For simplicity, in this example meteorological forcing is switched off.
+The method for generating the tidal boundary conditions is given. The method for
+generating the domain file (i.e. the grid and bathymetry) is not given. However
+the tidal boundary conditions and domain configuration file can be downloaded elsewhere.
+
 
 1) Get NEMO codebase
 ====================
@@ -46,7 +49,7 @@ Put files from git repo into ``MY_SRC``::
 
   rsync -vt MY_SRC/* $CDIR/$CONFIG/MY_SRC
 
-Add files to the experiment directory. Demonstrate with tide-only::
+Add files to the experiment directory. This demonstration is tide-only::
 
   rsync -vt EXP_tideonly/* $CDIR/$CONFIG/EXP_tideonly
 
@@ -181,4 +184,4 @@ Finally we are ready to submit a run script job from the experiment directory ::
   mkdir Restart_files
   qsub runscript
 
-Sea surface height is output every 15 mins. 
+Sea surface height is output every 15 mins.
