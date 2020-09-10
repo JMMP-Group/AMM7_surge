@@ -6,6 +6,8 @@ The configuration is based on v3.6 of the [NEMO](https://www.nemo-ocean.eu) mode
 
 The configuration recipe has be written for the [ARCHER](https://www.archer.ac.uk) HPC INTEL environment.
 
+The recipe describes how to configure and run a tides-only example.
+
 ---
 
 ## Repository File Hierarchy
