@@ -17,7 +17,7 @@ the tidal boundary conditions and domain configuration file can be downloaded el
 
 Login to ARCHER ::
 
-  ssh -l $USER login.archer.ac.uk
+  ssh -l $USER login.archer2.ac.uk
 
 Define some paths ::
 
@@ -70,8 +70,8 @@ Load modules ::
   module load cray-hdf5-parallel/1.10.0.1
   module swap PrgEnv-cray PrgEnv-intel/5.2.82
 
-2) Build XIOS2 @ r1242
-======================
+2) Build XIOS2.5 @ r2022
+========================
 
 Note when NEMO (nemo.exe / opa) is compiled it is done with reference to a particular version of
 XIOS. So on NEMO run time the version of XIOS that built xios_server.exe must be compatible with the
@@ -79,28 +79,71 @@ version of XIOS that built nemo.exe / opa.
 
 Modules::
 
-  module load cray-netcdf-hdf5parallel/4.4.1.1
-  module load cray-hdf5-parallel/1.10.0.1
-  module swap PrgEnv-cray PrgEnv-intel/5.2.82
+  #module load cray-netcdf-hdf5parallel/4.4.1.1
+  #module load cray-hdf5-parallel/1.10.0.1
+  #module swap PrgEnv-cray PrgEnv-intel/5.2.82
 
-Download XIOS2 and prep::
+  module unload craype-network-ofi
+  module unload cray-mpich
+  module load craype-network-ucx
+  module load cray-mpich-ucx
+  module load libfabric
+  module load cray-hdf5-parallel
+  module load cray-netcdf-hdf5parallel
+  module load gcc
+
+____
+
+Download XIOS2.0 and prep::
 
   cd $WORK/$USER
   svn co -r1242 http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/trunk xios-2.0_r1242
   cd xios-2.0_r1242
-  cp $WORK/$USER/$CONFIG/ARCH/arch-XC30_ARCHER* arch/.
+
+Make a mod (line 894)::
+
+  vi tools/FCM/lib/Fcm/Config.pm
+  FC_MODSEARCH => '-J',              # FC flag, specify "module" path
+
+Copy architecture files from git repo::
+
+  cp $WORK/$USER/$CONFIG/ARCH/arch-X86_ARCHER2-Cray* arch/.
+
+Implement make command (DOES NOT WORK)::
+
+  #./make_xios --full --prod --arch XC30_ARCHER --netcdf_lib netcdf4_par --job 8
+  ./make_xios --prod --arch X86_ARCHER2-Cray --netcdf_lib netcdf4_par --job 16 --full
+
+----
+
+
+Download XIOS2.5 and prep::
+
+  cd $WORK/$USER
+  svn co -r2022 http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/branchs/xios-2.5/  xios-2.5_r2022
+  cd xios-2.5_r2022
+
+Make a mod (line 894). Though you might need to run the ``make_xios`` command
+once first to unpack the tar files::
+
+  vi tools/FCM/lib/Fcm/Config.pm
+  FC_MODSEARCH => '-J',              # FC flag, specify "module" path
+
+Copy architecture files from git repo::
+
+  cp $WORK/$USER/$CONFIG/ARCH/XIOS/arch-X86_ARCHER2-Cray* arch/.
 
 Implement make command::
 
-  ./make_xios --full --prod --arch XC30_ARCHER --netcdf_lib netcdf4_par --job 8
+  ./make_xios --prod --arch X86_ARCHER2-Cray --netcdf_lib netcdf4_par --job 16 --full
 
-Link the xios-2.0_r1242 to a generic XIOS directory name::
+Link the xios-2.5_r2022 to a generic XIOS directory name::
 
-  ln -s  $WORK/$USER/xios-2.0_r1242  $WORK/$USER/XIOS
+  ln -s  $WORK/$USER/xios-2.5_r2022  $WORK/$USER/XIOS
 
 Link xios executable to the EXP directory::
 
-  ln -s  $WORK/$USER/xios-2.0_r1242/bin/xios_server.exe $EXP/xios_server.exe
+  ln -s  $WORK/$USER/xios-2.5_r2022/bin/xios_server.exe $EXP/xios_server.exe
 
 
 
@@ -121,16 +164,22 @@ Set the compile flags (will use the FES tide) ::
   bld::tool::fppkeys  key_nosignedzero key_diainstant key_mpp_mpi key_iomput  \
                       key_diaharm_fast key_FES14_tides
 
-Put the HPC compiler file (from the git repo) in the correct place ::
+Put the HPC compiler file (from the git repo) in the correct place (this
+currently uses xios2.5 from acc) ::
 
-  rsync -vt $WDIR/ARCH/arch-XC_ARCHER_INTEL.fcm $CDIR/../ARCH/.
+  rsync -vt $WDIR/ARCH/arch-X86_ARCHER2-Cray.fcm $CDIR/../ARCH/.
 
+
+Make a mod (line 894). Though you might need to run the ``make_xios`` command
+once first to unpack the tar files::
+
+  vi $WDIR/dev_r8814_surge_modelling_Nemo4/EXTERNAL/fcm/lib/Fcm/Config.pm
+  FC_MODSEARCH => '-J',              # FC flag, specify "module" path
 
 Make NEMO ::
 
   cd $CDIR
-  ./makenemo -n $CONFIG -m XC_ARCHER_INTEL -j 10
-
+  ./makenemo -n $CONFIG  -m X86_ARCHER2-Cray -j 16
 
 Copy executable to experiment directory ::
 
