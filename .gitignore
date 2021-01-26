@@ -1,1 +1,5 @@
 BINARIES
+*.nc
+*.tar.gz
+dev_r8814_surge_modelling_Nemo4/
+EXP_tideonly/bdydta
