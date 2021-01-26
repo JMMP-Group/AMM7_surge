@@ -203,10 +203,22 @@ There must also be a ``domain_cfg.nc`` domain file in ``$EXP``.
 7) Run NEMO
 ===========
 
-Finally we are ready to submit a run script job from the experiment directory ::
+Finally we are ready to submit a run script job from the experiment directory.
+
+Make the runscript (to be downloaded from repo but not settled on processor
+split yet). For example, to run with 4 xios servers (a maximum of 2 per node),
+each with sole occupancy of a 16-core NUMA region and 96 ocean cores, spaced
+with an idle core in between each, use::
+
+  cd $EXP
+  /work/n01/shared/acc/mkslurm -S 4 -s 16 -m 2 -C 96 -c 2 > runscript.slurm
+
+(rename executable in script from "nemo" to "opa")
+
+Submit::
 
   cd $EXP
   mkdir Restart_files
-  qsub runscript
+  sbatch runscript.slurm
 
 Sea surface height is output every 15 mins.
