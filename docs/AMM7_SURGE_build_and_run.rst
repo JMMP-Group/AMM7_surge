@@ -64,24 +64,7 @@ because it doesn't expect you to not care about the winds::
   <field id="vwnd"         long_name="v component of wind"       unit="m/s"        />
 
 
-Load modules ::
-
-  module load cray-netcdf-hdf5parallel/4.4.1.1
-  module load cray-hdf5-parallel/1.10.0.1
-  module swap PrgEnv-cray PrgEnv-intel/5.2.82
-
-2) Build XIOS2.5 @ r2022
-========================
-
-Note when NEMO (nemo.exe / opa) is compiled it is done with reference to a particular version of
-XIOS. So on NEMO run time the version of XIOS that built xios_server.exe must be compatible with the
-version of XIOS that built nemo.exe / opa.
-
-Modules::
-
-  #module load cray-netcdf-hdf5parallel/4.4.1.1
-  #module load cray-hdf5-parallel/1.10.0.1
-  #module swap PrgEnv-cray PrgEnv-intel/5.2.82
+Load some modules::
 
   module unload craype-network-ofi
   module unload cray-mpich
@@ -91,6 +74,13 @@ Modules::
   module load cray-hdf5-parallel
   module load cray-netcdf-hdf5parallel
   module load gcc
+
+2) Build XIOS2.5 @ r2022
+========================
+
+Note when NEMO (nemo.exe / opa) is compiled it is done with reference to a particular version of
+XIOS. So on NEMO run time the version of XIOS that built xios_server.exe must be compatible with the
+version of XIOS that built nemo.exe / opa.
 
 
 Download XIOS2.5 and prep::
