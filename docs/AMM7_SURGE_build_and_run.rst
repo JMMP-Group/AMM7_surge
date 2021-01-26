@@ -82,6 +82,9 @@ Note when NEMO (nemo.exe / opa) is compiled it is done with reference to a parti
 XIOS. So on NEMO run time the version of XIOS that built xios_server.exe must be compatible with the
 version of XIOS that built nemo.exe / opa.
 
+(Note though this builds fine, I actually used ACC's executable during the NEMO/OPA 
+build)
+
 
 Download XIOS2.5 and prep::
 
