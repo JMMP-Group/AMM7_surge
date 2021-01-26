@@ -6,7 +6,7 @@ A 7km resolution Atlantic Margin Model 2D surge configuration.
 
 The configuration is based on v3.6 of the [NEMO](https://www.nemo-ocean.eu) modelling framework.
 
-The configuration recipe has be written for the [ARCHER](https://www.archer.ac.uk) HPC INTEL environment.
+The configuration recipe has be written for the [ARCHER2](https://www.archer2.ac.uk) UK National Supercomputing Service. 
 
 The recipe describes how to configure and run a tides-only example.
 
@@ -24,7 +24,7 @@ An experiment directory for a (FES2014) tide only demonstration simulation.
 
 ### INPUTS
 
-Store for external forcing files (e.g. tides, meteorology) and domain configuration file. Also store for boundary condition setup namelist file. *The domain configuration file can be downloaded from elsewhere. The tidal boundaries can be generated from this recipe or downloaded elsewhere*. 
+Store for external forcing files (e.g. tides, meteorology) and domain configuration file. Also store for boundary condition setup namelist file. *The domain configuration file can be downloaded from elsewhere. The tidal boundaries can be generated from this recipe or downloaded elsewhere*.
 
 ### ARCH
 
@@ -42,4 +42,3 @@ Store for FORTRAN modification to NEMO checkout from NEMO repository.
 To run the AMM7 surge model follow the [AMM7_surge recipe](docs/AMM7_SURGE_build_and_run.rst). This recipe forms a template of how to obtain, compile and run the code.
 
 As noted additional files are required to run the code. To run a full surge model meteorological forcing is required. For simplicity this demonstration simulation is configured to run without meteorological forcing (otherwise requiring sea level pressure and 10m winds). Tidal boundary conditions are also required - these can be generated following this [recipe](docs/generate_tidal_boundaries.rst) from the [docs](docs) folder, or downloaded elsewhere. Finally a domain configuration file is required - this can be generated following NEMO guidelines or downloaded elsewhere.
-
