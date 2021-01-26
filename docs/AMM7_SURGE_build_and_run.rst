@@ -92,30 +92,6 @@ Modules::
   module load cray-netcdf-hdf5parallel
   module load gcc
 
-____
-
-Download XIOS2.0 and prep::
-
-  cd $WORK/$USER
-  svn co -r1242 http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/trunk xios-2.0_r1242
-  cd xios-2.0_r1242
-
-Make a mod (line 894)::
-
-  vi tools/FCM/lib/Fcm/Config.pm
-  FC_MODSEARCH => '-J',              # FC flag, specify "module" path
-
-Copy architecture files from git repo::
-
-  cp $WORK/$USER/$CONFIG/ARCH/arch-X86_ARCHER2-Cray* arch/.
-
-Implement make command (DOES NOT WORK)::
-
-  #./make_xios --full --prod --arch XC30_ARCHER --netcdf_lib netcdf4_par --job 8
-  ./make_xios --prod --arch X86_ARCHER2-Cray --netcdf_lib netcdf4_par --job 16 --full
-
-----
-
 
 Download XIOS2.5 and prep::
 
