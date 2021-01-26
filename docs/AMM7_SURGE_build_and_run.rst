@@ -43,6 +43,7 @@ Get the code::
 
 Make a link between where the inputs files are and where the model expects them ::
 
+    mkdir $EXP
     ln -s $INPUTS $EXP/bdydta
 
 Put files from git repo into ``MY_SRC``::
@@ -82,7 +83,7 @@ Note when NEMO (nemo.exe / opa) is compiled it is done with reference to a parti
 XIOS. So on NEMO run time the version of XIOS that built xios_server.exe must be compatible with the
 version of XIOS that built nemo.exe / opa.
 
-(Note though this builds fine, I actually used ACC's executable during the NEMO/OPA 
+(Note though this builds fine, I actually used ACC's executable during the NEMO/OPA
 build)
 
 
