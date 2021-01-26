@@ -93,7 +93,7 @@ Download XIOS2.5 and prep::
   svn co -r2022 http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/branchs/xios-2.5/  xios-2.5_r2022
   cd xios-2.5_r2022
 
-Make a mod (line 894). Though you might need to run the ``make_xios`` command
+Make a mod (line 480). Though you might need to run the ``make_xios`` command
 once first to unpack the tar files::
 
   vi tools/FCM/lib/Fcm/Config.pm
@@ -140,7 +140,7 @@ currently uses xios2.5 from acc) ::
   rsync -vt $WDIR/ARCH/arch-X86_ARCHER2-Cray.fcm $CDIR/../ARCH/.
 
 
-Make a mod (line 894). Though you might need to run the ``make_xios`` command
+Make a mod (line 480). Though you might need to run the ``make_xios`` command
 once first to unpack the tar files::
 
   vi $WDIR/dev_r8814_surge_modelling_Nemo4/EXTERNAL/fcm/lib/Fcm/Config.pm
