@@ -76,7 +76,29 @@ Load some modules::
   module load cray-netcdf-hdf5parallel
   module load gcc
 
-2) Build XIOS2.5 @ r2022
+2) Build XIOS
+=============
+
+  cd $WORK/$USER
+  cp -r /work/n01/shared/nemo/xios-trunk/ xios-trunk
+  #svn checkout  http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/trunk@2379 xios
+  cd xios-trunk
+
+#Copy architecture files from git repo::
+#
+#  cp $WORK/$USER/$CONFIG/ARCH/XIOS/arch-X86_ARCHER2-Cray* arch/.
+
+Implement make command::
+
+  ./make_xios --prod --arch X86_ARCHER2-Cray --netcdf_lib netcdf4_par --job 16 --full
+
+ERROR 
+Error:
+Unable to determine compiler version.
+Make sure that a cray module is loaded and that CRAY_CC_VERSION is defined
+
+
+2) Build XIOS2.5 @ r2022 OLD
 ========================
 
 Note when NEMO (nemo.exe / opa) is compiled it is done with reference to a particular version of
