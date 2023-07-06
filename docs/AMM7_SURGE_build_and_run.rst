@@ -132,7 +132,10 @@ Set the compile flags (will use the FES tide) ::
 Put the HPC compiler file (from the git repo) in the correct place (this
 currently uses xios2.5 from acc) ::
 
-  rsync -vt $WDIR/ARCH/arch-X86_ARCHER2-Cray.fcm $CDIR/../ARCH/.
+  rsync -vt /work/n01/n01/annkat/SE-NEMO_UPD/SE-NEMO/arch/nemo/arch-archer2-gnu-mpich.fcm $CDIR/../ARCH/. 
+
+# Dirty fix to hard wire path otherwise user will have to set XIOS_DIR in every new shell session
+sed -i "s?XXX_XIOS_DIR_XXX?$WORK/$USER/XIOS?" $CDIR/../ARCH/arch-archer2-gnu-mpich.fcm
 
 
 Make a mod (line 480). Though you might need to run the ``make_xios`` command
@@ -144,7 +147,7 @@ once first to unpack the tar files::
 Make NEMO ::
 
   cd $CDIR
-  ./makenemo -n $CONFIG  -m X86_ARCHER2-Cray -j 16
+  ./makenemo -n $CONFIG  -m archer2-gnu-mpich -j 16
 
 Copy executable to experiment directory ::
 
