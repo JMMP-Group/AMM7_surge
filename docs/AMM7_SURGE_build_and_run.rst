@@ -67,30 +67,33 @@ because it doesn't expect you to not care about the winds::
 
 Load some modules::
 
-  module unload craype-network-ofi
-  module unload cray-mpich
-  module load craype-network-ucx
-  module load cray-mpich-ucx
+  module restore
+  source /opt/cray/pe/cpe/22.12/restore_lmod_system_defaults.sh
+  
+  module swap PrgEnv-cray/8.3.3 PrgEnv-gnu/8.3.3
+  module swap craype-network-ofi craype-network-ucx
+  module swap cray-mpich cray-mpich-ucx
+  module load cray-hdf5-parallel/1.12.2.1
+  module load cray-netcdf-hdf5parallel/4.9.0.1
   module load libfabric
-  module load cray-hdf5-parallel
-  module load cray-netcdf-hdf5parallel
-  module load gcc
 
 2) Build XIOS
 =============
+
+::
 
   cd $WORK/$USER
   cp -r /work/n01/shared/nemo/xios-trunk/ xios-trunk
   #svn checkout  http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/trunk@2379 xios
   cd xios-trunk
 
-#Copy architecture files from git repo::
-#
-#  cp $WORK/$USER/$CONFIG/ARCH/XIOS/arch-X86_ARCHER2-Cray* arch/.
+Copy architecture files from git repo::
+
+  cp /work/n01/n01/annkat/SE-NEMO_UPD/SE-NEMO/arch/xios/arch-archer2-gnu-mpich.* arch/.
 
 Implement make command::
 
-  ./make_xios --prod --arch X86_ARCHER2-Cray --netcdf_lib netcdf4_par --job 16 --full
+  ./make_xios --prod --arch archer2-gnu-mpich --netcdf_lib netcdf4_par --job 16 --full
 
 ERROR 
 Error:
@@ -112,8 +115,8 @@ build)
 Download XIOS2.5 and prep::
 
   cd $WORK/$USER
-  svn co -r2022 http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/branchs/xios-2.5/  xios-2.5_r2022
-  cd xios-2.5_r2022
+  svn co -r2528 http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/branchs/xios-2.5/  xios-2.5_r2528
+  cd xios-2.5_r2528
 
 Make a mod (line 480). Though you might need to run the ``make_xios`` command
 once first to unpack the tar files::
