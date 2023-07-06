@@ -102,47 +102,13 @@ Implement make command::
 
   ./make_xios --prod --arch archer2-gnu-mpich --netcdf_lib netcdf4_par --job 16 --full
 
+Link the xios-2.5_r2528 to a generic XIOS directory name::
 
-
-
-2) Build XIOS2.5 @ r2022 OLD
-========================
-
-Note when NEMO (nemo.exe / opa) is compiled it is done with reference to a particular version of
-XIOS. So on NEMO run time the version of XIOS that built xios_server.exe must be compatible with the
-version of XIOS that built nemo.exe / opa.
-
-(Note though this builds fine, I actually used ACC's executable during the NEMO/OPA
-build)
-
-
-Download XIOS2.5 and prep::
-
-  cd $WORK/$USER
-  svn co -r2528 http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/branchs/xios-2.5/  xios-2.5_r2528
-  cd xios-2.5_r2528
-
-Make a mod (line 480). Though you might need to run the ``make_xios`` command
-once first to unpack the tar files::
-
-  vi tools/FCM/lib/Fcm/Config.pm
-  FC_MODSEARCH => '-J',              # FC flag, specify "module" path
-
-Copy architecture files from git repo::
-
-  cp $WORK/$USER/$CONFIG/ARCH/XIOS/arch-X86_ARCHER2-Cray* arch/.
-
-Implement make command::
-
-  ./make_xios --prod --arch X86_ARCHER2-Cray --netcdf_lib netcdf4_par --job 16 --full
-
-Link the xios-2.5_r2022 to a generic XIOS directory name::
-
-  ln -s  $WORK/$USER/xios-2.5_r2022  $WORK/$USER/XIOS
+  ln -s  $WORK/$USER/xios-2.5_r2528  $WORK/$USER/XIOS
 
 Link xios executable to the EXP directory::
 
-  ln -s  $WORK/$USER/xios-2.5_r2022/bin/xios_server.exe $EXP/xios_server.exe
+  ln -s  $WORK/$USER/xios-2.5_r2528/bin/xios_server.exe $EXP/xios_server.exe
 
 
 
