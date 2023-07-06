@@ -80,14 +80,21 @@ Load some modules::
 2) Build XIOS
 =============
 
-::
+
+Download XIOS2.5 and prep::
 
   cd $WORK/$USER
-  cp -r /work/n01/shared/nemo/xios-trunk/ xios-trunk
-  #svn checkout  http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/trunk@2379 xios
-  cd xios-trunk
+  svn co -r2528 http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/branchs/xios-2.5/  xios-2.5_r2528
+  cd xios-2.5_r2528
 
-Copy architecture files from git repo::
+Make a mod (line 480). Though you might need to run the ``make_xios`` command
+once first to unpack the tar files::
+
+  vi tools/FCM/lib/Fcm/Config.pm
+  FC_MODSEARCH => '-J',              # FC flag, specify "module" path
+
+
+Copy architecture files from ?git? repo::
 
   cp /work/n01/n01/annkat/SE-NEMO_UPD/SE-NEMO/arch/xios/arch-archer2-gnu-mpich.* arch/.
 
@@ -95,10 +102,7 @@ Implement make command::
 
   ./make_xios --prod --arch archer2-gnu-mpich --netcdf_lib netcdf4_par --job 16 --full
 
-ERROR 
-Error:
-Unable to determine compiler version.
-Make sure that a cray module is loaded and that CRAY_CC_VERSION is defined
+
 
 
 2) Build XIOS2.5 @ r2022 OLD
