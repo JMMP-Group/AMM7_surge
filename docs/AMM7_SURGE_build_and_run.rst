@@ -203,7 +203,7 @@ each with sole occupancy of a 16-core NUMA region and 96 ocean cores, spaced
 with an idle core in between each, use::
 
   cd $EXP
-  /work/n01/shared/acc/mkslurm -S 4 -s 16 -m 2 -C 96 -c 2 > runscript.slurm
+  /work/n01/shared/nemo/mkslurm_hetjob -S 4 -s 16 -m 2 -C 96 -g 2 -N 128 -t 00:10:00 -a n01-CLASS -j amm7-surge > runscript.slurm
 
 (rename executable in script from "nemo" to "opa")
 
