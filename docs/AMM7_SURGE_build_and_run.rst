@@ -26,8 +26,8 @@ Define some paths ::
   export WDIR=/work/n01/n01/$USER/$CONFIG
   export INPUTS=$WDIR/INPUTS
   export START_FILES=$WDIR/START_FILES
-  export CDIR=$WDIR/dev_r8814_surge_modelling_Nemo4/CONFIG
-  export TDIR=$WDIR/dev_r8814_surge_modelling_Nemo4/TOOLS
+  export CDIR=$WDIR/NEMO_4.0.4_surge/cfgs
+  export TDIR=$WDIR/NEMO_4.0.4_surge/tools
   export EXP=$CDIR/$CONFIG/EXP_tideonly
 
 
@@ -36,10 +36,11 @@ Clone the repository ::
   cd $WORK/$USER
   git clone https://github.com/JMMP-Group/AMM7_surge.git $CONFIG
 
-Get the code::
+Get the code (you need access to the code.metoffice.gov.uk repo)::
 
   cd $WDIR
-  svn co http://forge.ipsl.jussieu.fr/nemo/svn/branches/UKMO/dev_r8814_surge_modelling_Nemo4/NEMOGCM dev_r8814_surge_modelling_Nemo4
+  #svn co http://forge.ipsl.jussieu.fr/nemo/svn/branches/UKMO/dev_r8814_surge_modelling_Nemo4/NEMOGCM dev_r8814_surge_modelling_Nemo4
+  svn --username jeffpolton co https://code.metoffice.gov.uk/svn/nemo/NEMO/branches/UKMO/NEMO_4.0.4_surge/
 
 Make a link between where the inputs files are and where the model expects them ::
 
@@ -118,7 +119,8 @@ Link xios executable to the EXP directory::
 Already got NEMO branch ::
 
     #cd $WDIR
-    #svn co http://forge.ipsl.jussieu.fr/nemo/svn/branches/UKMO/dev_r8814_surge_modelling_Nemo4/NEMOGCM dev_r8814_surge_modelling_Nemo4
+    ##svn co http://forge.ipsl.jussieu.fr/nemo/svn/branches/UKMO/dev_r8814_surge_modelling_Nemo4/NEMOGCM dev_r8814_surge_modelling_Nemo4
+    #svn --username jeffpolton co https://code.metoffice.gov.uk/svn/nemo/NEMO/branches/UKMO/NEMO_4.0.4_surge/
 
 
 
