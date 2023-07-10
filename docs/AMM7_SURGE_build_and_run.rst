@@ -67,31 +67,25 @@ because it doesn't expect you to not care about the winds::
 
 Load some modules::
 
-  module unload craype-network-ofi
-  module unload cray-mpich
-  module load craype-network-ucx
-  module load cray-mpich-ucx
+  module restore
+  source /opt/cray/pe/cpe/22.12/restore_lmod_system_defaults.sh
+  
+  module swap PrgEnv-cray/8.3.3 PrgEnv-gnu/8.3.3
+  module swap craype-network-ofi craype-network-ucx
+  module swap cray-mpich cray-mpich-ucx
+  module load cray-hdf5-parallel/1.12.2.1
+  module load cray-netcdf-hdf5parallel/4.9.0.1
   module load libfabric
-  module load cray-hdf5-parallel
-  module load cray-netcdf-hdf5parallel
-  module load gcc
 
-2) Build XIOS2.5 @ r2022
-========================
-
-Note when NEMO (nemo.exe / opa) is compiled it is done with reference to a particular version of
-XIOS. So on NEMO run time the version of XIOS that built xios_server.exe must be compatible with the
-version of XIOS that built nemo.exe / opa.
-
-(Note though this builds fine, I actually used ACC's executable during the NEMO/OPA
-build)
+2) Build XIOS
+=============
 
 
 Download XIOS2.5 and prep::
 
   cd $WORK/$USER
-  svn co -r2022 http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/branchs/xios-2.5/  xios-2.5_r2022
-  cd xios-2.5_r2022
+  svn co -r2528 http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/branchs/xios-2.5/  xios-2.5_r2528
+  cd xios-2.5_r2528
 
 Make a mod (line 480). Though you might need to run the ``make_xios`` command
 once first to unpack the tar files::
@@ -99,21 +93,22 @@ once first to unpack the tar files::
   vi tools/FCM/lib/Fcm/Config.pm
   FC_MODSEARCH => '-J',              # FC flag, specify "module" path
 
-Copy architecture files from git repo::
 
-  cp $WORK/$USER/$CONFIG/ARCH/XIOS/arch-X86_ARCHER2-Cray* arch/.
+Copy architecture files from ?git? repo::
+
+  cp /work/n01/n01/annkat/SE-NEMO_UPD/SE-NEMO/arch/xios/arch-archer2-gnu-mpich.* arch/.
 
 Implement make command::
 
-  ./make_xios --prod --arch X86_ARCHER2-Cray --netcdf_lib netcdf4_par --job 16 --full
+  ./make_xios --prod --arch archer2-gnu-mpich --netcdf_lib netcdf4_par --job 16 --full
 
-Link the xios-2.5_r2022 to a generic XIOS directory name::
+Link the xios-2.5_r2528 to a generic XIOS directory name::
 
-  ln -s  $WORK/$USER/xios-2.5_r2022  $WORK/$USER/XIOS
+  ln -s  $WORK/$USER/xios-2.5_r2528  $WORK/$USER/XIOS
 
 Link xios executable to the EXP directory::
 
-  ln -s  $WORK/$USER/xios-2.5_r2022/bin/xios_server.exe $EXP/xios_server.exe
+  ln -s  $WORK/$USER/xios-2.5_r2528/bin/xios_server.exe $EXP/xios_server.exe
 
 
 
@@ -137,7 +132,11 @@ Set the compile flags (will use the FES tide) ::
 Put the HPC compiler file (from the git repo) in the correct place (this
 currently uses xios2.5 from acc) ::
 
-  rsync -vt $WDIR/ARCH/arch-X86_ARCHER2-Cray.fcm $CDIR/../ARCH/.
+  rsync -vt /work/n01/n01/annkat/SE-NEMO_UPD/SE-NEMO/arch/nemo/arch-archer2-gnu-mpich.fcm $CDIR/../ARCH/. 
+
+# Dirty fix to hard wire path otherwise user will have to set XIOS_DIR in every new shell session::
+
+  sed -i "s?XXX_XIOS_DIR_XXX?$WORK/$USER/XIOS?" $CDIR/../ARCH/arch-archer2-gnu-mpich.fcm
 
 
 Make a mod (line 480). Though you might need to run the ``make_xios`` command
@@ -149,11 +148,13 @@ once first to unpack the tar files::
 Make NEMO ::
 
   cd $CDIR
-  ./makenemo -n $CONFIG  -m X86_ARCHER2-Cray -j 16
+  ./makenemo -n $CONFIG  -m archer2-gnu-mpich -j 16
 
 Copy executable to experiment directory ::
 
-  ln -s $CDIR/$CONFIG/BLD/bin/nemo.exe $EXP/opa
+  ln -s $CDIR/$CONFIG/BLD/bin/nemo.exe $EXP/nemo
+
+(N.B. sometimes the executable is expected to be called `opa` or `nemo.exe`)
 
 
 
@@ -199,15 +200,8 @@ There must also be a ``domain_cfg.nc`` domain file in ``$EXP``.
 
 Finally we are ready to submit a run script job from the experiment directory.
 
-Make the runscript (to be downloaded from repo but not settled on processor
-split yet). For example, to run with 4 xios servers (a maximum of 2 per node),
-each with sole occupancy of a 16-core NUMA region and 96 ocean cores, spaced
-with an idle core in between each, use::
-
-  cd $EXP
-  /work/n01/shared/acc/mkslurm -S 4 -s 16 -m 2 -C 96 -c 2 > runscript.slurm
-
-(rename executable in script from "nemo" to "opa")
+Edit the runscript (to be downloaded from repo but not settled on processor
+split yet)
 
 Submit::
 
