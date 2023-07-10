@@ -49,11 +49,11 @@ Make a link between where the inputs files are and where the model expects them 
 
 Put files from git repo into ``MY_SRC``::
 
-  rsync -vt $WDIR/MY_SRC/* $CDIR/$CONFIG/MY_SRC
+  #rsync -vt $WDIR/MY_SRC/* $CDIR/$CONFIG/MY_SRC
 
 Add files to the experiment directory. This demonstration is tide-only::
 
-  rsync -vt $WDIR/EXP_tideonly/* $CDIR/$CONFIG/EXP_tideonly
+  #rsync -vt $WDIR/EXP_tideonly/* $CDIR/$CONFIG/EXP_tideonly
 
 
 NB Have added a couple of extra lines into the field_def files. This is a glitch in the surge code,
@@ -215,3 +215,6 @@ Submit::
   sbatch runscript.slurm
 
 Sea surface height is output every 15 mins.
+
+
+**Except it doesn't work yet. Mapping namelist change issues from CO9_AMM15 into namelist_cfg and namelist_ref.**
