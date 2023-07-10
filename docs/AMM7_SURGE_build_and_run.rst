@@ -197,15 +197,8 @@ There must also be a ``domain_cfg.nc`` domain file in ``$EXP``.
 
 Finally we are ready to submit a run script job from the experiment directory.
 
-Make the runscript (to be downloaded from repo but not settled on processor
-split yet). For example, to run with 4 xios servers (a maximum of 2 per node),
-each with sole occupancy of a 16-core NUMA region and 96 ocean cores, spaced
-with an idle core in between each, use::
-
-  cd $EXP
-  /work/n01/shared/nemo/mkslurm_hetjob -S 4 -s 16 -m 2 -C 96 -g 2 -N 128 -t 00:10:00 -a n01-CLASS -j amm7-surge > runscript.slurm
-
-(rename executable in script from "nemo" to "opa")
+Edit the runscript (to be downloaded from repo but not settled on processor
+split yet)
 
 Submit::
 
