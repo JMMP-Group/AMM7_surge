@@ -1,0 +1,261 @@
+#!/usr/bin/env python3
+"""
+Python version of mkslurm_alt by Andrew Coward using HetJobs.
+"""
+import argparse
+import logging
+import sys
+from textwrap import dedent
+
+
+def main(args):
+    """Create slurm scripts
+
+    Args:
+        args: Parsed arguments.
+    """
+
+    # Verbosity
+    if args.v:
+        logging.basicConfig(level=logging.DEBUG)
+    else:
+        logging.basicConfig(level=logging.INFO)
+    cmd = f"{parser.prog} " + " ".join(
+        [
+            f"{'-' if len(arg)==1 else '--'}{arg.replace('_', '-')} {val}"
+            for arg, val in vars(args).items()
+        ]
+    )
+    logging.info("Running %s", cmd)
+
+    # Check
+    if args.g == 1 or args.g < 0:
+        logging.critical("-g must be 0 or greater than 1.")
+        sys.exit()
+
+    # Find placements for each node
+    nodes_mapper = _mkslurm_alt(args)
+
+    # Group identical nodes: HetJob setup
+    hetjob_mapper = _group_identical_nodes(nodes_mapper)
+
+    # Print table
+    _print_table(hetjob_mapper, args.N)
+
+    # Build slurm script
+
+    # Main job settings
+
+    # Hetjobs settings
+    totn=0
+    for het_group, values in hetjob_mapper.items():
+        totn=totn + int(values['nnodes'])
+
+    # Environment
+
+    # Wrapper
+    exec_map = " ".join(
+        [
+            str(e)
+            for values in hetjob_mapper.values()
+            for i in range(values["nnodes"])
+            for e in values["ex"]
+        ]
+    )
+    exec_cmd = "exec ${map[${exec_map[$SLURM_PROCID]}]}"
+    string = f"""\
+    #!/bin/ksh
+    #
+    set -A map ./xios_server.exe ./nemo
+    exec_map=( {exec_map} )
+    #
+    {exec_cmd}
+    ##
+    """
+    slurm = dedent(string)
+    
+    # open myscript_wrapper.sh
+    file_out = open("myscript_wrapper.sh", "w")
+
+    # write string to file
+    file_out.write(slurm)
+
+    # close file
+    file_out.close()
+
+
+    # Srun
+    strings = []
+    prev_nodes = 0
+    for het_group, values in hetjob_mapper.items():
+        het_group_string = (
+            f"--het-group={het_group} --nodes={values['nnodes']}"
+            +f" --ntasks={values['nnodes']*len(values['ex'])}"
+            +f" --ntasks-per-node={len(values['ex'])}" if len(hetjob_mapper) > 1 else
+            f"--ntasks={values['nnodes']*len(values['ex'])}"
+            +f" --ntasks-per-node={len(values['ex'])}"
+        )
+        strings += [
+            f"{het_group_string} --cpu-bind=v,mask_cpu:"
+            + ",".join([hex(2 ** core) for core in values["pl"]])
+            + " ./myscript_wrapper.sh"
+        ]
+        prev_nodes += values["nnodes"]
+    #slurm = "\nsrun --mem-bind=local \\\n" + " \\\n: ".join(strings)
+    slurm = "\nsrun --mem-bind=local " + " : ".join(strings)
+
+    print(slurm)
+
+
+def _mkslurm_alt(args):
+    """
+    Python version of mkslurm_alt
+
+    Args:
+        args: Parsed arguments.
+
+    Returns:
+        Dictionary mapping nodes to their ex, pl
+    """
+
+    # Start loop
+    nservers_left = args.S
+    nclients_left = args.C
+    nodes_mapper = dict()
+    cpu, totnserv, prevclie, skipnext, node = (0 for _ in range(5))
+    while nservers_left or nclients_left:
+        # Reset node
+        cpu = 0 if cpu == args.N else cpu
+        totnserv = totnserv if cpu else 0
+        prevclie = prevclie if cpu else 0
+        skipnext = skipnext if cpu else 0
+        node = node if cpu else len(nodes_mapper)
+        if not cpu:
+            nodes_mapper[node] = dict(ex=[], pl=[])
+        if skipnext:
+            skipnext -= 1
+            cpu += 1
+            prevclie = 0
+            continue
+        if totnserv < args.m and nservers_left:
+            nodes_mapper[node]["ex"] += [0]
+            nodes_mapper[node]["pl"] += [cpu]
+            skipnext = args.s - 1
+            nservers_left -= 1
+            totnserv += 1
+        elif nclients_left:
+            nodes_mapper[node]["ex"] += [1]
+            nodes_mapper[node]["pl"] += [cpu]
+            nclients_left -= 1
+            prevclie += 1
+            skipnext = prevclie == args.g - 1
+        cpu += 1
+    nodes_needed = len(nodes_mapper)
+    reserved_cores = nodes_needed * args.N
+    cores_used = sum(len(values["ex"]) for values in nodes_mapper.values())
+    reserved_cores_needed = (
+        args.S * args.s + args.C + (args.C // (args.g - 1) if args.g else 0)
+    )
+    logging.info("nodes needed= %s (%s)", nodes_needed, reserved_cores)
+    logging.info("cores to be used= %s (%s)", cores_used, reserved_cores_needed)
+
+    return nodes_mapper
+
+
+def _group_identical_nodes(nodes_mapper):
+    """
+    Group identical nodes to HetJobs
+
+    Args:
+        nodes_mapper: Dictionary mapping nodes to their ex, pl
+
+    Returns:
+        Dictionary mapping het-groups to their ex, pl, and nnodes
+    """
+    # Group nodes for HetJob
+    hetjob_mapper = dict()
+    het_group = 0
+    # Loop over nodes
+    for node_values in nodes_mapper.values():
+        hetjob_found = False
+        # Loop over hetjobs already found
+        for hetjob, hetjob_values in hetjob_mapper.items():
+            hetjob_found = all(
+                hetjob_values[key] == node_values[key] for key in ["ex", "pl"]
+            )
+            if hetjob_found:
+                # Add to existing hetjob
+                hetjob_mapper[hetjob]["nnodes"] += 1
+                break
+        # Create new hetjob
+        if not hetjob_found:
+            hetjob_mapper[het_group] = node_values
+            hetjob_mapper[het_group]["nnodes"] = 1
+            het_group += 1
+
+    return dict(sorted(hetjob_mapper.items()))
+
+
+def _print_table(hetjob_mapper, ncores_per_node):
+    """
+    Print a human readable table of the setup.
+
+    Args:
+        hetjob_mapper: Dictionary mapping het-groups to their ex, pl, and nnodes
+        ncores_per_node: Number of cores per node
+    """
+    # Loop to create table
+    ex_list, pl_list, groups, nodes, cores, tasks = ([] for i in range(6))
+    for group, values in enumerate(hetjob_mapper.values()):
+        ex_list += values["ex"]
+        pl_list += values["pl"]
+        nnodes = values["nnodes"]
+        # Build table
+        for core in range(ncores_per_node):
+            if core in values["pl"]:
+                task = "c" if values["ex"][values["pl"].index(core)] else "s"
+                groups += [group]
+                nodes += [nnodes]
+                cores += [core]
+                tasks += [task]
+            else:
+                groups += [group]
+                nodes += [nnodes]
+                cores += [core]
+                tasks += ["-"]
+
+    # Print table
+    header = ("group", "nodes", "core", "task")
+    logging.debug("{:>5} {:>5} {:>5} {:>5}".format(*header))
+    for line in zip(groups, nodes, cores, tasks):
+        logging.debug("{:>5} {:>5} {:>5} {:>5}".format(*line))
+
+
+if __name__ == "__main__":
+    # Parse arguments
+    parser = argparse.ArgumentParser(
+        prog="mkslurm_hetjob",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+        description=" ".join(
+            [
+                "Python version of mkslurm_alt by Andrew Coward using HetJob.",
+                "Server placement and spacing remains",
+                "as mkslurm but clients are always tightly packed with a gap left",
+                'every "NC_GAP" cores where NC_GAP can be given by the -g argument.',
+                "values of 4, 8 or 16 are recommended.",
+            ]
+        ),
+        prefix_chars="-",
+    )
+    parser.add_argument("-S", help="num_servers", type=int, default=4)
+    parser.add_argument("-s", help="server_spacing", type=int, default=8)
+    parser.add_argument("-m", help="max_servers_per_node", type=int, default=2)
+    parser.add_argument("-C", help="num_clients", type=int, default=28)
+    parser.add_argument("-g", help="client_gap_interval", type=int, default=4)
+    parser.add_argument("-N", help="ncores_per_node", type=int, default=128)
+    parser.add_argument("-t", help="time_limit", type=str, default="00:10:00")
+    parser.add_argument("-a", help="account", type=str, default="n01")
+    parser.add_argument("-j", help="job_name", type=str, default="nemo_test")
+    parser.add_argument("-v", help="show human readable hetjobs", action="store_true")
+    # Let's go!
+    main(parser.parse_args())
