@@ -128,8 +128,8 @@ Copy files required to build ``nemo.exe``. Or get it from git repo. Or get it he
 Set the compile flags (will use the FES tide) ::
 
   vi $CDIR/$CONFIG/cpp_AMM7_SURGE.fcm
-  bld::tool::fppkeys  key_nosignedzero key_diainstant key_mpp_mpi key_iomput  \
-                      key_diaharm_fast key_FES14_tides
+  bld::tool::fppkeys   key_mpp_mpi key_vectopt_loop key_nosignedzero key_iomput
+
 
 Put the HPC compiler file (from the git repo) in the correct place (this
 currently uses xios2.5 from acc) ::
