@@ -134,23 +134,26 @@ Set the compile flags (will use the FES tide) ::
 Put the HPC compiler file (from the git repo) in the correct place (this
 currently uses xios2.5 from acc) ::
 
-  rsync -vt /work/n01/n01/annkat/SE-NEMO_UPD/SE-NEMO/arch/nemo/arch-archer2-gnu-mpich.fcm $CDIR/../ARCH/. 
+  rsync -vt /work/n01/n01/annkat/SE-NEMO_UPD/SE-NEMO/arch/nemo/arch-archer2-gnu-mpich.fcm $CDIR/../arch/. 
 
 # Dirty fix to hard wire path otherwise user will have to set XIOS_DIR in every new shell session::
 
-  sed -i "s?XXX_XIOS_DIR_XXX?$WORK/$USER/XIOS?" $CDIR/../ARCH/arch-archer2-gnu-mpich.fcm
+  sed -i "s?XXX_XIOS_DIR_XXX?$WORK/$USER/XIOS?" $CDIR/../arch/arch-archer2-gnu-mpich.fcm
 
 
 Make a mod (line 480). Though you might need to run the ``make_xios`` command
 once first to unpack the tar files::
 
-  vi $WDIR/dev_r8814_surge_modelling_Nemo4/EXTERNAL/fcm/lib/Fcm/Config.pm
+  vi $WDIR/NEMO_4.0.4_surge/ext/FCM/lib/Fcm/Config.pm
   FC_MODSEARCH => '-J',              # FC flag, specify "module" path
+
+
+echo 'AMM7_SURGE OCE' >> $CDIR/ref_cfgs.txt
 
 Make NEMO ::
 
-  cd $CDIR
-  ./makenemo -n $CONFIG  -m archer2-gnu-mpich -j 16
+  cd $CDIR/..
+  ./makenemo -r AMM7_SURGE  -m archer2-gnu-mpich -j 16
 
 Copy executable to experiment directory ::
 
