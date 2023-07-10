@@ -4,7 +4,7 @@
 
 A 7km resolution Atlantic Margin Model 2D surge configuration.
 
-The configuration is based on v4.0.4 of the [NEMO](https://www.nemo-ocean.eu) modelling framework.
+The configuration is based on v3.6 of the [NEMO](https://www.nemo-ocean.eu) modelling framework.
 
 The configuration recipe has be written for the [ARCHER2](https://www.archer2.ac.uk) UK National Supercomputing Service. 
 
