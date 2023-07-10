@@ -151,7 +151,9 @@ Make NEMO ::
 
 Copy executable to experiment directory ::
 
-  ln -s $CDIR/$CONFIG/BLD/bin/nemo.exe $EXP/opa
+  ln -s $CDIR/$CONFIG/BLD/bin/nemo.exe $EXP/nemo
+
+(N.B. sometimes the executable is expected to be called `opa` or `nemo.exe`)
 
 
 
