@@ -5,6 +5,7 @@
 !-----------------------------------------------------------------------
 &namrun        !   parameters of the run
 !-----------------------------------------------------------------------
+  ln_rst_eos = .false.  
   cn_exp      =  "AMM7_SURGE"  !  experience name
   nn_it000    =  7201   !  first time step
   nn_itend    = 77280 !  365 days 8 per hour ! 70080   ! plus 30*4 days
@@ -24,6 +25,9 @@
   nn_istate   =       0   !  output the initial state (1) or not (0)
   nn_stock    =  70080  ! 30 days  !  frequency of creation of a restart file (modulo referenced to 1)
   nn_write    =  70080  ! 30 days  !  frequency of write in the output file   (modulo referenced to nit000)
+  ln_rstdate = .true.
+  ln_mskland = .true.
+  ln_clobber = .true.
 /
 !-----------------------------------------------------------------------
 &namcfg        !   parameters of the configuration
@@ -43,7 +47,7 @@
 &namtsd    !   data : Temperature  & Salinity
 !-----------------------------------------------------------------------
    ln_tsd_init   = .false.   !  Initialisation of ocean T & S with T &S input data (T) or not (F)
-   ln_tsd_tradmp = .false.   !  damping of ocean T & S toward T &S input data (T) or not (F)
+   ln_tsd_dmp = .false.   !  damping of ocean T & S toward T &S input data (T) or not (F)
 /
 !-----------------------------------------------------------------------
 &namsbc        !   Surface Boundary Condition (surface module)
@@ -106,6 +110,7 @@
    ln_tide_ramp = .true.
    rdttideramp =    1.
    dn_love_number = 0.69
+   ln_tide_pot = .true.
 !   clname(1)     =   'M2'   !  name of constituent
 !   clname(2)     =   'S2'
 !   clname(3)     =   'K2'
@@ -276,9 +281,20 @@
 !-----------------------------------------------------------------------
 &namwad       !   Wetting and Drying namelist
 !-----------------------------------------------------------------------
-   ln_wd = .false.   !: key to turn on/off wetting/drying (T: on, F: off)
-   rn_wdmin1=0.1     !: minimum water depth on dried cells
-   rn_wdmin2 = 0.01  !: tolerrance of minimum water depth on dried cells
-   rn_wdld   = 20.0  !: land elevation below which wetting/drying will be considered
-   nn_wdit   =   10  !: maximum number of iteration for W/D limiter
+!   ln_wd = .false.   !: key to turn on/off wetting/drying (T: on, F: off)
+!   rn_wdmin1=0.1     !: minimum water depth on dried cells
+!   rn_wdmin2 = 0.01  !: tolerrance of minimum water depth on dried cells
+!   rn_wdld   = 20.0  !: land elevation below which wetting/drying will be considered
+!   nn_wdit   =   10  !: maximum number of iteration for W/D limiter
+   rn_wd_sbcfra = 0.99
+   rn_wd_sbcdep = 30.0
+   nn_wdit = 200
+   rn_wdld = 0.0
+   rn_wdmin2 = 1.0
+   rn_wdmin1 = 0.1
+   rn_wdmin0 = 10.0
+   ln_wd_dl_rmp = .true.
+   ln_wd_dl_bc = .true.
+   ln_wd_dl = .true.
+   ln_wd_il = .false.
 /

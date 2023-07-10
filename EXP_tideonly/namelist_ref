@@ -84,9 +84,8 @@
 &namdom        !   space and time domain (bathymetry, mesh, timestep)
 !-----------------------------------------------------------------------
    ln_linssh   = .false.   !  =T  linear free surface  ==>>  model level are fixed in time
-   nn_closea   =    0      !  remove (=0) or keep (=1) closed seas and lakes (ORCA)
    !
-   nn_msh      =    0      !  create (>0) a mesh file or not (=0)
+   nn_meshmask =    .false.      !  create (>0) a mesh file or not (=0)
    rn_isfhmin  =    1.00   !  treshold (m) to discriminate grounding ice to floating ice
    !
    rn_rdt      = 5760.     !  time step for the dynamics (and tracer if nn_acc=0)
@@ -105,16 +104,27 @@
    !
    cn_dir      = './'      !  root directory for the location of the runoff files
    ln_tsd_init = .true.    !  Initialisation of ocean T & S with T & S input data (T) or not (F)
-   ln_tsd_tradmp = .true.  !  damping of ocean T & S toward T & S input data (T) or not (F)
+   ln_tsd_dmp = .true.  !  damping of ocean T & S toward T & S input data (T) or not (F)
 /
 !-----------------------------------------------------------------------
 &namwad        !   Wetting and drying                                   (default F)
 !-----------------------------------------------------------------------
-   ln_wd       = .false.   !  T/F activation of wetting and drying
-   rn_wdmin1   =  0.1      !  Minimum wet depth on dried cells
-   rn_wdmin2   =  0.01     !  Tolerance of min wet depth on dried cells
-   rn_wdld     =  20.0     !  Land elevation below which wetting/drying is allowed
-   nn_wdit     =  10       !  Max iterations for W/D limiter
+!   ln_wd       = .false.   !  T/F activation of wetting and drying
+!   rn_wdmin1   =  0.1      !  Minimum wet depth on dried cells
+!   rn_wdmin2   =  0.01     !  Tolerance of min wet depth on dried cells
+!   rn_wdld     =  20.0     !  Land elevation below which wetting/drying is allowed
+!   nn_wdit     =  10       !  Max iterations for W/D limiter
+   ln_wd_il    = .false.   !  T/F activation of iterative   limiter
+   ln_wd_dl    = .false.   !  T/F activation of directional limiter
+   ln_wd_dl_bc = .false.   !  T/F Directional limiteer Baroclinic option
+   ln_wd_dl_rmp = .false.  !  T/F Turn on directional limiter ramp
+   rn_wdmin0   =  0.30     !  depth at which WaD starts
+   rn_wdmin1   =  0.2      !  Minimum wet depth on dried cells
+   rn_wdmin2   =  0.0001   !  Tolerance of min wet depth on dried cells
+   rn_wdld     =  2.5      !  Land elevation below which WaD is allowed
+   nn_wdit     =   20      !  Max iterations for WaD limiter
+   rn_wd_sbcdep =  5.0     !  Depth at which to taper sbc fluxes
+   rn_wd_sbcfra =  0.999   !  Fraction of SBC fluxes at taper depth (Must be <1)
 /
 !-----------------------------------------------------------------------
 &namcrs        !   coarsened grid (for outputs and/or TOP)              ("key_crs")
@@ -528,6 +538,11 @@
 !-----------------------------------------------------------------------
    ln_tide     = .false.
    ln_tide_pot = .true.    !  use tidal potential forcing
+         ln_scal_load  = .false.               ! Use scalar approximation for
+            rn_scal_load = 0.094               !     load potential
+         ln_read_load  = .false.               ! Or read load potential from file
+            cn_tide_load = 'tide_LOAD_grid_T.nc'  ! filename for load potential
+            !      
    ln_tide_ramp= .false.   !
    rdttideramp =    0.     !
    clname(1)   = 'DUMMY'   !  name of constituent - all tidal components must be set in namelist_cfg
@@ -552,13 +567,9 @@
     cn_tra        =  'none'               !
     nn_tra_dta    =  0                    !  = 0, bdy data are equal to the initial state
                                           !  = 1, bdy data are read in 'bdydata   .nc' files
-    cn_ice_lim      =  'none'             !
-    nn_ice_lim_dta  =  0                  !  = 0, bdy data are equal to the initial state
+    cn_ice      =  'none'             !
+    nn_ice_dta  =  0                  !  = 0, bdy data are equal to the initial state
                                           !  = 1, bdy data are read in 'bdydata   .nc' files
-    rn_ice_tem      = 270.                !  lim3 only: arbitrary temperature of incoming sea ice
-    rn_ice_sal      = 10.                 !  lim3 only:      --   salinity           --
-    rn_ice_age      = 30.                 !  lim3 only:      --   age                --
-
     ln_tra_dmp    =.false.                !  open boudaries conditions for tracers
     ln_dyn3d_dmp  =.false.                !  open boundary condition for baroclinic velocities
     rn_time_dmp   =  1.                   ! Damping time scale in days
@@ -566,7 +577,6 @@
     nn_rimwidth   = 10                    !  width of the relaxation zone
     ln_vol        = .false.               !  total volume correction (see nn_volctl parameter)
     nn_volctl     = 1                     !  = 0, the total water flux across open boundaries is zero
-    nb_jpk_bdy    = -1                    ! number of levels in the bdy data (set < 0 if consistent with planned run)
 /
 !-----------------------------------------------------------------------
 &nambdy_dta    !  open boundaries - external data                       
@@ -989,13 +999,10 @@
 !-----------------------------------------------------------------------
 &nammpp        !   Massively Parallel Processing                        ("key_mpp_mpi)
 !-----------------------------------------------------------------------
-   cn_mpi_send =  'I'      !  mpi send/recieve type   ='S', 'B', or 'I' for standard send,
-                           !  buffer blocking send or immediate non-blocking sends, resp.
-   nn_buffer   =   0       !  size in bytes of exported buffer ('B' case), 0 no exportation
    ln_nnogather=  .false.  !  activate code to avoid mpi_allgather use at the northfold
    jpni        =   0       !  jpni   number of processors following i (set automatically if < 1)
    jpnj        =   0       !  jpnj   number of processors following j (set automatically if < 1)
-   jpnij       =   0       !  jpnij  number of local domains (set automatically if < 1)
+   ln_listonly = .false.
 /
 !-----------------------------------------------------------------------
 &namctl        !   Control prints 
@@ -1008,8 +1015,6 @@
    nn_jctle    =    0      !  end   j indice of control
    nn_isplt    =    1      !  number of processors in i-direction
    nn_jsplt    =    1      !  number of processors in j-direction
-   nn_timing   =    0      !  timing by routine activated (=1) creates timing.output file, or not (=0)
-   nn_diacfl   =    0      !  Write out CFL diagnostics (=1) in cfl_diagnostics.ascii, or not (=0)
 /
 !-----------------------------------------------------------------------
 &namsto        ! Stochastic parametrization of EOS                      (default: NO)
