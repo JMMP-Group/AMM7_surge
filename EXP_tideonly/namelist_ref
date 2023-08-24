@@ -83,16 +83,16 @@
 !-----------------------------------------------------------------------
 &namdom        !   space and time domain (bathymetry, mesh, timestep)
 !-----------------------------------------------------------------------
-   ln_linssh   = .false.   !  =T  linear free surface  ==>>  model level are fixed in time
+!   ln_linssh   = .false.   !  =T  linear free surface  ==>>  model level are fixed in time
    !
-   nn_meshmask =    .false.      !  create (>0) a mesh file or not (=0)
-   rn_isfhmin  =    1.00   !  treshold (m) to discriminate grounding ice to floating ice
+!   nn_meshmask =    .false.      !  create (>0) a mesh file or not (=0)
+!   rn_isfhmin  =    1.00   !  treshold (m) to discriminate grounding ice to floating ice
    !
-   rn_rdt      = 5760.     !  time step for the dynamics (and tracer if nn_acc=0)
-   rn_atfp     =    0.1    !  asselin time filter parameter
+!   rn_rdt      = 5760.     !  time step for the dynamics (and tracer if nn_acc=0)
+!   rn_atfp     =    0.1    !  asselin time filter parameter
    !
-   ln_crs      = .false.   !  Logical switch for coarsening module
-   ln_2d        = .false.  !  (=T) run in 2D barotropic mode (no tracer processes or vertical diffusion)
+!   ln_crs      = .false.   !  Logical switch for coarsening module
+!   ln_2d        = .false.  !  (=T) run in 2D barotropic mode (no tracer processes or vertical diffusion)
 /
 !-----------------------------------------------------------------------
 &namtsd        !   data : Temperature  & Salinity
@@ -188,47 +188,47 @@
 !-----------------------------------------------------------------------
 &namsbc        !   Surface Boundary Condition (surface module)
 !-----------------------------------------------------------------------
-   nn_fsbc     = 5         !  frequency of surface boundary condition computation
+!   nn_fsbc     = 5         !  frequency of surface boundary condition computation
                            !     (also = the frequency of sea-ice & iceberg model call)
                      ! Type of air-sea fluxes 
-   ln_usr      = .false.   !  user defined formulation                  (T => check usrdef_sbc)
-   ln_flx      = .false.   !  flux formulation                          (T => fill namsbc_flx )
-   ln_blk      = .true.    !  Bulk formulation                          (T => fill namsbc_blk )
+!   ln_usr      = .false.   !  user defined formulation                  (T => check usrdef_sbc)
+!   ln_flx      = .false.   !  flux formulation                          (T => fill namsbc_flx )
+!   ln_blk      = .true.    !  Bulk formulation                          (T => fill namsbc_blk )
                      ! Type of coupling (Ocean/Ice/Atmosphere) :
-   ln_cpl      = .false.   !  atmosphere coupled   formulation          ( requires key_oasis3 )
-   ln_mixcpl   = .false.   !  forced-coupled mixed formulation          ( requires key_oasis3 )
-   nn_components = 0       !  configuration of the opa-sas OASIS coupling
+!   ln_cpl      = .false.   !  atmosphere coupled   formulation          ( requires key_oasis3 )
+!   ln_mixcpl   = .false.   !  forced-coupled mixed formulation          ( requires key_oasis3 )
+!   nn_components = 0       !  configuration of the opa-sas OASIS coupling
                            !  =0 no opa-sas OASIS coupling: default single executable configuration
                            !  =1 opa-sas OASIS coupling: multi executable configuration, OPA component
                            !  =2 opa-sas OASIS coupling: multi executable configuration, SAS component 
-   nn_limflx = -1          !  LIM3 Multi-category heat flux formulation (use -1 if LIM3 is not used)
+!   nn_limflx = -1          !  LIM3 Multi-category heat flux formulation (use -1 if LIM3 is not used)
                            !  =-1  Use per-category fluxes, bypass redistributor, forced mode only, not yet implemented coupled
                            !  = 0  Average per-category fluxes (forced and coupled mode)
                            !  = 1  Average and redistribute per-category fluxes, forced mode only, not yet implemented coupled
                            !  = 2  Redistribute a single flux over categories (coupled mode only)
                      ! Sea-ice :
-   nn_ice      = 3         !  =0 no ice boundary condition   ,
+!   nn_ice      = 3         !  =0 no ice boundary condition   ,
                            !  =1 use observed ice-cover      ,
                            !  =2 to 4 :  ice-model used (LIM2, LIM3 or CICE)                         ("key_lim3", "key_lim2", or "key_cice")
-   nn_ice_embd = 1         !  =0 levitating ice (no mass exchange, concentration/dilution effect)
+!   nn_ice_embd = 1         !  =0 levitating ice (no mass exchange, concentration/dilution effect)
                            !  =1 levitating ice with mass and salt exchange but no presure effect
                            !  =2 embedded sea-ice (full salt and mass exchanges and pressure)
                      ! Misc. options of sbc : 
-   ln_traqsr   = .true.    !  Light penetration in the ocean            (T => fill namtra_qsr)
-   ln_dm2dc    = .false.   !  daily mean to diurnal cycle on short wave
-   ln_rnf      = .true.    !  runoffs                                   (T => fill namsbc_rnf)
-   ln_ssr      = .true.    !  Sea Surface Restoring on T and/or S       (T => fill namsbc_ssr)
-   nn_fwb      = 2         !  FreshWater Budget: =0 unchecked
+!   ln_traqsr   = .true.    !  Light penetration in the ocean            (T => fill namtra_qsr)
+!   ln_dm2dc    = .false.   !  daily mean to diurnal cycle on short wave
+!   ln_rnf      = .true.    !  runoffs                                   (T => fill namsbc_rnf)
+!   ln_ssr      = .true.    !  Sea Surface Restoring on T and/or S       (T => fill namsbc_ssr)
+!   nn_fwb      = 2         !  FreshWater Budget: =0 unchecked
                            !     =1 global mean of e-p-r set to zero at each time step
                            !     =2 annual global mean of e-p-r set to zero
-   ln_apr_dyn  = .false.   !  Patm gradient added in ocean & ice Eqs.   (T => fill namsbc_apr )
-   ln_isf      = .false.   !  ice shelf                                 (T   => fill namsbc_isf)
-   ln_wave     = .false.   !  Activate coupling with wave  (T => fill namsbc_wave)
-   ln_cdgw     = .false.   !  Neutral drag coefficient read from wave model (T => ln_wave=.true. & fill namsbc_wave)
-   ln_sdw      = .false.   !  Read 2D Surf Stokes Drift & Computation of 3D stokes drift (T => ln_wave=.true. & fill namsbc_wave) 
-   ln_tauoc    = .false.   !  Activate ocean stress modified by external wave induced stress (T => ln_wave=.true. & fill namsbc_wave)
-   ln_stcor    = .false.   !  Activate Stokes Coriolis term (T => ln_wave=.true. & ln_sdw=.true. & fill namsbc_wave)
-   nn_lsm      = 0         !  =0 land/sea mask for input fields is not applied (keep empty land/sea mask filename field) ,
+!   ln_apr_dyn  = .false.   !  Patm gradient added in ocean & ice Eqs.   (T => fill namsbc_apr )
+!   ln_isf      = .false.   !  ice shelf                                 (T   => fill namsbc_isf)
+!   ln_wave     = .false.   !  Activate coupling with wave  (T => fill namsbc_wave)
+!   ln_cdgw     = .false.   !  Neutral drag coefficient read from wave model (T => ln_wave=.true. & fill namsbc_wave)
+!   ln_sdw      = .false.   !  Read 2D Surf Stokes Drift & Computation of 3D stokes drift (T => ln_wave=.true. & fill namsbc_wave) 
+!   ln_tauoc    = .false.   !  Activate ocean stress modified by external wave induced stress (T => ln_wave=.true. & fill namsbc_wave)
+!   ln_stcor    = .false.   !  Activate Stokes Coriolis term (T => ln_wave=.true. & ln_sdw=.true. & fill namsbc_wave)
+!   nn_lsm      = 0         !  =0 land/sea mask for input fields is not applied (keep empty land/sea mask filename field) ,
                            !  =1:n number of iterations of land/sea mask application for input fields (fill land/sea mask filename field)
 /
 !-----------------------------------------------------------------------
@@ -536,16 +536,16 @@
 !-----------------------------------------------------------------------
 &nam_tide      !   tide parameters
 !-----------------------------------------------------------------------
-   ln_tide     = .false.
-   ln_tide_pot = .true.    !  use tidal potential forcing
-         ln_scal_load  = .false.               ! Use scalar approximation for
-            rn_scal_load = 0.094               !     load potential
-         ln_read_load  = .false.               ! Or read load potential from file
-            cn_tide_load = 'tide_LOAD_grid_T.nc'  ! filename for load potential
-            !      
-   ln_tide_ramp= .false.   !
-   rdttideramp =    0.     !
-   clname(1)   = 'DUMMY'   !  name of constituent - all tidal components must be set in namelist_cfg
+!   ln_tide     = .false.
+!   ln_tide_pot = .true.    !  use tidal potential forcing
+!         ln_scal_load  = .false.               ! Use scalar approximation for
+!            rn_scal_load = 0.094               !     load potential
+!         ln_read_load  = .false.               ! Or read load potential from file
+!            cn_tide_load = 'tide_LOAD_grid_T.nc'  ! filename for load potential
+!            !      
+!   ln_tide_ramp= .false.   !
+!   rdttideramp =    0.     !
+!   clname(1)   = 'DUMMY'   !  name of constituent - all tidal components must be set in namelist_cfg
 /
 !-----------------------------------------------------------------------
 &nambdy        !  unstructured open boundaries                          
@@ -792,11 +792,11 @@
 !-----------------------------------------------------------------------
 &namdyn_adv    !   formulation of the momentum advection                (default: vector form)
 !-----------------------------------------------------------------------
-   ln_dynadv_vec = .true.  !  vector form (T) or flux form (F)
-   nn_dynkeg     = 0       ! scheme for grad(KE): =0   C2  ;  =1   Hollingsworth correction
-   ln_dynadv_cen2= .false. !  flux form - 2nd order centered scheme
-   ln_dynadv_ubs = .false. !  flux form - 3rd order UBS      scheme
-   ln_dynzad_zts = .false. !  Use (T) sub timestepping for vertical momentum advection
+!   ln_dynadv_vec = .true.  !  vector form (T) or flux form (F)
+!   nn_dynkeg     = 0       ! scheme for grad(KE): =0   C2  ;  =1   Hollingsworth correction
+!   ln_dynadv_cen2= .false. !  flux form - 2nd order centered scheme
+!   ln_dynadv_ubs = .false. !  flux form - 3rd order UBS      scheme
+!   ln_dynzad_zts = .false. !  Use (T) sub timestepping for vertical momentum advection
 /
 !-----------------------------------------------------------------------
 &nam_vvl    !   vertical coordinate options                             (default: zstar)
@@ -849,32 +849,32 @@
 !-----------------------------------------------------------------------
 &namdyn_ldf    !   lateral diffusion on momentum                        (default: NO)
 !-----------------------------------------------------------------------
-   !                       !  Type of the operator :
-   !                           !  no diffusion: set ln_dynldf_lap=..._blp=F 
-   ln_dynldf_lap =  .false.    !    laplacian operator
-   ln_dynldf_blp =  .false.    !  bilaplacian operator
-   !                       !  Direction of action  :
-   ln_dynldf_lev =  .false.    !  iso-level
-   ln_dynldf_hor =  .false.    !  horizontal (geopotential)
-   ln_dynldf_iso =  .false.    !  iso-neutral
-   !                       !  Coefficient
-   nn_ahm_ijk_t  = 0           !  space/time variation of eddy coef
-   !                                !  =-30  read in eddy_viscosity_3D.nc file
-   !                                !  =-20  read in eddy_viscosity_2D.nc file
-   !                                !  =  0  constant 
-   !                                !  = 10  F(k)=c1d
-   !                                !  = 20  F(i,j)=F(grid spacing)=c2d
-   !                                !  = 30  F(i,j,k)=c2d*c1d
-   !                                !  = 31  F(i,j,k)=F(grid spacing and local velocity)
-   !                                !  = 32  F(i,j,k)=F(local gridscale and deformation rate)
-   ! Caution in 20 and 30 cases the coefficient have to be given for a 1 degree grid (~111km)
-   rn_ahm_0      =  40000.     !  horizontal laplacian eddy viscosity   [m2/s]
-   rn_ahm_b      =      0.     !  background eddy viscosity for ldf_iso [m2/s]
-   rn_bhm_0      = 1.e+12      !  horizontal bilaplacian eddy viscosity [m4/s]
-   !                       !  Smagorinsky settings (nn_ahm_ijk_t  = 32) :
-   rn_csmc       = 3.5         !  Smagorinsky constant of proportionality
-   rn_minfac     = 1.0         !  multiplier of theorectical lower limit
-   rn_maxfac     = 1.0         !  multiplier of theorectical upper limit
+!   !                       !  Type of the operator :
+!   !                           !  no diffusion: set ln_dynldf_lap=..._blp=F 
+!   ln_dynldf_lap =  .false.    !    laplacian operator
+!   ln_dynldf_blp =  .false.    !  bilaplacian operator
+!   !                       !  Direction of action  :
+!   ln_dynldf_lev =  .false.    !  iso-level
+!   ln_dynldf_hor =  .false.    !  horizontal (geopotential)
+!   ln_dynldf_iso =  .false.    !  iso-neutral
+!   !                       !  Coefficient
+!   nn_ahm_ijk_t  = 0           !  space/time variation of eddy coef
+!   !                                !  =-30  read in eddy_viscosity_3D.nc file
+!   !                                !  =-20  read in eddy_viscosity_2D.nc file
+!   !                                !  =  0  constant 
+!   !                                !  = 10  F(k)=c1d
+!   !                                !  = 20  F(i,j)=F(grid spacing)=c2d
+!   !                                !  = 30  F(i,j,k)=c2d*c1d
+!   !                                !  = 31  F(i,j,k)=F(grid spacing and local velocity)
+!   !                                !  = 32  F(i,j,k)=F(local gridscale and deformation rate)
+!   ! Caution in 20 and 30 cases the coefficient have to be given for a 1 degree grid (~111km)
+!   rn_ahm_0      =  40000.     !  horizontal laplacian eddy viscosity   [m2/s]
+!   rn_ahm_b      =      0.     !  background eddy viscosity for ldf_iso [m2/s]
+!   rn_bhm_0      = 1.e+12      !  horizontal bilaplacian eddy viscosity [m4/s]
+!   !                       !  Smagorinsky settings (nn_ahm_ijk_t  = 32) :
+!   rn_csmc       = 3.5         !  Smagorinsky constant of proportionality
+!   rn_minfac     = 1.0         !  multiplier of theorectical lower limit
+!   rn_maxfac     = 1.0         !  multiplier of theorectical upper limit
 /
 
 !!======================================================================
@@ -1147,43 +1147,6 @@
 !!   nam_asminc   assimilation increments                               ('key_asminc')
 !!======================================================================
 !
-!-----------------------------------------------------------------------
-&namobs        !  observation usage switch
-!-----------------------------------------------------------------------
-   ln_diaobs   = .false.             ! Logical switch for the observation operator
-   ln_t3d      = .false.             ! Logical switch for T profile observations
-   ln_s3d      = .false.             ! Logical switch for S profile observations
-   ln_sla      = .false.             ! Logical switch for SLA observations
-   ln_sst      = .false.             ! Logical switch for SST observations
-   ln_sic      = .false.             ! Logical switch for Sea Ice observations
-   ln_vel3d    = .false.             ! Logical switch for velocity observations
-   ln_altbias  = .false.             ! Logical switch for altimeter bias correction
-   ln_nea      = .false.             ! Logical switch for rejection of observations near land
-   ln_grid_global = .true.           ! Logical switch for global distribution of observations
-   ln_grid_search_lookup = .false.   ! Logical switch for obs grid search w/lookup table
-   ln_ignmis   = .true.              ! Logical switch for ignoring missing files
-   ln_s_at_t   = .false.             ! Logical switch for computing model S at T obs if not there
-   ln_sstnight = .false.             ! Logical switch for calculating night-time average for SST obs
-! All of the *files* variables below are arrays. Use namelist_cfg to add more files
-   cn_profbfiles = 'profiles_01.nc'  ! Profile feedback input observation file names
-   cn_slafbfiles = 'sla_01.nc'       ! SLA feedback input observation file names
-   cn_sstfbfiles = 'sst_01.nc'       ! SST feedback input observation file names
-   cn_sicfbfiles = 'sic_01.nc'       ! SIC feedback input observation file names
-   cn_velfbfiles = 'vel_01.nc'       ! Velocity feedback input observation file names
-   cn_altbiasfile = 'altbias.nc'     ! Altimeter bias input file name
-   cn_gridsearchfile='gridsearch.nc' ! Grid search file name
-   rn_gridsearchres = 0.5            ! Grid search resolution
-   rn_dobsini  = 00010101.000000     ! Initial date in window YYYYMMDD.HHMMSS
-   rn_dobsend  = 00010102.000000     ! Final date in window YYYYMMDD.HHMMSS
-   nn_1dint    = 0                   ! Type of vertical interpolation method
-   nn_2dint    = 0                   ! Type of horizontal interpolation method
-   nn_msshc    = 0                   ! MSSH correction scheme
-   rn_mdtcorr  = 1.61                ! MDT  correction
-   rn_mdtcutoff = 65.0               ! MDT cutoff for computed correction
-   nn_profdavtypes = -1              ! Profile daily average types - array
-   ln_sstbias  = .false.             !
-   cn_sstbias_files = 'sstbias.nc'   !
-/
 !-----------------------------------------------------------------------
 &nam_asminc    !   assimilation increments                              ('key_asminc')
 !-----------------------------------------------------------------------

@@ -43,25 +43,24 @@
    rn_rdt      =   450    !  time step for the dynamics (and tracer if nn_acc=0)
 /
 
-!-----------------------------------------------------------------------
-&namtsd    !   data : Temperature  & Salinity
-!-----------------------------------------------------------------------
-   ln_tsd_init   = .false.   !  Initialisation of ocean T & S with T &S input data (T) or not (F)
-   ln_tsd_dmp = .false.   !  damping of ocean T & S toward T &S input data (T) or not (F)
-/
+!!-----------------------------------------------------------------------
+!&namtsd    !   data : Temperature  & Salinity
+!!-----------------------------------------------------------------------
+!   ln_tsd_init   = .false.   !  Initialisation of ocean T & S with T &S input data (T) or not (F)
+!   ln_tsd_dmp = .false.   !  damping of ocean T & S toward T &S input data (T) or not (F)
+!
 !-----------------------------------------------------------------------
 &namsbc        !   Surface Boundary Condition (surface module)
 !-----------------------------------------------------------------------
    nn_fsbc     = 1         !  frequency of surface boundary condition computation
-                           !     (also = the frequency of sea-ice model call)
+!                           !     (also = the frequency of sea-ice model call)
    ln_usr = .true.
-   ln_blk =  .false.
+!   ln_blk =  .false.
+   ln_flx = .false.
    ln_apr_dyn  = .false.    !  Patm gradient added in ocean & ice Eqs.   (T => fill namsbc_apr )
-   nn_ice      = 0         !  =0 no ice boundary condition   ,
    ln_rnf      = .false.   !  Runoffs                                   (T => fill namsbc_rnf)
    ln_ssr      = .false.   !  Sea Surface Restoring on T and/or S       (T => fill namsbc_ssr)
    ln_traqsr   = .false.   !  Light penetration in the ocean            (T => fill namtra_qsr)
-   nn_fwb      = 0         !  FreshWater Budget: =0 unchecked
 /
 !-----------------------------------------------------------------------
 &namsbc_usr  !   namsbc_surge   surge model fluxes
@@ -107,47 +106,47 @@
 &nam_tide      !   tide parameters
 !-----------------------------------------------------------------------
    ln_tide     = .true.
-   ln_tide_ramp = .true.
-   rdttideramp =    1.
-   dn_love_number = 0.69
-   ln_tide_pot = .true.
-!   clname(1)     =   'M2'   !  name of constituent
-!   clname(2)     =   'S2'
-!   clname(3)     =   'K2'
-   clname(1) ='2N2'
-   clname(2)='EPS2'
-   clname(3)='J1'
-   clname(4)='K1'
-   clname(5)='K2'
-   clname(6)='L2'
-   clname(7)='LA2'
-   clname(8)='M2'
-   clname(9)='M3'
-   clname(10)='M4'
-   clname(11)='M6'
-   clname(12)='M8'
-   clname(13)='MF'
-   clname(14)='MKS2'
-   clname(15)='MM'
-   clname(16)='MN4'
-   clname(17)='MS4'
-   clname(18)='MSF'
-   clname(19)='MSQM'
-   clname(20)='MTM'
-   clname(21)='MU2'
-   clname(22)='N2'
-   clname(23)='N4'
-   clname(24)='NU2'
-   clname(25)='O1'
-   clname(26)='P1'
-   clname(27)='Q1'
-   clname(28)='R2'
-   clname(29)='S1'
-   clname(30)='S2'
-   clname(31)='S4'
-   clname(32)='SA'
-   clname(33)='SSA'
-   clname(34)='T2'
+!   ln_tide_ramp = .true.
+!   rdttideramp =    1.
+!   dn_love_number = 0.69
+!   ln_tide_pot = .true.
+   clname(1)     =   'M2'   !  name of constituent
+   clname(2)     =   'S2'
+   clname(3)     =   'K2'
+!   clname(1) ='2N2'
+!   clname(2)='EPS2'
+!   clname(3)='J1'
+!   clname(4)='K1'
+!   clname(5)='K2'
+!   clname(6)='L2'
+!   clname(7)='LA2'
+!   clname(8)='M2'
+!   clname(9)='M3'
+!   clname(10)='M4'
+!   clname(11)='M6'
+!   clname(12)='M8'
+!   clname(13)='MF'
+!   clname(14)='MKS2'
+!   clname(15)='MM'
+!   clname(16)='MN4'
+!   clname(17)='MS4'
+!   clname(18)='MSF'
+!   clname(19)='MSQM'
+!   clname(20)='MTM'
+!   clname(21)='MU2'
+!   clname(22)='N2'
+!   clname(23)='N4'
+!   clname(24)='NU2'
+!   clname(25)='O1'
+!   clname(26)='P1'
+!   clname(27)='Q1'
+!   clname(28)='R2'
+!   clname(29)='S1'
+!   clname(30)='S2'
+!   clname(31)='S4'
+!   clname(32)='SA'
+!   clname(33)='SSA'
+!   clname(34)='T2'
 /
 !-----------------------------------------------------------------------
 &nambdy        !  unstructured open boundaries
@@ -192,9 +191,28 @@
    nn_bbl_ldf  =  0      !  diffusive bbl (=1)   or not (=0)
 /
 !-----------------------------------------------------------------------
+&namdrg
+!-----------------------------------------------------------------------
+ln_loglayer=.false.,
+ln_non_lin=.true.,
+/
+!-----------------------------------------------------------------------
+&namdrg_bot
+!-----------------------------------------------------------------------
+ln_boost=.false.,
+rn_Cd0=1e-5,
+rn_boost=1,
+rn_ke0=0.0e0,
+/
+!-----------------------------------------------------------------------
 &nameos        !   ocean physical parameters
 !-----------------------------------------------------------------------
    ln_teos10   = .true.         !  = Use TEOS-10 equation of state
+/
+!-----------------------------------------------------------------------
+&namdyn_adv
+!-----------------------------------------------------------------------
+   ln_dynadv_vec = .true.,
 /
 !-----------------------------------------------------------------------
 &namdyn_vor    !   option of physics/algorithm (not control by CPP keys)
@@ -223,8 +241,9 @@
    !                       !  Direction of action  :
    ln_dynldf_lev  =  .true.   !  iso-level
                            !  Coefficient
-   rn_ahm_0     = 60.0      !  horizontal laplacian eddy viscosity   [m2/s]
-   rn_bhm_0     = -1.0e+9   !  horizontal bilaplacian eddy viscosity [m4/s]
+   nn_ahm_ijk_t=0,
+   rn_Lv=1.e+4,
+   rn_Uv=0.012,
 /
 !-----------------------------------------------------------------------
 &namzdf        !   vertical physics
