@@ -217,4 +217,4 @@ Submit::
 Sea surface height is output every 15 mins.
 
 
-**Except it doesn't work yet. Mapping namelist change issues from CO9_AMM15 into namelist_cfg and namelist_ref.**
+**24 Aug. Namelists working for tide only** 
