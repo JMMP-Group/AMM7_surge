@@ -218,3 +218,5 @@ Sea surface height is output every 15 mins.
 
 
 **24 Aug. Namelists working for tide only** 
+
+**25 Aug. XIOS issue. No timestepping**
