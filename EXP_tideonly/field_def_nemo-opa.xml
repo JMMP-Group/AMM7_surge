@@ -414,8 +414,13 @@
          <field id="ssu_m"    unit="m/s"  />
          <field id="ssv_m"    unit="m/s"  />
          <field id="ssh_m"    unit="m"    />
+
          <field id="e3t_m"    unit="m"    />
          <field id="frq_m"    unit="-"    />
+	 
+         <!-- variables to make things work -->
+	 <field id="sst_m_pot"    unit="x"    />
+	 <field id="sss_m_abs"    unit="x"    />
 
       </field_group>
 
