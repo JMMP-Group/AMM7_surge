@@ -5,17 +5,16 @@
 <!-- XIOS context                                                                                 -->
 <!-- ============================================================================================ -->
 
-  <context id="xios">
+  <context id="xios" >
 
       <variable_definition>
 	
-	  <variable id="info_level"                type="int">0</variable>
+	  <variable id="info_level"                type="int">-1</variable>
 	  <variable id="using_server"              type="bool">true</variable>
 	  <variable id="using_oasis"               type="bool">false</variable>
 	  <variable id="oasis_codes_id"            type="string" >oceanx</variable>
 	
       </variable_definition>
-               
   </context>
 
 <!-- ============================================================================================ -->
@@ -23,5 +22,5 @@
 <!-- ============================================================================================ -->
 
   <context id="nemo" src="./context_nemo.xml"/>       <!--  NEMO       -->
-  
+
 </simulation>
