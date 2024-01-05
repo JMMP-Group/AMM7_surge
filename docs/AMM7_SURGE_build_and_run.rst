@@ -25,10 +25,9 @@ Define some paths ::
   export WORK=/work/n01/n01
   export WDIR=/work/n01/n01/$USER/$CONFIG
   export INPUTS=$WDIR/INPUTS
-  export START_FILES=$WDIR/START_FILES
-  export CDIR=$WDIR/NEMO_4.0.4_surge/cfgs
-  export TDIR=$WDIR/NEMO_4.0.4_surge/tools
-  export EXP=$CDIR/$CONFIG/EXP_tideonly
+  #export START_FILES=$WDIR/START_FILES
+  export EXP=$WDIR/EXP00
+  export CDIR=$WDIR/NEMO_4.0.4_surge/cfgs # compile location is down here
 
 
 Clone the repository ::
@@ -42,118 +41,54 @@ Get the code (you need access to the code.metoffice.gov.uk repo)::
   #svn co http://forge.ipsl.jussieu.fr/nemo/svn/branches/UKMO/dev_r8814_surge_modelling_Nemo4/NEMOGCM dev_r8814_surge_modelling_Nemo4
   svn --username jeffpolton co https://code.metoffice.gov.uk/svn/nemo/NEMO/branches/UKMO/NEMO_4.0.4_surge/
 
-Make a link between where the inputs files are and where the model expects them ::
+Make a link between where the version control files are and where the compile expects them ::
 
-    mkdir $EXP
-    ln -s $INPUTS $EXP/bdydta
+    ln -s $WDIR/EXPREF $CDIR/$CONFIG/EXPREF
 
-Put files from git repo into ``MY_SRC``::
+   
+Put files from git repo into ``MY_SRC`` (Actually this is empty)::
 
   #rsync -vt $WDIR/MY_SRC/* $CDIR/$CONFIG/MY_SRC
 
-Add files to the experiment directory. This demonstration is tide-only::
+Make a link between binaries and where they are expected to be found::
 
-  #rsync -vt $WDIR/EXP_tideonly/* $CDIR/$CONFIG/EXP_tideonly
+    mkdir $EXP
+    ln -s $INPUTS $EXP/bdydta
+    ln -s $INPUTS/coordinates.bdy.nc $EXP/coordinates.bdy.nc
+    ln -s $INPUTS/bfr_coef.nc $EXP/.
 
+Copy required files (namelists, xml files etc) from reference experiment into experiment directory::
 
-NB Have added a couple of extra lines into the field_def files. This is a glitch in the surge code,
-because it doesn't expect you to not care about the winds::
+   cp $WDIR/EXPREF/* $EXP/.
 
-  vi $EXP/field_def_nemo-opa.xml
-  line 338
-  <field id="wspd"         long_name="wind speed module"        standard_name="wind_speed"     unit="m/s" />                                                          unit="m/s"                            />
-  <field id="uwnd"         long_name="u component of wind"       unit="m/s"         />
-  <field id="vwnd"         long_name="v component of wind"       unit="m/s"        />
+The remaining setup instructions are machine dependent and beyond scope.
 
+As an example the following process has been used on ARCHER2 using XIOS2 and the CRAY compiler (valid at 5th Jan 2024)
+
+Get compiler option files using a shared XIOS2 install
+
+  cd $CDIR/..
+  cp /work/n01/shared/nemo/ARCH/*4.2.fcm arch/NOC/.
 
 Load some modules::
 
-  module restore
-  source /opt/cray/pe/cpe/22.12/restore_lmod_system_defaults.sh
-  
-  module swap PrgEnv-cray/8.3.3 PrgEnv-gnu/8.3.3
   module swap craype-network-ofi craype-network-ucx
   module swap cray-mpich cray-mpich-ucx
   module load cray-hdf5-parallel/1.12.2.1
   module load cray-netcdf-hdf5parallel/4.9.0.1
-  module load libfabric
 
-2) Build XIOS
-=============
-
-
-Download XIOS2.5 and prep::
-
-  cd $WORK/$USER
-  svn co -r2528 http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/branchs/xios-2.5/  xios-2.5_r2528
-  cd xios-2.5_r2528
-
-Make a mod (line 480). Though you might need to run the ``make_xios`` command
-once first to unpack the tar files::
-
-  vi tools/FCM/lib/Fcm/Config.pm
-  FC_MODSEARCH => '-J',              # FC flag, specify "module" path
-
-
-Copy architecture files from ?git? repo::
-
-  cp /work/n01/n01/annkat/SE-NEMO_UPD/SE-NEMO/arch/xios/arch-archer2-gnu-mpich.* arch/.
-
-Implement make command::
-
-  ./make_xios --prod --arch archer2-gnu-mpich --netcdf_lib netcdf4_par --job 16 --full
-
-Link the xios-2.5_r2528 to a generic XIOS directory name::
-
-  ln -s  $WORK/$USER/xios-2.5_r2528  $WORK/$USER/XIOS
 
 Link xios executable to the EXP directory::
 
-  ln -s  $WORK/$USER/xios-2.5_r2528/bin/xios_server.exe $EXP/xios_server.exe
+  ln -s /work/n01/shared/nemo/XIOS2_Cray/bin/xios_server.exe $EXP/xios_server.exe
 
+Compile NEMO
 
-
-3) Build NEMO
-==============
-
-Already got NEMO branch ::
-
-    #cd $WDIR
-    ##svn co http://forge.ipsl.jussieu.fr/nemo/svn/branches/UKMO/dev_r8814_surge_modelling_Nemo4/NEMOGCM dev_r8814_surge_modelling_Nemo4
-    #svn --username jeffpolton co https://code.metoffice.gov.uk/svn/nemo/NEMO/branches/UKMO/NEMO_4.0.4_surge/
-
-
-
-Copy files required to build ``nemo.exe``. Or get it from git repo. Or get it here.
-Set the compile flags (will use the FES tide) ::
-
-  vi $CDIR/$CONFIG/cpp_AMM7_SURGE.fcm
-  bld::tool::fppkeys   key_mpp_mpi key_vectopt_loop key_nosignedzero key_iomput
-
-
-Put the HPC compiler file (from the git repo) in the correct place (this
-currently uses xios2.5 from acc) ::
-
-  rsync -vt /work/n01/n01/annkat/SE-NEMO_UPD/SE-NEMO/arch/nemo/arch-archer2-gnu-mpich.fcm $CDIR/../arch/. 
-
-# Dirty fix to hard wire path otherwise user will have to set XIOS_DIR in every new shell session::
-
-  sed -i "s?XXX_XIOS_DIR_XXX?$WORK/$USER/XIOS?" $CDIR/../arch/arch-archer2-gnu-mpich.fcm
-
-
-Make a mod (line 480). Though you might need to run the ``make_xios`` command
-once first to unpack the tar files::
-
-  vi $WDIR/NEMO_4.0.4_surge/ext/FCM/lib/Fcm/Config.pm
-  FC_MODSEARCH => '-J',              # FC flag, specify "module" path
-
-
-echo 'AMM7_SURGE OCE' >> $CDIR/ref_cfgs.txt
-
-Make NEMO ::
-
+  cd $CDIR
+  echo "AMM7_SURGE OCE" >> ref_cfgs.txt
   cd $CDIR/..
-  ./makenemo -r AMM7_SURGE  -m archer2-gnu-mpich -j 16
+  ./makenemo -m X86_ARCHER2-Cray_4.2 -r AMM7_SURGE -j 16
+
 
 Copy executable to experiment directory ::
 
@@ -170,9 +105,7 @@ Copy a domain file that holds all the coordinates and domain discretisation.
 This files is called ``domain_cfg.nc``. The generation of this file is not
 described here. Obtain the file E.g. ::
 
-  cd /projects/jcomp/fred/SURGE/AMM7_INPUTS
-  scp amm7_surge_domain_cfg.nc jelt@login.archer.ac.uk:$INPUTS/domain_cfg.nc
-  ln -s $INPUTS/domain_cfg.nc $EXP/.
+  ln -s $INPUTS/domain_cfg.nc $EXP/amm7_surge_domain_cfg.nc
 
 
 5) Generate tidal boundary conditions
@@ -204,19 +137,19 @@ There must also be a ``domain_cfg.nc`` domain file in ``$EXP``.
 ===========
 
 Finally we are ready to submit a run script job from the experiment directory.
-
-Edit the runscript (to be downloaded from repo but not settled on processor
-split yet)
+Edit the runscript.
 
 Submit::
 
   cd $EXP
-  mkdir Restart_files
+  cp ../EXPREF/runscrupt.slurm .
   sbatch runscript.slurm
 
 Sea surface height is output every 15 mins.
 
 
-**24 Aug. Namelists working for tide only** 
+**5 Jan'24. Namelists tested for tide only**
 
-**25 Aug. XIOS issue. No timestepping**
+NB I spent a long time debugging an error that was hard to trace when an expected namelist variable (a filename) was not initialised. Made harder since file was not even needed.
+
+NB2: Need to tidy these docs
