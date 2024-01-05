@@ -564,6 +564,9 @@
    !                       !  free slip  !   partial slip  !   no slip   ! strong slip
    rn_shlat    =  -9999.   !  shlat = 0  !  0 < shlat < 2  !  shlat = 2  !  2 < shlat
    ln_vorlat   = .false.   !  consistency of vorticity boundary condition with analytical Eqs.
+   ln_shlat2d  = .false.
+   cn_shlat2d_file = "empty"
+   cn_shlat2d_var  = "empty"
 /
 !-----------------------------------------------------------------------
 &namagrif      !  AGRIF zoom                                            ("key_agrif")
@@ -577,7 +580,7 @@
 &nam_tide      !   tide parameters                                      (default: OFF)
 !-----------------------------------------------------------------------
    ln_tide     = .false.      ! Activate tides
-      ln_tide_pot   = .true.                !  use tidal potential forcing
+      ln_tide_pot   = .false.                !  use tidal potential forcing
          ln_scal_load  = .false.               ! Use scalar approximation for
             rn_scal_load = 0.094               !     load potential
          ln_read_load  = .false.               ! Or read load potential from file
@@ -615,7 +618,7 @@
    ln_dyn3d_dmp  =.false.     !  open boundary condition for baroclinic velocities
    rn_time_dmp   =  1.        !  Damping time scale in days
    rn_time_dmp_out = 1.       !  Outflow damping time scale
-   nn_rimwidth   = 10         !  width of the relaxation zone
+   nn_rimwidth   = 1         !  width of the relaxation zone
    ln_vol        = .false.    !  total volume correction (see nn_volctl parameter)
    nn_volctl     =  1         !  = 0, the total water flux across open boundaries is zero
 /
