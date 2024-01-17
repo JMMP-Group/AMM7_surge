@@ -82,7 +82,7 @@ Link xios executable to the EXP directory::
 
   ln -s /work/n01/shared/nemo/XIOS2_Cray/bin/xios_server.exe $EXP/xios_server.exe
 
-Compile NEMO
+Compile NEMO::
 
   cd $CDIR
   echo "AMM7_SURGE OCE" >> ref_cfgs.txt
