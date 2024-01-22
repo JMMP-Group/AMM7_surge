@@ -1,0 +1,22 @@
+=head1 NAME
+
+fcm add
+
+=head1 SYNOPSIS
+
+    fcm add [options] [args]
+
+=head1 OPTIONS
+
+=over 4
+
+=item -c [--check]
+
+Check for any files or directories reported by "L<svn|svn> status" as not under
+version control and add them.
+
+=back
+
+For other options, see output of "L<svn|svn> help add".
+
+=cut

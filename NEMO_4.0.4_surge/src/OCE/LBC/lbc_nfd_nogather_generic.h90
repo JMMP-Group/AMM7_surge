@@ -1,0 +1,356 @@
+#if defined MULTI
+#   define NAT_IN(k)                cd_nat(k)   
+#   define SGN_IN(k)                psgn(k)
+#   define F_SIZE(ptab)             kfld
+#   if defined DIM_2d
+#      define ARRAY_TYPE(i,j,k,l,f)    TYPE(PTR_2D),INTENT(inout)::ptab(f)
+#      define ARRAY_IN(i,j,k,l,f)      ptab(f)%pt2d(i,j)
+#      define K_SIZE(ptab)             1
+#      define L_SIZE(ptab)             1
+#   endif
+#   if defined DIM_3d
+#      define ARRAY_TYPE(i,j,k,l,f)    TYPE(PTR_3D),INTENT(inout)::ptab(f)
+#      define ARRAY_IN(i,j,k,l,f)      ptab(f)%pt3d(i,j,k)
+#      define K_SIZE(ptab)             SIZE(ptab(1)%pt3d,3)
+#      define L_SIZE(ptab)             1
+#   endif
+#   if defined DIM_4d
+#      define ARRAY_TYPE(i,j,k,l,f)    TYPE(PTR_4D),INTENT(inout)::ptab(f)
+#      define ARRAY_IN(i,j,k,l,f)      ptab(f)%pt4d(i,j,k,l)
+#      define K_SIZE(ptab)             SIZE(ptab(1)%pt4d,3)
+#      define L_SIZE(ptab)             SIZE(ptab(1)%pt4d,4)
+#   endif
+#   define ARRAY2_TYPE(i,j,k,l,f)   TYPE(PTR_4D),INTENT(inout)::ptab2(f)
+#   define J_SIZE(ptab2)            SIZE(ptab2(1)%pt4d,2)
+#   define ARRAY2_IN(i,j,k,l,f)     ptab2(f)%pt4d(i,j,k,l)
+#else
+!                          !==  IN: ptab is an array  ==!
+#   define NAT_IN(k)                cd_nat
+#   define SGN_IN(k)                psgn
+#   define F_SIZE(ptab)             1
+#   if defined DIM_2d
+#      define ARRAY_IN(i,j,k,l,f)   ptab(i,j)
+#      define K_SIZE(ptab)          1
+#      define L_SIZE(ptab)          1
+#   endif
+#   if defined DIM_3d
+#      define ARRAY_IN(i,j,k,l,f)   ptab(i,j,k)
+#      define K_SIZE(ptab)          SIZE(ptab,3)
+#      define L_SIZE(ptab)          1
+#   endif
+#   if defined DIM_4d
+#      define ARRAY_IN(i,j,k,l,f)   ptab(i,j,k,l)
+#      define K_SIZE(ptab)          SIZE(ptab,3)
+#      define L_SIZE(ptab)          SIZE(ptab,4)
+#   endif
+#   define ARRAY2_IN(i,j,k,l,f)  ptab2(i,j,k,l)
+#   define J_SIZE(ptab2)             SIZE(ptab2,2)
+#   define ARRAY_TYPE(i,j,k,l,f)     REAL(wp),INTENT(inout)::ARRAY_IN(i,j,k,l,f)
+#   define ARRAY2_TYPE(i,j,k,l,f)    REAL(wp),INTENT(inout)::ARRAY2_IN(i,j,k,l,f)
+#endif
+
+   SUBROUTINE ROUTINE_NFD( ptab, ptab2, cd_nat, psgn, kfld )
+      !!----------------------------------------------------------------------
+      !!
+      !! ** Purpose :   lateral boundary condition : North fold treatment
+      !!                without allgather exchanges. 
+      !!
+      !!----------------------------------------------------------------------
+      ARRAY_TYPE(:,:,:,:,:)                             ! array or pointer of arrays on which the boundary condition is applied
+      ARRAY2_TYPE(:,:,:,:,:)                            ! array or pointer of arrays on which the boundary condition is applied
+      CHARACTER(len=1) , INTENT(in   ) ::   NAT_IN(:)   ! nature of array grid-points
+      REAL(wp)         , INTENT(in   ) ::   SGN_IN(:)   ! sign used across the north fold boundary
+      INTEGER, OPTIONAL, INTENT(in   ) ::   kfld        ! number of pt3d arrays
+      !
+      INTEGER  ::    ji,  jj,   jk,     jl,   jh,  jf   ! dummy loop indices
+      INTEGER  ::   ipi, ipj,  ipk,    ipl,  ipf        ! dimension of the input array
+      INTEGER  ::   ijt, iju, ijpj, ijpjp1, ijta, ijua, jia, startloop, endloop
+      LOGICAL  ::   l_fast_exchanges
+      !!----------------------------------------------------------------------
+      ipj = J_SIZE(ptab2)  ! 2nd dimension of input array
+      ipk = K_SIZE(ptab)   ! 3rd dimension of output array
+      ipl = L_SIZE(ptab)   ! 4th    -
+      ipf = F_SIZE(ptab)   ! 5th    -      use in "multi" case (array of pointers)
+      !
+      ! Security check for further developments
+      IF ( ipf > 1 ) CALL ctl_stop( 'STOP', 'lbc_nfd_nogather: multiple fields not allowed. Revise implementation...' )
+      !
+      ijpj   = 1    ! index of first modified line 
+      ijpjp1 = 2    ! index + 1
+      
+      ! 2nd dimension determines exchange speed
+      IF (ipj == 1 ) THEN
+        l_fast_exchanges = .TRUE.
+      ELSE
+        l_fast_exchanges = .FALSE.
+      ENDIF
+      !
+      DO jf = 1, ipf                      ! Loop over the number of arrays to be processed
+         !
+         SELECT CASE ( npolj )
+         !
+         CASE ( 3, 4 )                       ! *  North fold  T-point pivot
+            !
+            SELECT CASE ( NAT_IN(jf) )
+            !
+            CASE ( 'T' , 'W' )                         ! T-, W-point
+               IF ( nimpp /= 1 ) THEN   ;   startloop = 1
+               ELSE                     ;   startloop = 2
+               ENDIF
+               !
+               DO jl = 1, ipl; DO jk = 1, ipk
+                  DO ji = startloop, nlci
+                     ijt = jpiglo - ji - nimpp - nfiimpp(isendto(1),jpnj) + 4
+                     ARRAY_IN(ji,nlcj,jk,jl,jf) = SGN_IN(jf) * ARRAY2_IN(ijt,ijpj,jk,jl,jf)
+                  END DO
+               END DO; END DO
+               IF( nimpp == 1 ) THEN
+                  DO jl = 1, ipl; DO jk = 1, ipk
+                     ARRAY_IN(1,nlcj,jk,jl,jf) = SGN_IN(jf) * ARRAY_IN(3,nlcj-2,jk,jl,jf)
+                  END DO; END DO
+               ENDIF
+               !
+               IF ( .NOT. l_fast_exchanges ) THEN
+                  IF( nimpp >= jpiglo/2+1 ) THEN
+                     startloop = 1
+                  ELSEIF( nimpp+nlci-1 >= jpiglo/2+1 .AND. nimpp < jpiglo/2+1 ) THEN
+                     startloop = jpiglo/2+1 - nimpp + 1
+                  ELSE
+                     startloop = nlci + 1
+                  ENDIF
+                  IF( startloop <= nlci ) THEN
+                     DO jl = 1, ipl; DO jk = 1, ipk
+                        DO ji = startloop, nlci
+                           ijt  = jpiglo - ji - nimpp - nfiimpp(isendto(1),jpnj) + 4
+                           jia  = ji + nimpp - 1
+                           ijta = jpiglo - jia + 2
+                           IF( ijta >= startloop+nimpp-1 .AND. ijta < jia ) THEN
+                              ARRAY_IN(ji,nlcj-1,jk,jl,jf) = SGN_IN(jf) * ARRAY_IN(ijta-nimpp+1,nlcj-1,jk,jl,jf)
+                           ELSE
+                              ARRAY_IN(ji,nlcj-1,jk,jl,jf) = SGN_IN(jf) * ARRAY2_IN(ijt,ijpjp1,jk,jl,jf)
+                           ENDIF
+                        END DO
+                     END DO; END DO
+                  ENDIF
+               ENDIF
+
+            CASE ( 'U' )                                     ! U-point
+               IF( nimpp + nlci - 1 /= jpiglo ) THEN
+                  endloop = nlci
+               ELSE
+                  endloop = nlci - 1
+               ENDIF
+               DO jl = 1, ipl; DO jk = 1, ipk
+                  DO ji = 1, endloop
+                     iju = jpiglo - ji - nimpp - nfiimpp(isendto(1),jpnj) + 3
+                     ARRAY_IN(ji,nlcj,jk,jl,jf) = SGN_IN(jf) * ARRAY2_IN(iju,ijpj,jk,jl,jf)
+                  END DO
+               END DO; END DO
+               IF (nimpp .eq. 1) THEN
+                  ARRAY_IN(1,nlcj,:,:,jf) = SGN_IN(jf) * ARRAY_IN(2,nlcj-2,:,:,jf)
+               ENDIF
+               IF((nimpp + nlci - 1) .eq. jpiglo) THEN
+                  ARRAY_IN(nlci,nlcj,:,:,jf) = SGN_IN(jf) * ARRAY_IN(nlci-1,nlcj-2,:,:,jf)
+               ENDIF
+               !
+               IF ( .NOT. l_fast_exchanges ) THEN
+                  IF( nimpp + nlci - 1 /= jpiglo ) THEN
+                     endloop = nlci
+                  ELSE
+                     endloop = nlci - 1
+                  ENDIF
+                  IF( nimpp >= jpiglo/2 ) THEN
+                     startloop = 1
+                     ELSEIF( ( nimpp+nlci-1 >= jpiglo/2 ) .AND. ( nimpp < jpiglo/2 ) ) THEN
+                     startloop = jpiglo/2 - nimpp + 1
+                  ELSE
+                     startloop = endloop + 1
+                  ENDIF
+                  IF( startloop <= endloop ) THEN
+                  DO jl = 1, ipl; DO jk = 1, ipk
+                     DO ji = startloop, endloop
+                        iju = jpiglo - ji - nimpp - nfiimpp(isendto(1),jpnj) + 3
+                        jia = ji + nimpp - 1
+                        ijua = jpiglo - jia + 1
+                        IF( ijua >= startloop+nimpp-1 .AND. ijua < jia ) THEN
+                           ARRAY_IN(ji,nlcj-1,jk,jl,jf) = SGN_IN(jf) * ARRAY_IN(ijua-nimpp+1,nlcj-1,jk,jl,jf)
+                        ELSE
+                           ARRAY_IN(ji,nlcj-1,jk,jl,jf) = SGN_IN(jf) * ARRAY2_IN(iju,ijpjp1,jk,jl,jf)
+                        ENDIF
+                     END DO
+                  END DO; END DO
+                  ENDIF
+               ENDIF
+               !
+            CASE ( 'V' )                                     ! V-point
+               IF( nimpp /= 1 ) THEN
+                 startloop = 1
+               ELSE
+                 startloop = 2
+               ENDIF
+               IF ( .NOT. l_fast_exchanges ) THEN
+                  DO jl = 1, ipl; DO jk = 1, ipk
+                     DO ji = startloop, nlci
+                        ijt=jpiglo - ji - nimpp - nfiimpp(isendto(1),jpnj) + 4
+                        ARRAY_IN(ji,nlcj-1,jk,jl,jf) = SGN_IN(jf) * ARRAY2_IN(ijt,ijpjp1,jk,jl,jf)
+                     END DO
+                  END DO; END DO
+               ENDIF
+               DO jl = 1, ipl; DO jk = 1, ipk
+                  DO ji = startloop, nlci
+                     ijt=jpiglo - ji - nimpp - nfiimpp(isendto(1),jpnj) + 4
+                     ARRAY_IN(ji,nlcj,jk,jl,jf) = SGN_IN(jf) * ARRAY2_IN(ijt,ijpj,jk,jl,jf)
+                  END DO
+               END DO; END DO
+               IF (nimpp .eq. 1) THEN
+                  ARRAY_IN(1,nlcj,:,:,jf) = SGN_IN(jf) * ARRAY_IN(3,nlcj-3,:,:,jf)
+               ENDIF
+            CASE ( 'F' )                                     ! F-point
+               IF( nimpp + nlci - 1 /= jpiglo ) THEN
+                  endloop = nlci
+               ELSE
+                  endloop = nlci - 1
+               ENDIF
+               IF ( .NOT. l_fast_exchanges ) THEN
+                  DO jl = 1, ipl; DO jk = 1, ipk
+                     DO ji = 1, endloop
+                        iju = jpiglo - ji - nimpp - nfiimpp(isendto(1),jpnj) + 3
+                        ARRAY_IN(ji,nlcj-1,jk,jl,jf) = SGN_IN(jf) * ARRAY2_IN(iju,ijpjp1,jk,jl,jf)
+                     END DO
+                  END DO; END DO
+               ENDIF
+               DO jl = 1, ipl; DO jk = 1, ipk
+                  DO ji = 1, endloop
+                     iju = jpiglo - ji - nimpp - nfiimpp(isendto(1),jpnj) + 3
+                     ARRAY_IN(ji,nlcj,jk,jl,jf) = SGN_IN(jf) * ARRAY2_IN(iju,ijpj,jk,jl,jf)
+                  END DO
+               END DO; END DO
+               IF (nimpp .eq. 1) THEN
+                  ARRAY_IN(1,nlcj,:,:,jf) = SGN_IN(jf) * ARRAY_IN(2,nlcj-3,:,:,jf)
+                  IF ( .NOT. l_fast_exchanges ) &
+                     ARRAY_IN(1,nlcj-1,:,:,jf) = SGN_IN(jf) * ARRAY_IN(2,nlcj-2,:,:,jf)
+               ENDIF
+               IF((nimpp + nlci - 1) .eq. jpiglo) THEN
+                  ARRAY_IN(nlci,nlcj,:,:,jf) = SGN_IN(jf) * ARRAY_IN(nlci-1,nlcj-3,:,:,jf)
+                  IF ( .NOT. l_fast_exchanges ) &
+                     ARRAY_IN(nlci,nlcj-1,:,:,jf) = SGN_IN(jf) * ARRAY_IN(nlci-1,nlcj-2,:,:,jf)
+               ENDIF
+               !
+            END SELECT
+            !
+         CASE ( 5, 6 )                        ! *  North fold  F-point pivot
+            !
+            SELECT CASE ( NAT_IN(jf) )
+            CASE ( 'T' , 'W' )                               ! T-, W-point
+               DO jl = 1, ipl; DO jk = 1, ipk
+                  DO ji = 1, nlci
+                     ijt = jpiglo - ji - nimpp - nfiimpp(isendto(1),jpnj) + 3
+                     ARRAY_IN(ji,nlcj,jk,jl,jf) = SGN_IN(jf) * ARRAY2_IN(ijt,ijpj,jk,jl,jf)
+                  END DO
+               END DO; END DO
+               !
+            CASE ( 'U' )                                     ! U-point
+               IF( nimpp + nlci - 1 /= jpiglo ) THEN
+                  endloop = nlci
+               ELSE
+                  endloop = nlci - 1
+               ENDIF
+               DO jl = 1, ipl; DO jk = 1, ipk
+                  DO ji = 1, endloop
+                     iju = jpiglo - ji - nimpp - nfiimpp(isendto(1),jpnj) + 2
+                     ARRAY_IN(ji,nlcj,jk,jl,jf) = SGN_IN(jf) * ARRAY2_IN(iju,ijpj,jk,jl,jf)
+                  END DO
+               END DO; END DO
+               IF((nimpp + nlci - 1) .eq. jpiglo) THEN
+                  DO jl = 1, ipl; DO jk = 1, ipk
+                     ARRAY_IN(nlci,nlcj,jk,jl,jf) = SGN_IN(jf) * ARRAY_IN(nlci-2,nlcj-1,jk,jl,jf)
+                  END DO; END DO
+               ENDIF
+               !
+            CASE ( 'V' )                                     ! V-point
+               DO jl = 1, ipl; DO jk = 1, ipk
+                  DO ji = 1, nlci
+                     ijt = jpiglo - ji - nimpp - nfiimpp(isendto(1),jpnj) + 3
+                     ARRAY_IN(ji,nlcj,jk,jl,jf) = SGN_IN(jf) * ARRAY2_IN(ijt,ijpj,jk,jl,jf)
+                  END DO
+               END DO; END DO
+
+               IF ( .NOT. l_fast_exchanges ) THEN
+                  IF( nimpp >= jpiglo/2+1 ) THEN
+                     startloop = 1
+                  ELSEIF( nimpp+nlci-1 >= jpiglo/2+1 .AND. nimpp < jpiglo/2+1 ) THEN
+                     startloop = jpiglo/2+1 - nimpp + 1
+                  ELSE
+                     startloop = nlci + 1
+                  ENDIF
+                  IF( startloop <= nlci ) THEN
+                  DO jl = 1, ipl; DO jk = 1, ipk
+                     DO ji = startloop, nlci
+                        ijt = jpiglo - ji - nimpp - nfiimpp(isendto(1),jpnj) + 3
+                        ARRAY_IN(ji,nlcj-1,jk,jl,jf) = SGN_IN(jf) * ARRAY2_IN(ijt,ijpjp1,jk,jl,jf)
+                     END DO
+                  END DO; END DO
+                  ENDIF
+               ENDIF
+               !
+            CASE ( 'F' )                               ! F-point
+               IF( nimpp + nlci - 1 /= jpiglo ) THEN
+                  endloop = nlci
+               ELSE
+                  endloop = nlci - 1
+               ENDIF
+               DO jl = 1, ipl; DO jk = 1, ipk
+                  DO ji = 1, endloop
+                     iju = jpiglo - ji - nimpp - nfiimpp(isendto(1),jpnj) + 2
+                     ARRAY_IN(ji,nlcj ,jk,jl,jf) = SGN_IN(jf) * ARRAY2_IN(iju,ijpj,jk,jl,jf)
+                  END DO
+               END DO; END DO
+               IF((nimpp + nlci - 1) .eq. jpiglo) THEN
+                  DO jl = 1, ipl; DO jk = 1, ipk
+                     ARRAY_IN(nlci,nlcj,jk,jl,jf) = SGN_IN(jf) * ARRAY_IN(nlci-2,nlcj-2,jk,jl,jf)
+                  END DO; END DO
+               ENDIF
+               !
+               IF ( .NOT. l_fast_exchanges ) THEN
+                  IF( nimpp + nlci - 1 /= jpiglo ) THEN
+                     endloop = nlci
+                  ELSE
+                     endloop = nlci - 1
+                  ENDIF
+                  IF( nimpp >= jpiglo/2+1 ) THEN
+                     startloop = 1
+                  ELSEIF( nimpp+nlci-1 >= jpiglo/2+1 .AND. nimpp < jpiglo/2+1 ) THEN
+                     startloop = jpiglo/2+1 - nimpp + 1
+                  ELSE
+                     startloop = endloop + 1
+                  ENDIF
+                  IF( startloop <= endloop ) THEN
+                     DO jl = 1, ipl; DO jk = 1, ipk
+                        DO ji = startloop, endloop
+                           iju = jpiglo - ji - nimpp - nfiimpp(isendto(1),jpnj) + 2
+                           ARRAY_IN(ji,nlcj-1,jk,jl,jf) = SGN_IN(jf) * ARRAY2_IN(iju,ijpjp1,jk,jl,jf)
+                        END DO
+                     END DO; END DO
+                  ENDIF
+               ENDIF
+               !
+            END SELECT
+            !
+         CASE DEFAULT                           ! *  closed : the code probably never go through
+            !
+            WRITE(*,*) 'lbc_nfd_nogather_generic: You should not have seen this print! error?', npolj
+            !
+         END SELECT     !  npolj
+         !
+      END DO            ! End jf loop
+   END SUBROUTINE ROUTINE_NFD
+#undef ARRAY_TYPE
+#undef ARRAY_IN
+#undef NAT_IN
+#undef SGN_IN
+#undef J_SIZE
+#undef K_SIZE
+#undef L_SIZE
+#undef F_SIZE
+#undef ARRAY2_TYPE
+#undef ARRAY2_IN

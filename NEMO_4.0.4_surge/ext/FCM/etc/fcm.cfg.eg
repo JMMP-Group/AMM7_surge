@@ -1,0 +1,266 @@
+# ------------------------------------------------------------------------------
+# FCM central configuration file
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+# Standard repository locations
+# ------------------------------------------------------------------------------
+
+# 3dVOM repository
+set::url::3dvom              svn://fcm9/3dVOM_svn/3dVOM
+
+# AAPP repository
+set::url::aapp               svn://fcm7/AAPP_svn/AAPP
+
+# AMV repository
+set::url::amv                svn://fcm7/AMV_svn/AMV
+
+# ANCIL repository
+set::url::ancil              svn://fcm8/ANCIL_svn/ANCIL
+
+# ATSR repository
+set::url::atsr               svn://fcm7/ATSR_svn/ATSR
+
+# BLASIUS repository
+set::url::blasius            svn://fcm2/BLASIUS_svn/BLASIUS		      
+
+# CICE repository
+set::url::cice               svn://fcm3/CICE_svn/CICE
+
+# CMA repository
+set::url::cma                svn://fcm9/CMA_svn/CMA
+
+# CVC repository
+set::url::cvc_admin          svn://fcm6/CVC_svn/Admin
+set::url::bufr               svn://fcm6/CVC_svn/BUFR
+set::url::bullseye           svn://fcm6/CVC_svn/Bullseye
+set::url::cat                svn://fcm6/CVC_svn/CAT
+set::url::deicing            svn://fcm6/CVC_svn/Deicing
+set::url::ea                 svn://fcm6/CVC_svn/EA  
+set::url::ensemble           svn://fcm6/CVC_svn/Ensemble
+set::url::gales              svn://fcm6/CVC_svn/Gales
+set::url::ifv                svn://fcm6/CVC_svn/IFV
+set::url::mogreps            svn://fcm6/CVC_svn/MOGREPS
+set::url::openroad           svn://fcm6/CVC_svn/OpenRoad
+set::url::powertable         svn://fcm6/CVC_svn/PowerTable
+set::url::qnh                svn://fcm6/CVC_svn/QNH
+set::url::tafs               svn://fcm6/CVC_svn/TAFS
+set::url::warnings           svn://fcm6/CVC_svn/WARNINGS
+
+# DA repository
+set::url::da                 svn://fcm5/DA_svn/DA
+
+# ENS repository
+set::url::ens                svn://fcm9/ENS_svn/ENS
+
+# ERSEM repository
+set::url::ersem              svn://fcm3/ERSEM_svn/ERSEM
+set::url::ersem_pml          svn://fcm3/ERSEM_svn/ERSEM_PML
+
+# FCM repository
+set::url::fcm                svn://fcm1/FCM_svn/FCM
+set::url::fcm_admin          svn://fcm1/FCM_svn/Admin
+
+
+# FLUME repository
+set::url::flume_metadata     svn://fcm2/FLUME_svn/metadata
+set::url::flume_framework    svn://fcm2/FLUME_svn/framework
+set::url::flume_models       svn://fcm2/FLUME_svn/models
+set::url::flume_jobs         svn://fcm2/FLUME_svn/jobs
+
+# FORMOST repository
+set::url::formost_local      svn://fcm9/FORMOST_svn/FORMOST_LOCAL
+set::url::formost_remote     svn://fcm9/FORMOST_svn/FORMOST_REMOTE
+
+# GEN repository
+set::url::gen                svn://fcm1/GEN_svn/GEN
+
+# GS repository
+set::url::gs                 svn://fcm9/GS_svn/GS
+
+# HadGOA repository
+set::url::hadgoa             svn://fcm9/HadGOA_svn/HadGOA
+
+# HadISD repository
+set::url::hadisd_gen         svn://fcm9/HadISD_svn/general
+set::url::hadisd_homog       svn://fcm9/HadISD_svn/homogenisation
+set::url::hadisd_qc          svn://fcm9/HadISD_svn/quality_control
+
+# IRIS repository
+set::url::iris               svn://fcm9/IRIS_svn/IRIS
+
+# LEM repository
+set::url::lem                svn://fcm2/LEM_svn/LEM
+
+# LINK repository
+set::url::link               svn://fcm1/LINK_svn/LINK
+
+# MASS_MIG repository
+set::url::mass_mig           svn://fcm9/MASS_MIG_svn/MASS_MIG
+
+# MOOSE repository
+set::url::moose              svn://fcm9/MOOSE_svn/MOOSE
+
+# MOSIG repository
+set::url::mosig              svn://fcm9/MOSIG_svn/MOSIG
+
+# MUMTI repository
+set::url::mumti              svn://fcm1/MUMTI_svn/Project
+
+# NEMO repository
+set::url::nemosys            svn://fcm3/NEMO_svn/NEMOSYS
+set::url::nemovar            svn://fcm3/NEMO_svn/NEMOVAR
+set::url::nemo               svn://fcm3/NEMO_svn/NEMO
+set::url::ioipsl             svn://fcm3/NEMO_svn/IOIPSL
+set::url::ocnasm             svn://fcm3/NEMO_svn/OCNASM
+set::url::nemoukmo           svn://fcm3/NEMO_svn/UKMO
+
+# NWPSAF repository
+
+set::url::meto_1dvar         svn://fcm7/NWPSAF_svn/MetOffice_1DVar		   
+set::url::ssmis_1dvar        svn://fcm7/NWPSAF_svn/ssmis_1DVar		   
+set::url::ssmis_pp           svn://fcm7/NWPSAF_svn/ssmis_PP		   
+
+# NWPWEB repository
+set::url::www_nwp            svn://fcm1/NWPWEB_svn/www_nwp
+
+# obsmon repository
+set::url::obsmon_dc          svn://fcm4/obsmon_svn/DC
+set::url::obsmon_rtm         svn://fcm4/obsmon_svn/RTM
+
+# ODB repository
+set::url::odb                svn://fcm4/ODB_svn/ODB
+
+# OCN repository
+set::url::polcoms            svn://fcm3/OCN_svn/POLCOMS
+
+# OPFC repository
+set::url::opfc               svn://fcm9/OPFC_svn/OPFC
+
+# OPS repository
+set::url::ops                svn://fcm4/OPS_svn/OPS
+set::url::ops_admin          svn://fcm4/OPS_svn/Admin
+set::url::ops_data           svn://fcm4/OPS_svn/Data
+set::url::ops_external       svn://fcm4/OPS_svn/External
+
+# OSTIA repository
+set::url::ostia              svn://fcm3/OSTIA_svn/OSTIA
+
+# PF repository
+set::url::pf                 svn://fcm5/PF_svn/PF
+
+# PostProc repository
+set::url::pp                 svn://fcm9/PostProc_svn/PostProc
+set::url::ppancil            svn://fcm9/PostProc_svn/PostProcAncil
+set::url::ppvssps            svn://fcm9/PostProc_svn/VerificationSSPS
+
+# PRISM repository
+set::url::oasis3             svn://fcm2/PRISM_svn/OASIS3
+set::url::oasis4             svn://fcm2/PRISM_svn/OASIS4
+set::url::prism_ukmo         svn://fcm2/PRISM_svn/PRISM_UKMO
+
+# radarnet repository
+set::url::radarnet4          svn://fcm9/radarnet_svn/radarnet4
+
+# RADSAT repository
+set::url::polar              svn://fcm7/RADSAT_svn/POLAR
+set::url::radsat             svn://fcm7/RADSAT_svn/RADSAT
+
+# ROPP repository
+set::url::ropp_doc           svn://fcm7/ROPP_svn/ropp_doc
+set::url::ropp_src           svn://fcm7/ROPP_svn/ropp_src
+set::url::ropp_test          svn://fcm7/ROPP_svn/ropp_test
+set::url::ropp_web           svn://fcm7/ROPP_svn/ropp_web
+
+# RTTOV repository
+set::url::rttov              svn://fcm7/RTTOV_svn/RTTOV 
+set::url::rttov8             svn://fcm7/RTTOV_svn/RTTOV8
+set::url::rttov9             svn://fcm7/RTTOV_svn/RTTOV9
+
+# SAUtils repository
+set::url::autoscat_global    svn://fcm7/SAUtils_svn/AUTOSCAT_Global
+set::url::autoscat_nae       svn://fcm7/SAUtils_svn/AUTOSCAT_NAE
+set::url::climetop           svn://fcm7/SAUtils_svn/CLIMETOP
+set::url::dataflow           svn://fcm7/SAUtils_svn/DataFlow
+set::url::gpsiwv_mon         svn://fcm7/SAUtils_svn/GPSIWV_Mon
+set::url::gpswv_nrt          svn://fcm7/SAUtils_svn/GPSWV_NRT
+set::url::gpsro_mon          svn://fcm7/SAUtils_svn/GPSRO_Mon
+set::url::iasi_mon           svn://fcm7/SAUtils_svn/IASI_Mon
+set::url::metstrike          svn://fcm7/SAUtils_svn/METSTRIKE
+set::url::scatwind_mon       svn://fcm7/SAUtils_svn/Scatwind_Mon
+
+# SBV repository
+set::url::sbv                svn://fcm6/SBV_svn/SBV
+set::url::sbv_admin          svn://fcm6/SBV_svn/Admin
+
+# SCS repository
+set::url::scs                svn://fcm1/SCS_svn/SCS
+set::url::scs_admin          svn://fcm1/SCS_svn/Admin
+set::url::tik                svn://fcm1/SCS_svn/TIK
+set::url::tt                 svn://fcm1/SCS_svn/TT
+
+# SPS repository
+set::url::sps                svn://fcm7/SPS_svn/SPS
+set::url::tigger             svn://fcm7/SPS_svn/Tigger
+set::url::sps_archive        svn://fcm7/SPS_svn/Archive
+
+# SURF repository
+set::url::surf               svn://fcm8/SURF_svn/SURF
+
+# SWARV repository
+set::url::swarv              svn://fcm9/SWARV_svn/SWARV
+
+# test repository
+set::url::test               svn://fcm1/test_svn/OPS
+
+# tutorial repository
+set::url::tutorial           svn://fcm1/tutorial_svn/tutorial
+
+# THORPEX repository
+set::url::thorpex            svn://fcm9/ENS_svn/ENS
+
+# TRUI repository
+set::url::trui               svn://fcm1/TRUI_svn/TRUI
+
+# UM repository
+set::url::um                 svn://fcm2/UM_svn/UM
+set::url::um_admin           svn://fcm2/UM_svn/Admin
+set::url::gcom               svn://fcm2/UM_svn/GCOM
+
+# UM tutorial repository
+set::url::um_tutorial        svn://fcm2/UM_TUTORIAL_svn/UM
+
+# utils repository
+set::url::app_publications   svn://fcm9/utils_svn/APP_publications
+set::url::asyncios           svn://fcm9/utils_svn/asyncIOS
+set::url::avapps_coldsoak    svn://fcm9/utils_svn/avapps_coldsoak
+set::url::avapps_verCB       svn://fcm9/utils_svn/avapps_verCB
+set::url::crmtest            svn://fcm9/utils_svn/cr_model_testing
+set::url::cr_valnote         svn://fcm9/utils_svn/cr_validation_note
+set::url::fray_utils         svn://fcm9/utils_svn/fray_utils
+set::url::hpss_tests         svn://fcm9/utils_svn/HPSS_tests
+set::url::jules_benchmarking svn://fcm9/utils_svn/jules_benchmarking
+set::url::jules_standalone   svn://fcm9/utils_svn/jules_standalone
+set::url::kid                svn://fcm9/utils_svn/KiD
+set::url::numerical_methods  svn://fcm9/utils_svn/numerical_methods
+set::url::wavefc             svn://fcm9/utils_svn/wave_forecasting
+
+# VAR repository
+set::url::var                svn://fcm5/VAR_svn/VAR
+set::url::var_admin          svn://fcm5/VAR_svn/Admin
+set::url::var_data           svn://fcm5/VAR_svn/Data
+
+# VER repository
+set::url::ver                svn://fcm6/VER_svn/VER
+set::url::ver_admin          svn://fcm6/VER_svn/Admin
+set::url::ver_archive        svn://fcm6/VER_svn/Archive
+
+# VMM repository
+set::url::vmm                svn://fcm9/VMM_svn/VMM
+
+# WW3 repository
+set::url::ww3                svn://fcm3/WW3_svn/WW3
+set::url::ww3_config         svn://fcm3/WW3_svn/WW3CONFIG
+set::url::ww3_utils          svn://fcm3/WW3_svn/WW3UTILS
+
+# EOF

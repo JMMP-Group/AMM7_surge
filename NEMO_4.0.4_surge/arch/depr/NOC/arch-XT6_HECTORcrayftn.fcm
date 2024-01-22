@@ -1,0 +1,44 @@
+# compiler options for hector CRAY XT6 (using crayftn compiler)
+
+# NCDF_HOME   root directory containing lib and include subdirectories for netcdf4
+# HDF5_HOME   root directory containing lib and include subdirectories for HDF5
+# NCDF_INC    netcdf include file
+# NCDF_LIB    netcdf library
+# FC          Fortran compiler command
+# FCFLAGS     Fortran compiler flags
+# FFLAGS      Fortran 77 compiler flags
+# LD          linker
+# LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
+# FPPFLAGS    pre-processing flags
+# AR          assembler
+# ARFLAGS     assembler flags
+# MK          make
+# USER_INC    additional include files for the compiler,  e.g. -I<include dir>
+# USER_LIB    additional libraries to pass to the linker, e.g. -l<library>
+
+
+# PrgEnv-cray (default for hector phase 3)
+# use "module load netcdf/4.1.2" to setup netcdf (defines NETCDF_DIR and HDF5_DIR)
+
+%NCDF_HOME           $NETCDF_DIR
+%HDF5_HOME           $HDF5_DIR
+%NCDF_INC            -I%NCDF_HOME/include -I%HDF5_HOME/include
+%NCDF_LIB            -L%HDF5_HOME/lib -L%NCDF_HOME/lib -lnetcdf -lhdf5_fortran -lhdf5_hl -lhdf5 -lz
+%FC                  ftn
+%FCFLAGS             -em -s integer32 -s real64 -O3
+%FFLAGS              -em -s integer32 -s real64 -O3
+%LD                  ftn
+%FPPFLAGS            -P -C -traditional
+%LDFLAGS
+%AR                  ar 
+%ARFLAGS             -r
+%MK                  gmake
+%USER_INC            %NCDF_INC
+%USER_LIB            %NCDF_LIB
+
+# replacement options for GNU prgenv
+
+# %NCDF_HOME           $CRAY_NETCDF_DIR/netcdf-gnu
+# %HDF5_HOME           $CRAY_HDF5_DIR/hdf5-gnu
+# %FCFLAGS             -fdefault-real-8 -O3
+# %FFLAGS              -fdefault-real-8 -O3

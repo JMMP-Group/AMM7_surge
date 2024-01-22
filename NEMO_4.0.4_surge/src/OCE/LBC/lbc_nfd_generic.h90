@@ -1,0 +1,175 @@
+#if defined MULTI
+#   define NAT_IN(k)                cd_nat(k)   
+#   define SGN_IN(k)                psgn(k)
+#   define F_SIZE(ptab)             kfld
+#   if defined DIM_2d
+#      define ARRAY_TYPE(i,j,k,l,f)    TYPE(PTR_2D),INTENT(inout)::ptab(f)
+#      define ARRAY_IN(i,j,k,l,f)      ptab(f)%pt2d(i,j)
+#      define K_SIZE(ptab)             1
+#      define L_SIZE(ptab)             1
+#   endif
+#   if defined DIM_3d
+#      define ARRAY_TYPE(i,j,k,l,f)    TYPE(PTR_3D),INTENT(inout)::ptab(f)
+#      define ARRAY_IN(i,j,k,l,f)      ptab(f)%pt3d(i,j,k)
+#      define K_SIZE(ptab)             SIZE(ptab(1)%pt3d,3)
+#      define L_SIZE(ptab)             1
+#   endif
+#   if defined DIM_4d
+#      define ARRAY_TYPE(i,j,k,l,f)    TYPE(PTR_4D),INTENT(inout)::ptab(f)
+#      define ARRAY_IN(i,j,k,l,f)      ptab(f)%pt4d(i,j,k,l)
+#      define K_SIZE(ptab)             SIZE(ptab(1)%pt4d,3)
+#      define L_SIZE(ptab)             SIZE(ptab(1)%pt4d,4)
+#   endif
+#else
+!                          !==  IN: ptab is an array  ==!
+#   define NAT_IN(k)                cd_nat
+#   define SGN_IN(k)                psgn
+#   define F_SIZE(ptab)             1
+#   if defined DIM_2d
+#      define ARRAY_IN(i,j,k,l,f)   ptab(i,j)
+#      define K_SIZE(ptab)          1
+#      define L_SIZE(ptab)          1
+#   endif
+#   if defined DIM_3d
+#      define ARRAY_IN(i,j,k,l,f)   ptab(i,j,k)
+#      define K_SIZE(ptab)          SIZE(ptab,3)
+#      define L_SIZE(ptab)          1
+#   endif
+#   if defined DIM_4d
+#      define ARRAY_IN(i,j,k,l,f)   ptab(i,j,k,l)
+#      define K_SIZE(ptab)          SIZE(ptab,3)
+#      define L_SIZE(ptab)          SIZE(ptab,4)
+#   endif
+#   define ARRAY_TYPE(i,j,k,l,f)    REAL(wp),INTENT(inout)::ARRAY_IN(i,j,k,l,f)
+#endif
+
+#if defined MULTI
+   SUBROUTINE ROUTINE_NFD( ptab, cd_nat, psgn, kfld )
+      INTEGER          , INTENT(in   ) ::   kfld        ! number of pt3d arrays
+#else
+   SUBROUTINE ROUTINE_NFD( ptab, cd_nat, psgn       )
+#endif
+      ARRAY_TYPE(:,:,:,:,:)                             ! array or pointer of arrays on which the boundary condition is applied
+      CHARACTER(len=1) , INTENT(in   ) ::   NAT_IN(:)   ! nature of array grid-points
+      REAL(wp)         , INTENT(in   ) ::   SGN_IN(:)   ! sign used across the north fold boundary
+      !
+      INTEGER  ::    ji,  jj,  jk,  jl, jh,  jf   ! dummy loop indices
+      INTEGER  ::   ipi, ipj, ipk, ipl,     ipf   ! dimension of the input array
+      INTEGER  ::   ijt, iju, ipjm1
+      !!----------------------------------------------------------------------
+      !
+      ipk = K_SIZE(ptab)   ! 3rd dimension
+      ipl = L_SIZE(ptab)   ! 4th    -
+      ipf = F_SIZE(ptab)   ! 5th    -      use in "multi" case (array of pointers)
+      !
+      !
+      SELECT CASE ( jpni )
+      CASE ( 1 )     ;   ipj = nlcj       ! 1 proc only  along the i-direction
+      CASE DEFAULT   ;   ipj = 4          ! several proc along the i-direction
+      END SELECT
+      ipjm1 = ipj-1
+
+      !
+      DO jf = 1, ipf                      ! Loop on the number of arrays to be treated
+         !
+         SELECT CASE ( npolj )
+         !
+         CASE ( 3 , 4 )                        ! *  North fold  T-point pivot
+            !
+            SELECT CASE ( NAT_IN(jf)  )
+            CASE ( 'T' , 'W' )                         ! T-, W-point
+               DO ji = 2, jpiglo
+                  ijt = jpiglo-ji+2
+                  ARRAY_IN(ji,ipj,:,:,jf) = SGN_IN(jf)  * ARRAY_IN(ijt,ipj-2,:,:,jf)
+               END DO
+               ARRAY_IN(1,ipj,:,:,jf) = SGN_IN(jf)  * ARRAY_IN(3,ipj-2,:,:,jf)
+               DO ji = jpiglo/2+1, jpiglo
+                  ijt = jpiglo-ji+2
+                  ARRAY_IN(ji,ipjm1,:,:,jf) = SGN_IN(jf)  * ARRAY_IN(ijt,ipjm1,:,:,jf)
+               END DO
+            CASE ( 'U' )                               ! U-point
+               DO ji = 1, jpiglo-1
+                  iju = jpiglo-ji+1
+                  ARRAY_IN(ji,ipj,:,:,jf) = SGN_IN(jf)  * ARRAY_IN(iju,ipj-2,:,:,jf)
+               END DO
+               ARRAY_IN(   1  ,ipj,:,:,jf) = SGN_IN(jf)  * ARRAY_IN(    2   ,ipj-2,:,:,jf)
+               ARRAY_IN(jpiglo,ipj,:,:,jf) = SGN_IN(jf)  * ARRAY_IN(jpiglo-1,ipj-2,:,:,jf) 
+               DO ji = jpiglo/2, jpiglo-1
+                  iju = jpiglo-ji+1
+                  ARRAY_IN(ji,ipjm1,:,:,jf) = SGN_IN(jf)  * ARRAY_IN(iju,ipjm1,:,:,jf)
+               END DO
+            CASE ( 'V' )                               ! V-point
+               DO ji = 2, jpiglo
+                  ijt = jpiglo-ji+2
+                  ARRAY_IN(ji,ipj-1,:,:,jf) = SGN_IN(jf)  * ARRAY_IN(ijt,ipj-2,:,:,jf)
+                  ARRAY_IN(ji,ipj  ,:,:,jf) = SGN_IN(jf)  * ARRAY_IN(ijt,ipj-3,:,:,jf)
+               END DO
+               ARRAY_IN(1,ipj,:,:,jf) = SGN_IN(jf)  * ARRAY_IN(3,ipj-3,:,:,jf) 
+            CASE ( 'F' )                               ! F-point
+               DO ji = 1, jpiglo-1
+                  iju = jpiglo-ji+1
+                  ARRAY_IN(ji,ipj-1,:,:,jf) = SGN_IN(jf)  * ARRAY_IN(iju,ipj-2,:,:,jf)
+                  ARRAY_IN(ji,ipj  ,:,:,jf) = SGN_IN(jf)  * ARRAY_IN(iju,ipj-3,:,:,jf)
+               END DO
+               ARRAY_IN(   1  ,ipj,:,:,jf) = SGN_IN(jf)  * ARRAY_IN(    2   ,ipj-3,:,:,jf)
+               ARRAY_IN(jpiglo,ipj,:,:,jf) = SGN_IN(jf)  * ARRAY_IN(jpiglo-1,ipj-3,:,:,jf) 
+            END SELECT
+            !
+         CASE ( 5 , 6 )                        ! *  North fold  F-point pivot
+            !
+            SELECT CASE ( NAT_IN(jf)  )
+            CASE ( 'T' , 'W' )                         ! T-, W-point
+               DO ji = 1, jpiglo
+                  ijt = jpiglo-ji+1
+                  ARRAY_IN(ji,ipj,:,:,jf) = SGN_IN(jf)  * ARRAY_IN(ijt,ipj-1,:,:,jf)
+               END DO
+            CASE ( 'U' )                               ! U-point
+               DO ji = 1, jpiglo-1
+                  iju = jpiglo-ji
+                  ARRAY_IN(ji,ipj,:,:,jf) = SGN_IN(jf)  * ARRAY_IN(iju,ipj-1,:,:,jf)
+               END DO
+               ARRAY_IN(jpiglo,ipj,:,:,jf) = SGN_IN(jf) * ARRAY_IN(jpiglo-2,ipj-1,:,:,jf)
+            CASE ( 'V' )                               ! V-point
+               DO ji = 1, jpiglo
+                  ijt = jpiglo-ji+1
+                  ARRAY_IN(ji,ipj,:,:,jf) = SGN_IN(jf)  * ARRAY_IN(ijt,ipj-2,:,:,jf)
+               END DO
+               DO ji = jpiglo/2+1, jpiglo
+                  ijt = jpiglo-ji+1
+                  ARRAY_IN(ji,ipjm1,:,:,jf) = SGN_IN(jf)  * ARRAY_IN(ijt,ipjm1,:,:,jf)
+               END DO
+            CASE ( 'F' )                               ! F-point
+               DO ji = 1, jpiglo-1
+                  iju = jpiglo-ji
+                  ARRAY_IN(ji,ipj  ,:,:,jf) = SGN_IN(jf)  * ARRAY_IN(iju,ipj-2,:,:,jf)
+               END DO
+               ARRAY_IN(jpiglo,ipj,:,:,jf) = SGN_IN(jf)   * ARRAY_IN(jpiglo-2,ipj-2,:,:,jf)
+               DO ji = jpiglo/2+1, jpiglo-1
+                  iju = jpiglo-ji
+                  ARRAY_IN(ji,ipjm1,:,:,jf) = SGN_IN(jf)  * ARRAY_IN(iju,ipjm1,:,:,jf)
+               END DO
+            END SELECT
+            !
+         CASE DEFAULT                           ! *  closed : the code probably never go through
+            !
+            SELECT CASE ( NAT_IN(jf) )
+            CASE ( 'T' , 'U' , 'V' , 'W' )             ! T-, U-, V-, W-points
+               ARRAY_IN(:, 1 ,:,:,jf) = 0._wp
+               ARRAY_IN(:,ipj,:,:,jf) = 0._wp
+            CASE ( 'F' )                               ! F-point
+               ARRAY_IN(:,ipj,:,:,jf) = 0._wp
+            END SELECT
+            !
+         END SELECT     !  npolj
+         !
+      END DO
+      !
+   END SUBROUTINE ROUTINE_NFD
+
+#undef ARRAY_TYPE
+#undef ARRAY_IN
+#undef NAT_IN
+#undef SGN_IN
+#undef K_SIZE
+#undef L_SIZE
+#undef F_SIZE

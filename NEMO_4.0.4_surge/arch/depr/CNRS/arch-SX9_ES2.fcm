@@ -1,0 +1,30 @@
+# Earth Simulator 2, NEC SX-9, http://www.jamstec.go.jp/esc/index.en.html
+# NCDF_INC    netcdf include file
+# NCDF_LIB    netcdf library
+# FC          Fortran compiler command
+# FCFLAGS     Fortran compiler flags
+# FFLAGS      Fortran 77 compiler flags
+# LD          linker
+# LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
+# FPPFLAGS    pre-processing flags
+# AR          assembler
+# ARFLAGS     assembler flags
+# MK          make
+# USER_INC    additional include files for the compiler,  e.g. -I<include dir>
+# USER_LIB    additional libraries to pass to the linker, e.g. -l<library>
+
+
+%NCDF_INC        -I/SX/usr/include
+%NCDF_LIB        -L/SX/usr/lib -lnetcdf
+%FC              sxmpif90
+%FCFLAGS         -f2003 nocbind -P stack -dW -Wf,-pvctl res=whole,-A idbl4,-ptr byte -EP -R5 -float0 -size_t64 -dw -Wf,"-pvctl loopcnt=999999 fullmsg noassume"  -Wf"-init heap=zero" -R2
+%FFLAGS          %FCFLAGS
+%LD              sxmpif90
+%LDFLAGS
+%FPPFLAGS        -P -C -traditional
+%AR              sxar
+%ARFLAGS         rs
+%MK              gmake
+%USER_INC        %NCDF_INC
+%USER_LIB        %NCDF_LIB
+

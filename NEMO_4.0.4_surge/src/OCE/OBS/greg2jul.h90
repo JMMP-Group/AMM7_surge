@@ -1,0 +1,89 @@
+   SUBROUTINE greg2jul( ksec, kmin, khour, kday, kmonth, kyear, pjulian, &
+      &                 krefdate )
+      !!-----------------------------------------------------------------------
+      !!
+      !!                     ***  ROUTINE greg2jul  ***
+      !!
+      !! ** Purpose : Produce the time relative to the current date and time.
+      !!
+      !! ** Method  : The units are days, so hours and minutes transform to
+      !!              fractions of a day. 
+      !!
+      !!              Reference date : 19500101
+      !! ** Action  :
+      !!
+      !! History :
+      !!      ! 06-04  (A. Vidard) Original
+      !!      ! 06-04  (A. Vidard) Reformatted
+      !!      ! 06-10  (A. Weaver) Cleanup
+      !!-----------------------------------------------------------------------
+
+      ! * Arguments
+      INTEGER, INTENT(IN) :: &
+         & ksec,   &
+         & kmin,   &
+         & khour,  & 
+         & kday,   &
+         & kmonth, & 
+         & kyear
+      REAL(KIND=dp), INTENT(OUT) :: &
+         & pjulian
+      INTEGER, INTENT(IN), OPTIONAL :: &
+         & krefdate
+
+      !! * Local declarations
+      INTEGER, PARAMETER :: &
+         & jpgreg = 15 + 31 * ( 10 + 12 * 1582 ), &     ! Gregorian calendar introduction date
+         & jporef = 2433283,                      &     ! Julian reference date: 19500101
+         & jparef = 2415021,                      &     ! Julian reference date: 19000101
+         & jpgref = 2299161                             ! Julian reference date start of Gregorian calender
+      INTEGER :: &
+         & ija,     &
+         & ijy,     &
+         & ijm,     &
+         & ijultmp, &
+         & ijyear,  &
+         & iref
+      CHARACTER(len=200) :: &
+         & cerr
+
+      IF ( PRESENT( krefdate ) ) THEN
+         SELECT CASE ( krefdate )
+
+         CASE( 0 ) 
+            iref = jpgref
+
+         CASE( 19500101 )
+            iref = jporef
+
+         CASE( 19000101 )
+            iref = jparef
+
+         CASE DEFAULT
+            WRITE(cerr,'(A,I8.8)')'greg2jul: Unknown krefdate:', krefdate
+            CALL ctl_stop( cerr )
+
+         END SELECT
+
+      ELSE
+         iref = jporef 
+      ENDIF
+
+      ! Main computation
+      ijyear = kyear
+      IF ( ijyear < 0 ) ijyear = ijyear + 1
+      IF ( kmonth > 2 ) THEN
+	 ijy = ijyear
+	 ijm = kmonth + 1
+      ELSE
+	 ijy = ijyear  - 1
+	 ijm = kmonth + 13
+      ENDIF
+      ijultmp = INT( 365.25 * ijy ) + INT( 30.6001 * ijm ) + kday + 1720995
+      IF ( kday + 31 * ( kmonth + 12 * ijyear ) >= jpgreg ) THEN
+	 ija = INT( 0.01 * ijy )
+	 ijultmp = ijultmp + 2 - ija + INT( 0.25 * ija )
+      ENDIF
+      pjulian = ( ijultmp - iref ) + ( ( 60 * khour + kmin ) * 60 + ksec ) / 86400.
+
+   END SUBROUTINE greg2jul

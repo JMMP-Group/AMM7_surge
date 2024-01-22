@@ -1,0 +1,115 @@
+   RECURSIVE SUBROUTINE jul2greg( ksec, kminut, khour, kday, kmonth, kyear, &
+      &                           prelday, krefdate )
+      !!-----------------------------------------------------------------------
+      !!
+      !!                     ***  ROUTINE jul2greg  ***
+      !!
+      !! ** Purpose : Take the relative time in days and re-express in terms of
+      !!              seconds, minutes, hours, days, month, year.
+      !!
+      !! ** Method  : Reference date : 19500101
+      !!
+      !! ** Action  :
+      !!
+      !! History
+      !!      ! 06-04  (A. Vidard) Original
+      !!      ! 06-05  (A. Vidard) Reformatted and refdate      
+      !!      ! 06-10  (A. Weaver) Cleanup
+      !!      ! 2014-09 (D. Lea) Change to use FLOOR to deal with negative prelday
+      !!-----------------------------------------------------------------------
+
+      ! * Arguments
+      INTEGER, INTENT(IN), OPTIONAL :: &
+         & krefdate
+      INTEGER, INTENT(OUT) :: &
+         & ksec,   &
+         & kminut, &
+         & khour,  &
+         & kday,   &
+         & kmonth, &
+         & kyear
+      REAL(KIND=dp), INTENT(IN) :: &
+         & prelday
+
+      !! * Local declarations
+      INTEGER, PARAMETER :: &
+         & jpgreg = 2299161, &
+         & jporef = 2433283, &
+         & jparef = 2415021
+      INTEGER :: &
+         & ijulian, &
+         & ij1,     &
+         & ija,     &
+         & ijb,     &
+         & ijc,     &
+         & ijd,     &
+         & ije,     &
+         & isec,    &
+         & imin,    &
+         & ihou,    &
+         & iday,    &
+         & imon,    &
+         & iyea,    &
+         & iref
+      REAL(KIND=wp) :: &
+         & zday, &
+         & zref
+      CHARACTER(len=200) :: &
+         & cerr
+
+      ! Main computation
+      IF ( PRESENT( krefdate ) ) THEN
+
+         SELECT CASE ( krefdate )
+
+         CASE( 0 ) 
+            iref = jpgreg
+
+         CASE( 19500101 )
+            iref = jporef
+
+         CASE( 19000101 )
+            iref = jparef
+
+         CASE DEFAULT
+            WRITE(cerr,'(A,I8.8)')'jul2greg: Unknown krefdate:', krefdate
+            CALL ctl_stop( cerr )
+
+         END SELECT
+
+      ELSE
+         iref = jporef 
+      ENDIF
+
+      zday = prelday
+      ksec = FLOOR( 86400. * MOD( zday, 1. ) )
+
+      IF ( ksec < 0. ) ksec = 86400. + ksec
+
+      khour  = ksec / 3600
+      kminut = ( ksec - 3600 * khour ) / 60
+      ksec   = MOD( ksec , 60 )
+
+      ijulian = iref + INT( zday )
+      IF ( zday < 0. ) ijulian = ijulian - 1
+
+      ! If input date after 10/15/1582 :
+      IF ( ijulian >= jpgreg ) THEN
+	 ij1 = INT( ( DBLE( ijulian - 1867216 ) - 0.25 ) / 36524.25 )
+	 ija = ijulian + 1 + ij1 - INT( ( 0.25 * ij1 ) )
+      ELSE
+	 ija = ijulian
+      ENDIF
+
+      ijb = ija + 1524
+      ijc = INT( 6680. + ( DBLE ( ijb - 2439870 ) - 122.1 ) / 365.25 )
+      ijd = 365 * ijc + INT( 0.25 * ijc )
+      ije = INT( ( ijb - ijd ) / 30.6001 )
+      kday = ijb - ijd - INT( 30.6001 * ije )
+      kmonth = ije - 1
+      IF ( kmonth > 12 ) kmonth = kmonth - 12
+      kyear = ijc - 4715
+      IF ( kmonth > 2 ) kyear = kyear - 1
+      IF ( kyear <= 0 ) kyear = kyear - 1
+
+   END SUBROUTINE jul2greg

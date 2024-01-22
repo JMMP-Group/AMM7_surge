@@ -1,0 +1,83 @@
+#!/usr/bin/env perl
+#-------------------------------------------------------------------------------
+# (C) Crown copyright Met Office. All rights reserved.
+# For further details please refer to the file COPYRIGHT.txt
+# which you should have received as part of this distribution.
+#-------------------------------------------------------------------------------
+
+use strict;
+use warnings;
+
+my ($base, $mine, $older, $yours) = @ARGV;
+
+# FCM_GRAPHIC_MERGE is the graphical merge tool command
+my $cmd = (exists $ENV{FCM_GRAPHIC_MERGE} ? $ENV{FCM_GRAPHIC_MERGE} : 'xxdiff');
+
+my $rc  = 2;
+my $out = '';
+if ($cmd eq 'xxdiff') {
+  # Launch xxdiff
+  my @command   = ($cmd, qw/-m -M/, $base, qw/-O -X/, $mine, $older, $yours);
+  my ($cmd_out) = qx(@command);
+  my $cmd_rc    = $?;
+
+  # Parse output from xxdiff
+  if ($cmd_out) {
+    chomp $cmd_out;
+    if ($cmd_out eq 'NODECISION') {
+      $out = 'made no decision';
+      $rc  = 1;
+
+    } elsif ($cmd_out eq 'MERGED' and $cmd_rc) {
+      $out = 'not resolved all the conflicts';
+      $rc  = 1;
+
+    } else {
+      $out = lc ($cmd_out);
+      $rc  = 0;
+    }
+
+  } else {
+    print STDERR $cmd, ': failed, abort.', "\n";
+  }
+
+} else {
+  # Throw error for unknown/undefined graphic merge tool
+  print STDERR ($cmd ? $cmd . ': ' : ''),
+               'unknown/undefined graphic merge tool, abort.', "\n";
+}
+
+if ($rc == 1) {
+  # Merge unresolved
+  print 'You have ', $out, '.', "\n";
+
+} elsif ($rc == 0) {
+  # Merge resolved
+  print 'You ', $out, ' all the changes.', "\n";
+}
+
+exit $rc;
+
+__END__
+
+=head1 NAME
+
+fcm_graphic_merge
+
+=head1 SYNOPSIS
+
+    fcm_graphic_merge BASE MINE OLDER YOURS
+
+=head1 DESCRIPTION
+
+Wrapper script which invokes a graphical merge tool. It returns 0 on
+success, 1 if conflicts not resolved or 2 on failure. (This is similar to
+GNU diff3.) BASE is the file you want to save the merge result into. MINE
+is the original file. YOURS is the file you want MINE to merge with. OLDER
+is the common ancestor of MINE and YOURS.
+
+=head1 COPYRIGHT
+
+(C) Crown copyright Met Office. All rights reserved.
+
+=cut

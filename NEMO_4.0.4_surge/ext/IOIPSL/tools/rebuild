@@ -1,0 +1,110 @@
+#!/bin/ksh
+#
+#$Id: rebuild 2281 2010-10-15 14:21:13Z smasson $
+#
+# This software is governed by the CeCILL license
+# See IOIPSL/IOIPSL_License_CeCILL.txt
+#---------------------------------------------------------------------
+# @(#)Rebuild IOIPSL domains
+#---------------------------------------------------------------------
+function rebuild_Usage
+{
+print - "
+\"${b_n}\"
+  rebuild a model_file from several input files.
+Each input file contains the model_data for a domain.
+
+Usage :
+  ${b_n} [-h]
+  ${b_n} [-v level] [-f] -o output_file_name input_file_names
+
+Options :
+  -h         : help
+  -v O/1/2/3 : verbose mode (verbosity increasing with level)
+  -f         : executing mode
+               (execute the program even if the number of input files
+                is not equal to the total number of domains)
+"
+}
+#-
+#set -xv
+#-
+# Extract the calling sequence of the script (d_n/b_n)
+#-
+d_n=${0%/*}; b_n=${0##*/};
+#-
+# Retrieving the options
+#-
+r_v='0'; r_f='noforce'; r_o="";
+while getopts :hv:fo: V
+ do
+  case $V in
+   (h) rebuild_Usage; exit 0;;
+   (v) r_v=${OPTARG};;
+   (f) r_f='force';;
+   (o) r_o=${OPTARG};;
+   (:) print -u2 "${b_n} : missing value for option $OPTARG"; exit 2;;
+   (\?) print -u2 "${b_n} : option $OPTARG not supported"; exit 2;;
+  esac
+ done
+shift $(($OPTIND-1));
+#-
+# Validate the -v option
+#-
+case ${r_v} in
+  ( 0 | 1 | 2 | 3 );;
+  ("") r_v='0';;
+  (*)
+    print -u2 "${b_n} :";
+    print -u2 "Invalid verbosity level requested : ${r_v}";
+    print -u2 "(must be 0, 1, 2 or 3)";
+    exit 1;;
+esac
+#-
+# Validate the number of arguments
+#-
+[[ ${#} < 1 ]] && \
+ {
+  print -u2 "${b_n} : Too few arguments have been specified. (Use -h)";
+  exit 3;
+ }
+#-
+# Check for the output file name
+#-
+[[ -z ${r_o} ]] && \
+ {
+  r_o='rebuilt_file.nc';
+  print -u2 - "
+   ${b_n} : output_file_name not specified. (Use -h)
+            rebuilt_file.nc should be created."
+ }
+#-
+# Validate the names of the input files
+#-
+for i in $*;
+ do
+  [[ ! -f ${i} ]] && { echo "${i} unreachable ..."; exit 3;}
+ done
+#-
+# Create the information file for the program
+#-
+echo ${r_v} > tmp.$$;
+echo ${r_f} >> tmp.$$;
+echo $((${#}+1)) >> tmp.$$;
+for i in $*;
+ do echo ${i} >> tmp.$$;
+ done
+echo ${r_o} >> tmp.$$;
+#-
+# Create the output file
+#-
+${d_n}/flio_rbld.exe < tmp.$$
+r_c=$?
+#-
+# Clear
+#-
+rm -f tmp.$$
+#-
+# End
+#-
+exit ${r_c};

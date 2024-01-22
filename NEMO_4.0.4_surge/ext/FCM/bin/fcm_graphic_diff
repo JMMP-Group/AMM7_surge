@@ -1,0 +1,96 @@
+#!/usr/bin/env perl
+#-------------------------------------------------------------------------------
+# (C) Crown copyright Met Office. All rights reserved.
+# For further details please refer to the file COPYRIGHT.txt
+# which you should have received as part of this distribution.
+#-------------------------------------------------------------------------------
+
+use strict;
+use warnings;
+
+use Getopt::Long qw{GetOptions};
+
+# ------------------------------------------------------------------------------
+
+my ($u, @label);
+GetOptions ('u' => \$u, 'L=s' => \@label);
+
+# Check existence of files
+for my $i (0 .. 1) {
+  die $ARGV[$i], ': not found, abort' unless $ARGV[$i] and -f $ARGV[$i];
+}
+
+my ($old, $new) = @ARGV;
+
+if ($old =~ m#.svn/empty-file$#) {
+  print 'Skipping new file', "\n\n";
+
+} elsif ($new =~ m#.svn/empty-file$#) {
+  print 'Skipping deleted file', "\n\n";
+
+} elsif (-z $old) {
+  print 'Skipping as old file is empty (or does not exist)', "\n\n";
+
+} elsif (-z $new) {
+  print 'Skipping as new file is empty (or deleted)', "\n\n";
+
+} elsif (-B $new) {
+  print 'Skipping binary file', "\n\n";
+
+} else {
+  # Print descriptions of files
+  if (@label >= 2) {
+    print '--- ', $label[0], "\n", '+++ ', $label[1], "\n\n";
+  }
+
+  # FCM_GRAPHIC_DIFF is the graphical diff tool command
+  my $cmd = (exists $ENV{FCM_GRAPHIC_DIFF} ? $ENV{FCM_GRAPHIC_DIFF} : 'xxdiff');
+
+  if ($cmd) {
+    my @options = ();
+
+    # Set options for labels if appropriate
+    if (@label >= 2) {
+      if ($cmd eq 'tkdiff') {
+        # Use tkdiff
+        @options = ('-L', $label[0], '-L', $label[1]);
+
+      } elsif ($cmd eq 'xxdiff') {
+        # Use xxdiff
+        @options = ('--title1', $label[0], '--title2', $label[1]);
+      }
+    }
+
+    # Execute the command
+    my @command = ($cmd, @options, $old, $new);
+    exec (@command) or die 'Cannot execute: ', join (' ', @command);
+  }
+
+  exit;
+}
+
+__END__
+
+=head1 NAME
+
+fcm_graphic_diff
+
+=head1 SYNOPSIS
+
+    fcm_graphic_diff [-u] [-L OLD_DESC] [-L NEW_DESC] OLD NEW
+
+=head1 DESCRIPTION
+
+Wrapper script which invokes a graphical diff tool. Its interface is
+compatible with the "svn diff" command and can be used in combination with
+its "--diff-cmd" option. The command prints the OLD_DESC and NEW_DESC if
+they are both set. The two arguments OLD and NEW must be set and are the
+files to compare. The graphical diff tool invoked depends on the value of
+the FCM_GRAPHIC_DIFF environment variable. The command exits if the
+environment variable is not set.
+
+=head1 COPYRIGHT
+
+(C) Crown copyright Met Office. All rights reserved.
+
+=cut
