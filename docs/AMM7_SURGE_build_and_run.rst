@@ -63,12 +63,12 @@ Make a link between binaries and where they are expected to be found::
 
 The remaining setup instructions are machine dependent. Two examples are given: 1) ARCHER2 HPC; 2) Using a Singularity container.
 
-1) Building on ARCHER2 HPC
-==========================
+1) Building and running on ARCHER2 HPC
+======================================
 
 As an example the following process has been used on ARCHER2 using XIOS2 and the CRAY compiler (valid at 5th Jan 2024)
 
-Get compiler option files using a shared XIOS2 install
+Get compiler option files using a shared XIOS2 install::
 
   cd $CDIR/..
   cp /work/n01/shared/nemo/ARCH/*4.2.fcm arch/NOC/.
@@ -99,6 +99,38 @@ Link executable to experiment directory ::
   ln -s $CDIR/$CONFIG/BLD/bin/nemo.exe $EXP/nemo
 
 (N.B. sometimes the executable is expected to be called `opa` or `nemo.exe`)
+
+
+
+Finally we are ready to submit a run script job from the experiment directory.
+Edit the runscript.
+
+Submit::
+
+  cd $EXP
+  sbatch runscript.slurm
+
+Sea surface height is output every 15 mins::
+
+  AMMSRG_met_15mi_20170101_20170206_grid_V.nc
+  AMMSRG_met_15mi_20170101_20170206_grid_U.nc
+  AMMSRG_met_15mi_20170101_20170206_grid_T.nc
+
+
+2) Building and running in a Singularity Container
+==================================================
+
+There are many reasons why ARCHER2 is not suitable. Here is the workflow to get the code running in a Singularity container, on the assumption that you have already got Singularity installed.
+
+This workflow includes the building of XIOS. The idea is to use a container with a controlled operating system and prebuilt libraries so that you can be confident that the NEMO and XIOS programs will compile.
+
+cd TEST
+ wget https://github.com/jpolton/CoNES/releases/download/0.2.19/nemo_baseOS.sif
+wget https://github.com/NOC-MSM/CoNES/releases/download/0.0.2/nemo_baseOS.sif  # 297Mb
+singularity shell nemo_base_OS.sif
+
+
+
 
 
 
