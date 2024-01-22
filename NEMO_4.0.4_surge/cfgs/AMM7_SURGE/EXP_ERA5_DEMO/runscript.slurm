@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH --job-name=amm7surge
-#SBATCH --time=00:05:00
+#SBATCH --job-name=SRG_ERA5
+#SBATCH --time=00:30:00
 #SBATCH --nodes=2
 #SBATCH --ntasks-per-core=1
 #SBATCH --account=n01-class

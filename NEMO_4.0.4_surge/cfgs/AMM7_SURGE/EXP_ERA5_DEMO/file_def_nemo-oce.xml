@@ -11,7 +11,6 @@
       <file_group id="15mi" output_freq="15mi"  output_level="10" enabled=".TRUE." > <!-- 1 time step files -->
          <file id="file1" name_suffix="_grid_T" description="ocean T grid variables"  enabled=".TRUE.">
             <field field_ref="ssh"          name="zos"      long_name="sea_surface_height_above_geoid"            operation="instant"      />
-            <field  field_ref="wetdep"       long_name="wet depth"                  name="wet_depth"               operation="instant"     />
          </file>
 
          <file id="file2" name_suffix="_grid_U" description="ocean U grid variables"  enabled=".TRUE.">

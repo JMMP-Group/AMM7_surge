@@ -19,16 +19,18 @@
 !-----------------------------------------------------------------------
 &namrun        !   parameters of the run
 !-----------------------------------------------------------------------
-   cn_exp      =  "AMMSURGE"  !  experience name
+   cn_exp      =  "AMMSRG_met"  !  experience name
    nn_it000    =       1   !  first time step
-   nn_itend    =    1920 ! 52560   !  last  time step (std 1 day = 144)
-   nn_date0    =  20130101 !  date at nit_0000 (format yyyymmdd) used if ln_rstart=F or (ln_rstart=T and nn_rstctl=0 or 1)
+   nn_itend    =    7008 ! 52560   !  last  time step (std 1 day = 192)
+   nn_date0    =  20170101 !  date at nit_0000 (format yyyymmdd) used if ln_rstart=F or (ln_rstart=T and nn_rstctl=0 or 1)
    nn_leapy    =       1   !  Leap year calendar (1) or not (0)
    ln_rstart   =  .false.  !  start from rest (F) or from a restart file (T)
-   cn_ocerst_in   = "ammsurge_restart_oce"   !  suffix of ocean restart name (input)
-   cn_ocerst_out  = "restart_oce_out"             !  suffix of ocean restart name (input)
-   nn_stock    =    52560   !  frequency of creation of a restart file (modulo referenced to 1)
-   nn_write    =    10  ! 52560   !  frequency of write in the output file   (modulo referenced to nit000) 
+      cn_ocerst_in    = "restart"   !  suffix of ocean restart name (input)
+      cn_ocerst_indir = "./RESTARTS"         !  directory from which to read input ocean restarts
+      cn_ocerst_out   = "restart"   !  suffix of ocean restart name (output)
+      cn_ocerst_outdir = "./RESTARTS"        !  directory in which to write output ocean restarts
+   nn_stock    =    70080   !  frequency of creation of a restart file (modulo referenced to 1)
+   nn_write    =    192  ! 52560   !  frequency of write in the output file   (modulo referenced to nit000) 
 /
 !-----------------------------------------------------------------------
 &namdom        !   time and space domain
@@ -80,19 +82,19 @@
    ln_traqsr   = .false.   !  Light penetration in the ocean            (T => fill namtra_qsr)
    ln_ssr      = .false.   !  Sea Surface Restoring on T and/or S       (T => fill namsbc_ssr)
    ln_rnf      = .false.   !  runoffs                                   (T => fill namsbc_rnf)
-   ln_apr_dyn  = .false.   !  Patm gradient added in ocean & ice Eqs.   (T => fill namsbc_apr )
+   ln_apr_dyn  = .true.   !  Patm gradient added in ocean & ice Eqs.   (T => fill namsbc_apr )
 /
 !-----------------------------------------------------------------------
 &namsbc_usr  !   namsbc_surge   surge model fluxes
 !-----------------------------------------------------------------------
-   ln_use_sbc  = .false.    ! (T) to turn on surge fluxes (wind and pressure only)
+   ln_use_sbc  = .true.    ! (T) to turn on surge fluxes (wind and pressure only)
                             ! (F) for no fluxes (ie tide only case)
 
 !
 !              !  file name                    ! frequency (hours) ! variable  ! time interp. !  clim  ! 'yearly'/ ! weights  ! rotation !
 !              !                               !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  !
-   sn_wndi     = 'windspd_u_amm7'              ,       1           ,'x_wind',   .true.     , .false. , 'daily'  ,'' , ''
-   sn_wndj     = 'windspd_v_amm7'              ,       1           ,'y_wind',   .true.     , .false. , 'daily'  ,'' , ''
+   sn_wndi     = 'ERA5_U10'              ,       1           ,'U10',   .true.     , .false. , 'yearly'  ,'weights_era5_bicubic.nc'   ,  'Uwnd',    'ERA5_LSM' 
+   sn_wndj     = 'ERA5_V10'              ,       1           ,'V10',   .true.     , .false. , 'yearly'  ,'weights_era5_bicubic.nc'   ,  'Vwnd' ,   'ERA5_LSM'
    cn_dir      = './fluxes/'          !  root directory for the location of the bulk files
    rn_vfac     = 1.                   !  multiplicative factor for ocean/ice velocity
                                       !  in the calculation of the wind stress (0.=absolute winds or 1.=relative winds)
@@ -109,7 +111,7 @@
    !___________!_________________________!___________________!___________!_____________!________!___________!__________________!__________!_______________!
    !           !  file name              ! frequency (hours) ! variable  ! time interp.!  clim  ! 'yearly'/ ! weights filename ! rotation ! land/sea mask !
    !           !                         !  (if <0  months)  !   name    !   (logical) !  (T/F) ! 'monthly' !                  ! pairing  !    filename   !
-   sn_apr       =  'pressure_amm7',        1         ,   'air_pressure_at_sea_level' ,    .true.    , .false., 'daily'   ,  ''      ,   ''     ,  ''
+   sn_apr       =  'ERA5_MSL'            ,        1          ,    'MSL' ,    .true.    , .false., 'yearly'  , 'weights_era5_bicubic.nc',  'Uwnd' ,   'ERA5_LSM' 
 /
 !!======================================================================
 !!               ***  Lateral boundary condition  ***                 !!
@@ -131,9 +133,9 @@
 &nam_tide      !   tide parameters                                      (default: OFF)
 !-----------------------------------------------------------------------
    ln_tide     = .true.
-   clname(1)     =   'M2'   !  name of constituent
-   clname(2)     =   'S2'
-   clname(3)     =   'K2'
+!!   clname(1)     =   'M2'   !  name of constituent
+!!   clname(2)     =   'S2'
+!!   clname(3)     =   'K2'
 !   clname(1) ='2N2'
 !   clname(2)='EPS2'
 !   clname(3)='J1'
@@ -168,6 +170,33 @@
 !   clname(32)='SA'
 !   clname(33)='SSA'
 !   clname(34)='T2'
+! consititent matching clare's list
+   clname(1)='Q1'
+   clname(2)='L2'
+   clname(3)='T2'
+   clname(4)='S2'
+   clname(5)='K2'
+   clname(6)='M4'
+! 2MK6                  Missing from FES2014
+! 2MS6
+! 2SM2
+! 3M2S2
+! Lam2
+   clname(7)='O1'
+   clname(8)='M6'
+! MK3
+   clname(9)='MN4'
+! 'MNS2',
+! 'MO3',
+   clname(10)='MS4'
+! MSN2
+   clname(11)='P1'
+   clname(12)='K1'
+   clname(13) ='2N2'
+   clname(14)='MU2'
+   clname(15)='N2'
+   clname(16)='NU2'
+   clname(17)='M2'
 /
 !-----------------------------------------------------------------------
 &nambdy        !  unstructured open boundaries                          (default: OFF)
@@ -209,9 +238,9 @@
 !-----------------------------------------------------------------------
 &namdrg_bot    !   BOTTOM friction                                  
 !-----------------------------------------------------------------------
-   rn_Cd0     =  2.4e-3   !  1e-5 (Clare 4Jan24) ! drag coefficient [-]
+   rn_Cd0     =  2.4e-3   !  CO'N used 1e-5 with ln_boost field (4Jan24) ! drag coefficient [-]
    rn_ke0     =  0.0e0    !  background kinetic energy  [m2/s2] (non-linear cases)
-   ln_boost   = .true.,
+   ln_boost   = .false.,
    rn_boost   = 1.,
 /
 !!======================================================================
