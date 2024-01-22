@@ -122,12 +122,12 @@ Sea surface height is output every 15 mins::
 
 There are many reasons why ARCHER2 is not suitable. Here is the workflow to get the code running in a Singularity container, on the assumption that you have already got Singularity installed.
 
-This workflow includes the building of XIOS. The idea is to use a container with a controlled operating system and prebuilt libraries so that you can be confident that the NEMO and XIOS programs will compile.
+This workflow includes the building of XIOS. The idea is to use a container with a controlled operating system and prebuilt libraries so that you can be confident that the NEMO and XIOS programs will compile::
 
-cd TEST
- wget https://github.com/jpolton/CoNES/releases/download/0.2.19/nemo_baseOS.sif
-wget https://github.com/NOC-MSM/CoNES/releases/download/0.0.2/nemo_baseOS.sif  # 297Mb
-singularity shell nemo_base_OS.sif
+  cd TEST
+  wget https://github.com/jpolton/CoNES/releases/download/0.2.19/nemo_baseOS.sif
+  wget https://github.com/NOC-MSM/CoNES/releases/download/0.0.2/nemo_baseOS.sif  # 297Mb
+  singularity shell nemo_base_OS.sif
 
 
 
