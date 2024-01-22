@@ -125,11 +125,22 @@ There are many reasons why ARCHER2 is not suitable. Here is the workflow to get 
 This workflow includes the building of XIOS. The idea is to use a container with a controlled operating system and prebuilt libraries so that you can be confident that the NEMO and XIOS programs will compile::
 
   cd TEST
-  wget https://github.com/jpolton/CoNES/releases/download/0.2.19/nemo_baseOS.sif
   wget https://github.com/NOC-MSM/CoNES/releases/download/0.0.2/nemo_baseOS.sif  # 297Mb
-  singularity shell nemo_base_OS.sif
+  chmod u+x nemo_baseOS.sif
+  singularity shell ./nemo_baseOS.sif
+
+Set up some paths that have been preprepared::
+
+  PATH=$PATH:/opt/mpi/install/bin:/opt/hdf5/install/bin
+  LD_LIBRARY_PATH=/opt/hdf5/install/lib:$LD_LIBRARY_PATH
 
 
+
+Cd xios
+Cp archfile to arch/
+
+
+﻿./make_xios --full --prod --arch singularity --netcdf_lib netcdf4_par -j 8
 
 
 
