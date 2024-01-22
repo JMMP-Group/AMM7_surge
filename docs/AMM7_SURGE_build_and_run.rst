@@ -11,11 +11,19 @@ The method for generating the tidal boundary conditions is given. The method for
 generating the domain file (i.e. the grid and bathymetry) is not given. However
 the tidal boundary conditions and domain configuration file can be downloaded elsewhere.
 
+To run NEMO you need to build NEMO and XIOS with the appropriate library. In my experience building the netcdf libraries is problematic. See e.g. SEAsia wiki notes (https://zenodo.org/record/6483231), Julian Mak's NEMO notes: https://nemo-related.readthedocs.io/en/latest/, or collated guidance in Polton et al (2023). Reproducible and relocatable regional ocean modelling: fundamentals and practices. DOI: https://doi.org/10.5194/gmd-16-1481-2023
+
+Here we will present a solution that uses containers so that the libraries can be more easily controlled. But you have to install Singularity, or equivalent.
+
+A basic "operating system for NEMO" container can be downloaded from  https://github.com/NOC-MSM/CoNES/releases/download/0.0.2/nemo_baseOS.sif, or better still you can follow instructions on the CoNES repository to build you own version. You will place this in your INPUTS directory. You can then open a command line shell in the container and it is like running on a new machine with all the libraries and compilers sorted out.
+
+
+
 
 1) Get NEMO codebase
 ====================
 
-Login to ARCHER ::
+Login to ARCHER2 ::
 
   ssh -l $USER login.archer2.ac.uk
 
@@ -34,6 +42,8 @@ Clone the repository ::
 
   cd $WORK/$USER
   git clone https://github.com/JMMP-Group/AMM7_surge.git $CONFIG
+
+Make sure you are on the correct branch (git checkout -b NAME_OF_BRANCH)
 
 Get the code (you need access to the code.metoffice.gov.uk repo)::
 
