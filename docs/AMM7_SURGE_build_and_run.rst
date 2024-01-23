@@ -183,7 +183,7 @@ Compile NEMO, as before::
   ./makenemo -m singularity -r AMM7_SURGE -j 16
 
 
-Link executables to experiment directory (first remove any old existing placeholder links)::
+Link executables to experiment directory (first remove any old existing placeholder links, as appropriate)::
 
   ln -s $XIOS_DIR/bin/xios_server.exe $EXP/xios_server.exe
   ln -s $CDIR/$CONFIG/BLD/bin/nemo.exe $EXP/nemo
@@ -191,7 +191,7 @@ Link executables to experiment directory (first remove any old existing placehol
 (N.B. sometimes the executable is expected to be called `opa` or `nemo.exe`)
 
 
-Make a link between binaries and where they are expected to be found::
+Make a link between binaries and where they are expected to be found (first remove any old existing placeholder links, as appropriate)::
 
     ln -s $INPUTS/bdydta                   $EXP/bdydta
     ln -s $INPUTS/fluxes                   $EXP/fluxes   # Not needed for no-wind example
