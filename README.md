@@ -1,6 +1,6 @@
 # AMM7_surge
 
-[![DOI](https://zenodo.org/badge/293564924.svg)](https://zenodo.org/badge/latestdoi/293564924)
+NEMO 3.6 release: [![DOI](https://zenodo.org/badge/293564924.svg)](https://zenodo.org/badge/latestdoi/293564924)
 
 A 7km resolution Atlantic Margin Model 2D surge configuration.
 
