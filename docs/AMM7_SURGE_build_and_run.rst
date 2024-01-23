@@ -152,7 +152,7 @@ Clone the configuration repository (and select the appropriate branch)::
 
 Clone the XIOS repository, and copy in the arch files::
 
-  cd TEST
+  cd $WORK
   svn co http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS2/trunk XIOS2
   cd $XIOS_DIR
   cp $GIT_DIR/ARCH/SINGULARITY/xios/* arch/.
