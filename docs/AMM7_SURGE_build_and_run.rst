@@ -211,48 +211,21 @@ Run the configuration::
 
 
 
-4) Generate a domain configuration file
-========================================
-
-Copy a domain file that holds all the coordinates and domain discretisation.
-This files is called ``domain_cfg.nc``. The generation of this file is not
-described here. Obtain the file E.g. ::
-
-  ln -s $INPUTS/domain_cfg.nc $EXP/amm7_surge_domain_cfg.nc
 
 
-5) Generate tidal boundary conditions
-======================================
 
-The tidal boundary conditions were generated from the FES2014 tidal model with a tool called PyBDY.
-The boundary data are stored in ``$INPUTS``
+************************************************
+Generate tidal boundary conditions
+************************************************
 
-See **generate tidal boundaries** page.
-
-
-5) Generate surface forcing
-===========================
-
-The surge model requires 10m wind velocity and atmospheric pressure. As a demonstration some example data is provided that has been processed from the ERA5 dataset. 
+The tidal boundary conditions were generated from the FES2014 tidal model with a tool called `PyBDY<https://github.com/NOC-MSM/pyBDY>`
+The boundary data are stored in ``$INPUTS``. Data are provided for this configuration.
 
 
-7) Run NEMO
-===========
+************************************************
+Generate surface forcing
+************************************************
 
-Finally we are ready to submit a run script job from the experiment directory.
-Edit the runscript.
-
-Submit::
-
-  cd $EXP
-  cp ../EXPREF/runscrupt.slurm .
-  sbatch runscript.slurm
-
-Sea surface height is output every 15 mins.
+The surge model requires 10m wind velocity and atmospheric pressure. As a demonstration some example data is provided that has been processed from the ERA5 dataset. Data were processed using the tool 'pySBC<https://github.com/NOC-MSM/pySBC>`
 
 
-**5 Jan'24. Namelists tested for tide only**
-
-NB I spent a long time debugging an error that was hard to trace when an expected namelist variable (a filename) was not initialised. Made harder since file was not even needed.
-
-NB2: Need to tidy these docs
