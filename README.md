@@ -65,9 +65,9 @@ As noted additional files are required to run the code. These include: a domain 
 Example extraction into INPUTS directory:
 
 ```
-wget https://gws-access.jasmin.ac.uk/public/jmmp/AMM7_surge/domain_cfg.nc -O  INPUTS/amm7_surge_domain_cfg.nc
-wget http://gws-access.jasmin.ac.uk/public/jmmp/AMM7_surge/coordinates.bdy.nc INPUTS/coordinates.bdy.nc
-wget http://gws-access.jasmin.ac.uk/public/jmmp/AMM7_surge/bfr_coef.nc        INPUTS/bfr_coef.nc
+wget https://gws-access.jasmin.ac.uk/public/jmmp/AMM7_surge/domain_cfg.nc     -O INPUTS/amm7_surge_domain_cfg.nc
+wget http://gws-access.jasmin.ac.uk/public/jmmp/AMM7_surge/coordinates.bdy.nc -O INPUTS/coordinates.bdy.nc
+wget http://gws-access.jasmin.ac.uk/public/jmmp/AMM7_surge/bfr_coef.nc        -O INPUTS/bfr_coef.nc
 ```
 ---
 
