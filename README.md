@@ -62,8 +62,9 @@ As noted additional files are required to run the code. These include: a domain 
 |-------------- | -------------- |
 | **Domain_cfg.nc** | https://gws-access.jasmin.ac.uk/public/jmmp/AMM7_surge/domain_cfg.nc |
 | **Open ocean boundary coordinates.bdy.nc** | http://gws-access.jasmin.ac.uk/public/jmmp/AMM7_surge/coordinates.bdy.nc |
-| **Bottom friction map bfr_coef.nc** | http://gws-access.jasmin.ac.uk/public/jmmp/AMM7_surge/bfr_coef.nc |
+| **Bottom friction 2D scaling bfr_coef.nc** | http://gws-access.jasmin.ac.uk/public/jmmp/AMM7_surge/bfr_coef.nc |
 
+In this example, the map of bottom friction 2D scaling coefficients are set to unity.
 
 Example extraction into INPUTS directory:
 
