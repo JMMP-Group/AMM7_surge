@@ -50,9 +50,7 @@ Define some paths ::
 Clone the repository ::
 
   cd $WORK/$USER
-  git clone https://github.com/JMMP-Group/AMM7_surge.git $CONFIG
-
-Make sure you are on the correct branch (git checkout -b feature/v4.0.4)
+  git clone -b feature/v4.0.4 https://github.com/JMMP-Group/AMM7_surge.git $CONFIG
 
 
 Get compiler option files using a shared XIOS2 install::
@@ -144,8 +142,7 @@ Set up some library paths that have been preprepared::
 
 Clone the configuration repository (and select the appropriate branch)::
 
-  git clone https://github.com/JMMP-Group/AMM7_surge.git $CONFIG
-  git checkout -b feature/v4.0.4
+  git clone -b feature/v4.0.4 https://github.com/JMMP-Group/AMM7_surge.git $CONFIG
 
 
 
