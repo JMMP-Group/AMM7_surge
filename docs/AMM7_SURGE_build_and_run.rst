@@ -122,26 +122,73 @@ Sea surface height is output every 15 mins::
 
 There are many reasons why ARCHER2 is not suitable. Here is the workflow to get the code running in a Singularity container, on the assumption that you have already got Singularity installed.
 
+Set up some paths::
+
+  export CONFIG=AMM7_SURGE
+  export WORK=/work/$USER/TEST
+  export WDIR=$WORK/$CONFIG
+  export GIT_DIR=$WORK/$CONFIG
+  export CDIR=$WDIR/NEMO_4.0.4_surge/cfgs # compile location is down here
+  export XIOS_DIR=$WORK/XIOS2
+
 This workflow includes the building of XIOS. The idea is to use a container with a controlled operating system and prebuilt libraries so that you can be confident that the NEMO and XIOS programs will compile::
 
-  cd TEST
+  cd $WORK
   wget https://github.com/NOC-MSM/CoNES/releases/download/0.0.2/nemo_baseOS.sif  # 297Mb
   chmod u+x nemo_baseOS.sif
   singularity shell ./nemo_baseOS.sif
 
-Set up some paths that have been preprepared::
+
+
+Set up some library paths that have been preprepared::
 
   PATH=$PATH:/opt/mpi/install/bin:/opt/hdf5/install/bin
   LD_LIBRARY_PATH=/opt/hdf5/install/lib:$LD_LIBRARY_PATH
 
 
 
-Cd xios
-Cp archfile to arch/
+Clone the configuration repository (and select the appropriate branch)::
+
+  git clone https://github.com/JMMP-Group/AMM7_surge.git $CONFIG
+  git checkout -b feature/v4.0.4
 
 
-﻿./make_xios --full --prod --arch singularity --netcdf_lib netcdf4_par -j 8
 
+
+Clone the XIOS repository, and copy in the arch files::
+
+  cd TEST
+  svn co http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS2/trunk XIOS2
+  cd $XIOS_DIR
+  cp $GIT_DIR/ARCH/SINGULARITY/xios/* arch/.
+
+
+Compile::
+
+  ./make_xios --full --debug --arch singularity --netcdf_lib netcdf4_par -j 8
+
+NB `./make_xios --full --prod --arch singularity --netcdf_lib netcdf4_par -j 8` does not work...
+
+This builds the `$XIOS_DIR/bin/xios_server.exe` executable and libraries, which need to be linked into the NEMO builds.
+
+Edit the NEMO arch files to point to new XIOS builds::
+
+  sed -i "s?XXX_XIOS_DIR_XXX?$XIOS_DIR?g" $GIT_DIR/ARCH/SINGULARITY/nemo/arch-singularity.fcm 
+
+
+
+Copy arch files for NEMO build into place::
+  
+  cp $GIT_DIR/ARCH/SINGULARITY/nemo/*.fcm $CDIR/../arch/.
+
+
+
+Compile NEMO, as before::
+
+  cd $CDIR
+  echo "AMM7_SURGE OCE" >> ref_cfgs.txt
+  cd $CDIR/..
+  ./makenemo -m singularity -r AMM7_SURGE -j 16
 
 
 
