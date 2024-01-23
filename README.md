@@ -49,3 +49,24 @@ In the demonstration examples are given how to run on ARCHER2 and also how to ru
 
 As noted additional files are required to run the code. These include: a domain file, boundary tides, sea level pressure and 10m winds. The are expected to be copied into the INPUTS folder. Example files are downloadable from ...
 
+
+---
+
+
+## Configuration Input Files
+
+|  **Input** | **Download Location** |
+|-------------- | -------------- |
+| **Domain_cfg.nc** | https://gws-access.jasmin.ac.uk/public/jmmp/AMM7_surge/domain_cfg.nc |
+| **Open ocean boundary coordinates.bdy.nc** | http://gws-access.jasmin.ac.uk/public/jmmp/AMM7_surge/coordinates.bdy.nc |
+| **Bottom friction map bfr_coef.nc** | http://gws-access.jasmin.ac.uk/public/jmmp/AMM7_surge/bfr_coef.nc |
+
+---
+
+## Sample Forcing Files
+
+| **Forcing** | **Download Location** |
+|-------------- | ------------------|
+| **Surface boundary** | http://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/SBC/ |
+| **Tide** | https://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/TIDE/ |
+
