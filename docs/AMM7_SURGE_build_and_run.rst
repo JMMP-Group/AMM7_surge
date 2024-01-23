@@ -219,7 +219,7 @@ Generate tidal boundary conditions
 ************************************************
 
 The tidal boundary conditions were generated from the FES2014 tidal model with a tool called ``PyBDY`` <https://github.com/NOC-MSM/pyBDY>
-The boundary data are stored in ``$INPUTS``. Data are provided for this configuration.
+The boundary data are stored in ``$INPUTS``. Data are provided for this configuration. Notes for generating tidal files for other configurations can be found e.g. https://github.com/JMMP-Group/SEVERN-SWOT/wiki/04.-Make-tidal-boundary-conditions
 
 
 ************************************************
