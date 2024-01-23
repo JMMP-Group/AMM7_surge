@@ -32,7 +32,7 @@
 #
 %NCDF_HOME           /opt/netcdf/install
 %HDF5_HOME           /opt/hdf5/install
-%XIOS_HOME           /work/jelt/TEST/XIOS2
+%XIOS_HOME           $XIOS_DIR
 
 %NCDF_INC            -I%NCDF_HOME/include -I%HDF5_HOME/include
 %NCDF_LIB            -L%HDF5_HOME/lib -L%NCDF_HOME/lib -lnetcdff -lnetcdf -lhdf5_hl -lhdf5 -lcurl -lz
