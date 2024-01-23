@@ -17,12 +17,21 @@ Here we will present a solution that uses containers so that the libraries can b
 
 A basic "operating system for NEMO" container can be downloaded from  https://github.com/NOC-MSM/CoNES/releases/download/0.0.2/nemo_baseOS.sif, or better still you can follow instructions on the CoNES repository to build you own version. You will place this in your INPUTS directory. You can then open a command line shell in the container and it is like running on a new machine with all the libraries and compilers sorted out.
 
+The source code in the directory `NEMO_4.0.4_surge` was made available from::
 
+  https://code.metoffice.gov.uk/svn/nemo/NEMO/branches/UKMO/NEMO_4.0.4_surge/
 
+In this processes the source code was stripped back to make a light weight configuration. In previous and future versions the surge configuration will be shared as edits to version controlled official releases. This surge configuration falls between the gaps as NEMO transitioned from svn to git and so a pragmatic solution is given.
 
+Binaries files (best kept separate from git repositories) are available here.
+Download these and copy them into the `INPUTS` directory for the git cloned surge repository.
 
-Get NEMO codebase
-*****************
+The remaining setup instructions are machine dependent. Two examples are given: 1) ARCHER2 HPC; 2) Using a Singularity container.
+
+1) Building and running on ARCHER2 HPC
+======================================
+
+As an example the following process has been used on ARCHER2 using XIOS2 and the CRAY compiler (valid at 22nd Jan 2024)
 
 Login to ARCHER2 ::
 
@@ -38,7 +47,6 @@ Define some paths ::
   export CDIR=$WDIR/NEMO_4.0.4_surge/cfgs # compile location is down here
   export EXP=$CDIR/$CONFIG/EXP_TEST
 
-
 Clone the repository ::
 
   cd $WORK/$USER
@@ -46,27 +54,6 @@ Clone the repository ::
 
 Make sure you are on the correct branch (git checkout -b feature/v4.0.4)
 
-The source code in the directory `NEMO_4.0.4_surge` was made available from::
-
-  https://code.metoffice.gov.uk/svn/nemo/NEMO/branches/UKMO/NEMO_4.0.4_surge/
-
-
-Make a link between binaries and where they are expected to be found::
-
-    mkdir $EXP
-    ln -s $INPUTS/bdydta             $EXP/bdydta
-    ln -s $INPUTS/fluxes             $EXP/fluxes
-    ln -s $INPUTS/coordinates.bdy.nc $EXP/coordinates.bdy.nc
-    ln -s $INPUTS/bfr_coef.nc        $EXP/bfr_coef.nc
-    ln -s $INPUTS/domain_cfg.nc      $EXP/amm7_surge_domain_cfg.nc  
-
-
-The remaining setup instructions are machine dependent. Two examples are given: 1) ARCHER2 HPC; 2) Using a Singularity container.
-
-1) Building and running on ARCHER2 HPC
-======================================
-
-As an example the following process has been used on ARCHER2 using XIOS2 and the CRAY compiler (valid at 5th Jan 2024)
 
 Get compiler option files using a shared XIOS2 install::
 
@@ -81,11 +68,6 @@ Load some modules::
   module load cray-netcdf-hdf5parallel/4.9.0.1
 
 
-Link xios executable to the EXP directory::
-
-  mkdir $EXP
-  ln -s /work/n01/shared/nemo/XIOS2_Cray/bin/xios_server.exe $EXP/xios_server.exe
-
 Compile NEMO::
 
   cd $CDIR
@@ -94,12 +76,23 @@ Compile NEMO::
   ./makenemo -m X86_ARCHER2-Cray_4.2 -r AMM7_SURGE -j 16
 
 
-Link executable to experiment directory ::
+Link executables to experiment directory ::
 
+  mkdir $EXP
+  ln -s /work/n01/shared/nemo/XIOS2_Cray/bin/xios_server.exe $EXP/xios_server.exe
   ln -s $CDIR/$CONFIG/BLD/bin/nemo.exe $EXP/nemo
 
 (N.B. sometimes the executable is expected to be called `opa` or `nemo.exe`)
 
+
+Make a link between binaries and where they are expected to be found::
+
+    mkdir $EXP
+    ln -s $INPUTS/bdydta             $EXP/bdydta
+    ln -s $INPUTS/fluxes             $EXP/fluxes
+    ln -s $INPUTS/coordinates.bdy.nc $EXP/coordinates.bdy.nc
+    ln -s $INPUTS/bfr_coef.nc        $EXP/bfr_coef.nc
+    ln -s $INPUTS/domain_cfg.nc      $EXP/amm7_surge_domain_cfg.nc  
 
 
 Finally we are ready to submit a run script job from the experiment directory.
@@ -130,6 +123,7 @@ Set up some paths::
   export GIT_DIR=$WORK/$CONFIG
   export CDIR=$WDIR/NEMO_4.0.4_surge/cfgs # compile location is down here
   export XIOS_DIR=$WORK/XIOS2
+  export EXP=$CDIR/$CONFIG/EXP_NOWIND_DEMO
 
 This workflow includes the building of XIOS. The idea is to use a container with a controlled operating system and prebuilt libraries so that you can be confident that the NEMO and XIOS programs will compile::
 
@@ -167,9 +161,9 @@ Compile::
 
   ./make_xios --full --debug --arch singularity --netcdf_lib netcdf4_par -j 8
 
-NB `./make_xios --full --prod --arch singularity --netcdf_lib netcdf4_par -j 8` does not work...
+NB ``./make_xios --full --prod --arch singularity --netcdf_lib netcdf4_par -j 8`` does not work...
 
-This builds the `$XIOS_DIR/bin/xios_server.exe` executable and libraries, which need to be linked into the NEMO builds.
+This builds the ``$XIOS_DIR/bin/xios_server.exe`` executable and libraries, which need to be linked into the NEMO builds.
 
 Edit the NEMO arch files to point to new XIOS builds::
 
@@ -189,6 +183,23 @@ Compile NEMO, as before::
   echo "AMM7_SURGE OCE" >> ref_cfgs.txt
   cd $CDIR/..
   ./makenemo -m singularity -r AMM7_SURGE -j 16
+
+
+Link executables to experiment directory ::
+
+  ln -s $XIOS_DIR/bin/xios_server.exe $EXP/xios_server.exe
+  ln -s $CDIR/$CONFIG/BLD/bin/nemo.exe $EXP/nemo
+
+(N.B. sometimes the executable is expected to be called `opa` or `nemo.exe`)
+
+
+Make a link between binaries and where they are expected to be found::
+
+    ln -s $INPUTS/bdydta             $EXP/bdydta
+    ln -s $INPUTS/fluxes             $EXP/fluxes   # Not needed for no-wind example
+    ln -s $INPUTS/coordinates.bdy.nc $EXP/coordinates.bdy.nc
+    ln -s $INPUTS/bfr_coef.nc        $EXP/bfr_coef.nc
+    ln -s $INPUTS/domain_cfg.nc      $EXP/amm7_surge_domain_cfg.nc  
 
 
 
