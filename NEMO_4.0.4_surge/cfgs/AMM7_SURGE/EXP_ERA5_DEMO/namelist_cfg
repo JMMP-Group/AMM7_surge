@@ -133,9 +133,9 @@
 &nam_tide      !   tide parameters                                      (default: OFF)
 !-----------------------------------------------------------------------
    ln_tide     = .true.
-!!   clname(1)     =   'M2'   !  name of constituent
-!!   clname(2)     =   'S2'
-!!   clname(3)     =   'K2'
+   clname(1)     =   'M2'   !  name of constituent
+   clname(2)     =   'S2'
+   clname(3)     =   'K2'
 !   clname(1) ='2N2'
 !   clname(2)='EPS2'
 !   clname(3)='J1'
@@ -170,33 +170,6 @@
 !   clname(32)='SA'
 !   clname(33)='SSA'
 !   clname(34)='T2'
-! consititent matching clare's list
-   clname(1)='Q1'
-   clname(2)='L2'
-   clname(3)='T2'
-   clname(4)='S2'
-   clname(5)='K2'
-   clname(6)='M4'
-! 2MK6                  Missing from FES2014
-! 2MS6
-! 2SM2
-! 3M2S2
-! Lam2
-   clname(7)='O1'
-   clname(8)='M6'
-! MK3
-   clname(9)='MN4'
-! 'MNS2',
-! 'MO3',
-   clname(10)='MS4'
-! MSN2
-   clname(11)='P1'
-   clname(12)='K1'
-   clname(13) ='2N2'
-   clname(14)='MU2'
-   clname(15)='N2'
-   clname(16)='NU2'
-   clname(17)='M2'
 /
 !-----------------------------------------------------------------------
 &nambdy        !  unstructured open boundaries                          (default: OFF)
