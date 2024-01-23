@@ -121,6 +121,7 @@ Set up some paths::
   export WORK=/work/$USER/TEST
   export WDIR=$WORK/$CONFIG
   export GIT_DIR=$WORK/$CONFIG
+  export INPUTS=$WDIR/INPUTS
   export CDIR=$WDIR/NEMO_4.0.4_surge/cfgs # compile location is down here
   export XIOS_DIR=$WORK/XIOS2
   export EXP=$CDIR/$CONFIG/EXP_NOWIND_DEMO
@@ -200,6 +201,13 @@ Make a link between binaries and where they are expected to be found::
     ln -s $INPUTS/coordinates.bdy.nc $EXP/coordinates.bdy.nc
     ln -s $INPUTS/bfr_coef.nc        $EXP/bfr_coef.nc
     ln -s $INPUTS/domain_cfg.nc      $EXP/amm7_surge_domain_cfg.nc  
+
+
+Run the configuration::
+
+  mpirun -n 1 ./nemo : -n 1 ./xios_server.exe
+
+
 
 
 
