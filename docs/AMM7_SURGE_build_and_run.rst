@@ -92,7 +92,7 @@ Make a link between binaries and where they are expected to be found::
     ln -s $INPUTS/fluxes             $EXP/fluxes
     ln -s $INPUTS/coordinates.bdy.nc $EXP/coordinates.bdy.nc
     ln -s $INPUTS/bfr_coef.nc        $EXP/bfr_coef.nc
-    ln -s $INPUTS/domain_cfg.nc      $EXP/amm7_surge_domain_cfg.nc  
+    ln -s $INPUTS/amm7_surge_domain_cfg.nc $EXP/amm7_surge_domain_cfg.nc
 
 
 Finally we are ready to submit a run script job from the experiment directory.
@@ -196,11 +196,11 @@ Link executables to experiment directory ::
 
 Make a link between binaries and where they are expected to be found::
 
-    ln -s $INPUTS/bdydta             $EXP/bdydta
-    ln -s $INPUTS/fluxes             $EXP/fluxes   # Not needed for no-wind example
-    ln -s $INPUTS/coordinates.bdy.nc $EXP/coordinates.bdy.nc
-    ln -s $INPUTS/bfr_coef.nc        $EXP/bfr_coef.nc
-    ln -s $INPUTS/domain_cfg.nc      $EXP/amm7_surge_domain_cfg.nc  
+    ln -s $INPUTS/bdydta                   $EXP/bdydta
+    ln -s $INPUTS/fluxes                   $EXP/fluxes   # Not needed for no-wind example
+    ln -s $INPUTS/coordinates.bdy.nc       $EXP/coordinates.bdy.nc
+    ln -s $INPUTS/bfr_coef.nc              $EXP/bfr_coef.nc
+    ln -s $INPUTS/amm7_surge_domain_cfg.nc $EXP/amm7_surge_domain_cfg.nc
 
 
 Run the configuration::
