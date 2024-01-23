@@ -183,7 +183,7 @@ Compile NEMO, as before::
   ./makenemo -m singularity -r AMM7_SURGE -j 16
 
 
-Link executables to experiment directory ::
+Link executables to experiment directory (first remove any old existing placeholder links)::
 
   ln -s $XIOS_DIR/bin/xios_server.exe $EXP/xios_server.exe
   ln -s $CDIR/$CONFIG/BLD/bin/nemo.exe $EXP/nemo
