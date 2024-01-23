@@ -61,6 +61,14 @@ As noted additional files are required to run the code. These include: a domain 
 | **Open ocean boundary coordinates.bdy.nc** | http://gws-access.jasmin.ac.uk/public/jmmp/AMM7_surge/coordinates.bdy.nc |
 | **Bottom friction map bfr_coef.nc** | http://gws-access.jasmin.ac.uk/public/jmmp/AMM7_surge/bfr_coef.nc |
 
+
+Example extraction into INPUTS directory:
+
+```
+wget https://gws-access.jasmin.ac.uk/public/jmmp/AMM7_surge/domain_cfg.nc -O  INPUTS/amm7_surge_domain_cfg.nc
+wget http://gws-access.jasmin.ac.uk/public/jmmp/AMM7_surge/coordinates.bdy.nc INPUTS/coordinates.bdy.nc
+wget http://gws-access.jasmin.ac.uk/public/jmmp/AMM7_surge/bfr_coef.nc        INPUTS/bfr_coef.nc
+```
 ---
 
 ## Sample Forcing Files
@@ -70,3 +78,22 @@ As noted additional files are required to run the code. These include: a domain 
 | **Surface boundary** | http://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/SBC/ |
 | **Tide** | https://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/TIDE/FES/ |
 
+Example extraction into INPUTS directory:
+
+```
+wget http://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/SBC/ERA5_U10_y2017.nc       INPUTS/fluxes/.
+wget http://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/SBC/ERA5_V10_y2017.nc       INPUTS/fluxes/.
+wget http://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/SBC/ERA5_MSL_y2017.nc       INPUTS/fluxes/.
+wget http://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/SBC/ERA5_LSM.nc             INPUTS/fluxes/.
+wget http://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/SBC/weights_era5_bicubic.nc INPUTS/fluxes/.
+
+wget https://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/TIDE/FES/AMM7_surge_bdytide_rotT_M2_grid_U.nc INPUTS/bdydta/.
+wget https://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/TIDE/FES/AMM7_surge_bdytide_rotT_M2_grid_V.nc INPUTS/bdydta/.
+wget https://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/TIDE/FES/AMM7_surge_bdytide_rotT_M2_grid_T.nc INPUTS/bdydta/.
+wget https://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/TIDE/FES/AMM7_surge_bdytide_rotT_S2_grid_U.nc INPUTS/bdydta/.
+wget https://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/TIDE/FES/AMM7_surge_bdytide_rotT_S2_grid_V.nc INPUTS/bdydta/.
+wget https://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/TIDE/FES/AMM7_surge_bdytide_rotT_S2_grid_T.nc INPUTS/bdydta/.
+wget https://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/TIDE/FES/AMM7_surge_bdytide_rotT_K2_grid_U.nc INPUTS/bdydta/.
+wget https://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/TIDE/FES/AMM7_surge_bdytide_rotT_K2_grid_V.nc INPUTS/bdydta/.
+wget https://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/TIDE/FES/AMM7_surge_bdytide_rotT_K2_grid_T.nc INPUTS/bdydta/.
+```
