@@ -81,19 +81,21 @@ wget http://gws-access.jasmin.ac.uk/public/jmmp/AMM7_surge/bfr_coef.nc        -O
 Example extraction into INPUTS directory:
 
 ```
-wget http://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/SBC/ERA5_U10_y2017.nc       INPUTS/fluxes/.
-wget http://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/SBC/ERA5_V10_y2017.nc       INPUTS/fluxes/.
-wget http://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/SBC/ERA5_MSL_y2017.nc       INPUTS/fluxes/.
-wget http://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/SBC/ERA5_LSM.nc             INPUTS/fluxes/.
-wget http://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/SBC/weights_era5_bicubic.nc INPUTS/fluxes/.
+cd INPUTS/fluxes
+wget http://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/SBC/ERA5_U10_y2017.nc .
+wget http://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/SBC/ERA5_V10_y2017.nc .
+wget http://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/SBC/ERA5_MSL_y2017.nc .
+wget http://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/SBC/ERA5_LSM.nc       .
+wget http://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/SBC/weights_era5_bicubic.nc .
 
-wget https://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/TIDE/FES/AMM7_surge_bdytide_rotT_M2_grid_U.nc INPUTS/bdydta/.
-wget https://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/TIDE/FES/AMM7_surge_bdytide_rotT_M2_grid_V.nc INPUTS/bdydta/.
-wget https://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/TIDE/FES/AMM7_surge_bdytide_rotT_M2_grid_T.nc INPUTS/bdydta/.
-wget https://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/TIDE/FES/AMM7_surge_bdytide_rotT_S2_grid_U.nc INPUTS/bdydta/.
-wget https://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/TIDE/FES/AMM7_surge_bdytide_rotT_S2_grid_V.nc INPUTS/bdydta/.
-wget https://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/TIDE/FES/AMM7_surge_bdytide_rotT_S2_grid_T.nc INPUTS/bdydta/.
-wget https://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/TIDE/FES/AMM7_surge_bdytide_rotT_K2_grid_U.nc INPUTS/bdydta/.
-wget https://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/TIDE/FES/AMM7_surge_bdytide_rotT_K2_grid_V.nc INPUTS/bdydta/.
-wget https://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/TIDE/FES/AMM7_surge_bdytide_rotT_K2_grid_T.nc INPUTS/bdydta/.
+cd INPUTS/bdydta
+wget https://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/TIDE/FES/AMM7_surge_bdytide_rotT_M2_grid_U.nc .
+wget https://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/TIDE/FES/AMM7_surge_bdytide_rotT_M2_grid_V.nc .
+wget https://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/TIDE/FES/AMM7_surge_bdytide_rotT_M2_grid_T.nc .
+wget https://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/TIDE/FES/AMM7_surge_bdytide_rotT_S2_grid_U.nc .
+wget https://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/TIDE/FES/AMM7_surge_bdytide_rotT_S2_grid_V.nc .
+wget https://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/TIDE/FES/AMM7_surge_bdytide_rotT_S2_grid_T.nc .
+wget https://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/TIDE/FES/AMM7_surge_bdytide_rotT_K2_grid_U.nc .
+wget https://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/TIDE/FES/AMM7_surge_bdytide_rotT_K2_grid_V.nc .
+wget https://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/TIDE/FES/AMM7_surge_bdytide_rotT_K2_grid_T.nc .
 ```
