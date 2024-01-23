@@ -8,7 +8,7 @@ The configuration is based on v4.0.4 of the [NEMO](https://www.nemo-ocean.eu) mo
 
 The configuration recipe has be written for the [ARCHER2](https://www.archer2.ac.uk) UK National Supercomputing Service. 
 
-The recipe describes how to configure and run a tides-only example.
+The recipe describes how to configure and run a tides-only and a tide+meteorolgy example.
 
 ---
 
