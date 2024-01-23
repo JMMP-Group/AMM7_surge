@@ -218,7 +218,7 @@ Run the configuration::
 Generate tidal boundary conditions
 ************************************************
 
-The tidal boundary conditions were generated from the FES2014 tidal model with a tool called `PyBDY<https://github.com/NOC-MSM/pyBDY>`
+The tidal boundary conditions were generated from the FES2014 tidal model with a tool called ``PyBDY`` <https://github.com/NOC-MSM/pyBDY>
 The boundary data are stored in ``$INPUTS``. Data are provided for this configuration.
 
 
@@ -226,6 +226,6 @@ The boundary data are stored in ``$INPUTS``. Data are provided for this configur
 Generate surface forcing
 ************************************************
 
-The surge model requires 10m wind velocity and atmospheric pressure. As a demonstration some example data is provided that has been processed from the ERA5 dataset. Data were processed using the tool 'pySBC<https://github.com/NOC-MSM/pySBC>`
+The surge model requires 10m wind velocity and atmospheric pressure. As a demonstration some example data is provided that has been processed from the ERA5 dataset. Data were processed using the tool ``pySBC`` <https://github.com/NOC-MSM/pySBC>
 
 
