@@ -18,14 +18,6 @@ The recipe describes how to configure and run a tides-only example.
 
 A recipe on how to build and run AMM7_surge model.
 
-### EXP_tideonly
-
-An experiment directory for a tide only (FES2014) demonstration simulation.
-
-### EXP_era5
-
-An experiment directory for a tide (FES2014) + surface wind and sea level pressure forced (ERA5) demonstration simulation.
-
 ### INPUTS
 
 A store for external forcing files (e.g. tides, meteorology) and domain configuration file. Also store for boundary condition setup namelist file. *The domain configuration file can be downloaded from elsewhere. The tidal boundaries can be generated from this recipe or downloaded elsewhere*.
@@ -34,10 +26,21 @@ A store for external forcing files (e.g. tides, meteorology) and domain configur
 
 Store for architecture build files.
 
-### MY_SRC
+### NEMO_4.0.4_surge
+
+Parent directory for source code and experiment set up files
+
+### NEMO_4.0.4_surge/cfgs/AMM7_SURGE/MY_SRC
 
 Store for FORTRAN modification to NEMO checkout from NEMO repository.
 
+### NEMO_4.0.4_surge/cfgs/AMM7_SURGE/EXP_NOWIND_DEMO
+
+An experiment directory for a tide only (FES2014) demonstration simulation.
+
+### NEMO_4.0.4_surge/cfgs/AMM7_SURGE/EXP_ERA5_DEMO
+
+An experiment directory for a tide (FES2014) + surface wind and sea level pressure forced (ERA5) demonstration simulation.
 
 ---
 
