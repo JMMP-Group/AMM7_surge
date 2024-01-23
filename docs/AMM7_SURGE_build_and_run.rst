@@ -43,9 +43,8 @@ Define some paths ::
   export WORK=/work/n01/n01
   export WDIR=/work/n01/n01/$USER/$CONFIG
   export INPUTS=$WDIR/INPUTS
-  #export START_FILES=$WDIR/START_FILES
   export CDIR=$WDIR/NEMO_4.0.4_surge/cfgs # compile location is down here
-  export EXP=$CDIR/$CONFIG/EXP_TEST
+  export EXP=$CDIR/$CONFIG/EXP_ERA5_DEMO
 
 Clone the repository ::
 
