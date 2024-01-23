@@ -75,7 +75,7 @@ Compile NEMO::
 
 Link executables to experiment directory ::
 
-  mkdir $EXP
+  cd $EXP
   ln -s /work/n01/shared/nemo/XIOS2_Cray/bin/xios_server.exe $EXP/xios_server.exe
   ln -s $CDIR/$CONFIG/BLD/bin/nemo.exe $EXP/nemo
 
@@ -84,7 +84,7 @@ Link executables to experiment directory ::
 
 Make a link between binaries and where they are expected to be found::
 
-    mkdir $EXP
+    cd $EXP
     ln -s $INPUTS/bdydta             $EXP/bdydta
     ln -s $INPUTS/fluxes             $EXP/fluxes
     ln -s $INPUTS/coordinates.bdy.nc $EXP/coordinates.bdy.nc
