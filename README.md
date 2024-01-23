@@ -68,5 +68,5 @@ As noted additional files are required to run the code. These include: a domain 
 | **Forcing** | **Download Location** |
 |-------------- | ------------------|
 | **Surface boundary** | http://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/SBC/ |
-| **Tide** | https://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/TIDE/ |
+| **Tide** | https://gws-access.jasmin.ac.uk/public/jmmp/AMM7/inputs/TIDE/FES/ |
 
