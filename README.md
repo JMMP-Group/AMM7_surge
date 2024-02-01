@@ -48,7 +48,7 @@ An experiment directory for a tide (FES2014) + surface wind and sea level pressu
 
 To run the AMM7 surge model follow the [AMM7_surge recipe](docs/AMM7_SURGE_build_and_run.rst). This recipe forms a template of how to obtain, compile and run the code.
 
-In the demonstration examples are given how to run on ARCHER2 and also how to run in a Sinularity container (which has been independently tested on a macbook and a linux server).
+In the demonstration examples are given how to run on ARCHER2 and also how to run in a Singularity container (which has been independently tested on a macbook and a linux server).
 
 As noted additional files are required to run the code. These include: a domain file, boundary tides, sea level pressure and 10m winds. The are expected to be copied into the INPUTS folder. Example files are downloadable from ...
 
@@ -63,8 +63,6 @@ As noted additional files are required to run the code. These include: a domain 
 | **Domain_cfg.nc** | https://gws-access.jasmin.ac.uk/public/jmmp/AMM7_surge/domain_cfg.nc |
 | **Open ocean boundary coordinates.bdy.nc** | http://gws-access.jasmin.ac.uk/public/jmmp/AMM7_surge/coordinates.bdy.nc |
 | **Bottom friction 2D scaling bfr_coef.nc** | http://gws-access.jasmin.ac.uk/public/jmmp/AMM7_surge/bfr_coef.nc |
-
-In this example, the map of bottom friction 2D scaling coefficients are set to unity.
 
 Example extraction into INPUTS directory:
 
