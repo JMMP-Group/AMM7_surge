@@ -2,13 +2,13 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10605585.svg)](https://doi.org/10.5281/zenodo.10605585)
 
-A 7km resolution Atlantic Margin Model 2D surge configuration.
+A 7km resolution Atlantic Margin Model 2D surge configuration, based on v4.0.4 of the [NEMO](https://www.nemo-ocean.eu) modelling framework.
 
-The configuration is based on v4.0.4 of the [NEMO](https://www.nemo-ocean.eu) modelling framework.
+The configuration has example demonstrations written for the [ARCHER2](https://www.archer2.ac.uk) UK National Supercomputing Service, or to be run in a Singularity container.
 
-The configuration recipe has be written for the [ARCHER2](https://www.archer2.ac.uk) UK National Supercomputing Service. 
+This release includes a tutorial describing how to configure and run a tides-only and a tide+meteorolgy example.
 
-The recipe describes how to configure and run a tides-only and a tide+meteorolgy example.
+This collaboration was facilitated by the [National Partnership for Ocean Prediction](https://oceanprediction.org/) and the [Joint Marine Modelling Programme](https://www.metoffice.gov.uk/research/approach/collaboration/joint-marine-modelling-programme).
 
 ---
 
