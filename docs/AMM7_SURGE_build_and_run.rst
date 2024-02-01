@@ -222,6 +222,12 @@ Generate surface forcing
 
 The surge model requires 10m wind velocity and atmospheric pressure. As a demonstration some example data is provided that has been processed from the ERA5 dataset. Data were processed using the tool ``pySBC`` <https://github.com/NOC-MSM/pySBC>
 
+************************************************
+2D bottom friction coefficients
+************************************************
+
+This surge configuration uses 2D spatially varying bottom friction coefficients. These were generated following Warder and Piggot (2022) 
+and converted into depth vary drag coefficents. The map is implemented as a scaling on the existing drag coefficient.
 
 ************************************************
 Useful references
@@ -232,3 +238,5 @@ Useful references
 * Collated guidance in Polton et al (2023). Reproducible and relocatable regional ocean modelling: fundamentals and practices. DOI: https://doi.org/10.5194/gmd-16-1481-2023
 * Polton, J. A., Wise, A., O'Neill, C. K., & O'Dea, E. (2020). AMM7-surge: A 7km resolution Atlantic Margin Model surge configuration using NEMOv3.6 (v0.0.9). Zenodo. https://doi.org/10.5281/zenodo.4022310
 * Old notes on generating boundary conditions from previous AMM7_surge release: https://github.com/JMMP-Group/AMM7_surge/blob/v0.0.9/docs/generate_tidal_boundaries.rst
+* Warder and Piggott (2022). Optimal experiment design for a bottom friction parameter estimation problem. GEM - International Journal on Geomathematics  DOI: https://doi.org/10.1007/s13137-022-00196-4
+
