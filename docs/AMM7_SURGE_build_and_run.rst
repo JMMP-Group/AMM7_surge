@@ -6,14 +6,12 @@ Setting up and running the NEMO AMM7 surge model
 ************************************************
 
 This recipe describes how to build NEMO and XIOS appropriate for a surge model.
-For simplicity, in this example meteorological forcing is switched off.
-The method for generating the tidal boundary conditions is given. The method for
-generating the domain file (i.e. the grid and bathymetry) is not given. However
-the tidal boundary conditions and domain configuration file can be downloaded elsewhere.
 
-To run NEMO you need to build NEMO and XIOS with the appropriate library. In my experience building the netcdf libraries is problematic. See e.g. SEAsia wiki notes (https://zenodo.org/record/6483231), Julian Mak's NEMO notes: https://nemo-related.readthedocs.io/en/latest/, or collated guidance in Polton et al (2023). Reproducible and relocatable regional ocean modelling: fundamentals and practices. DOI: https://doi.org/10.5194/gmd-16-1481-2023
+Example domain file (i.e. the grid and bathymetry), tidal and meterology forcing are shared here. Guidance for generating these files can be found elsewhere (see references).
+To run NEMO you need to build NEMO and XIOS with the appropriate libraries. In my experience building the netcdf libraries is problematic.
 
-Here we will present a solution that uses containers so that the libraries can be more easily controlled. But you have to install Singularity, or equivalent.
+Here we present a solution that runs on ARCHER2.ac.uk.
+We also present a solution that uses containers so that the libraries can be more easily controlled. But you have to install Singularity, or equivalent. 
 
 A basic "operating system for NEMO" container can be downloaded from  https://github.com/NOC-MSM/CoNES/releases/download/0.0.2/nemo_baseOS.sif, or better still you can follow instructions on the CoNES repository to build you own version. You will place this in your INPUTS directory. You can then open a command line shell in the container and it is like running on a new machine with all the libraries and compilers sorted out.
 
@@ -23,7 +21,7 @@ The source code in the directory `NEMO_4.0.4_surge` was made available from::
 
 In this processes the source code was stripped back to make a light weight configuration. In previous and future versions the surge configuration will be shared as edits to version controlled official releases. This surge configuration falls between the gaps as NEMO transitioned from svn to git and so a pragmatic solution is given.
 
-Binaries files (best kept separate from git repositories) are available here.
+Binaries files for the example forcings and domain file (best kept separate from git repositories) are available for download - links are on the README.
 Download these and copy them into the `INPUTS` directory for the git cloned surge repository.
 
 The remaining setup instructions are machine dependent. Two examples are given: 1) ARCHER2 HPC; 2) Using a Singularity container.
@@ -225,3 +223,12 @@ Generate surface forcing
 The surge model requires 10m wind velocity and atmospheric pressure. As a demonstration some example data is provided that has been processed from the ERA5 dataset. Data were processed using the tool ``pySBC`` <https://github.com/NOC-MSM/pySBC>
 
 
+************************************************
+Useful references
+************************************************
+
+* SEAsia wiki notes (https://zenodo.org/record/6483231)
+* Julian Mak's NEMO notes: https://nemo-related.readthedocs.io/en/latest/
+* Collated guidance in Polton et al (2023). Reproducible and relocatable regional ocean modelling: fundamentals and practices. DOI: https://doi.org/10.5194/gmd-16-1481-2023
+* Polton, J. A., Wise, A., O'Neill, C. K., & O'Dea, E. (2020). AMM7-surge: A 7km resolution Atlantic Margin Model surge configuration using NEMOv3.6 (v0.0.9). Zenodo. https://doi.org/10.5281/zenodo.4022310
+* Old notes on generating boundary conditions from previous AMM7_surge release: https://github.com/JMMP-Group/AMM7_surge/blob/v0.0.9/docs/generate_tidal_boundaries.rst
