@@ -1,0 +1,54 @@
+# POWER 6 at ECMWF
+#
+# NCDF_INC    netcdf4 include file
+# NCDF_LIB    netcdf4 library
+# XIOS_INC    xios include file    (taken into accound only if key_iomput is activated)
+# XIOS_LIB    xios library         (taken into accound only if key_iomput is activated)
+#
+# FC          Fortran compiler command
+# FCFLAGS     Fortran compiler flags
+# FFLAGS      Fortran 77 compiler flags
+# LD          linker
+# LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
+# FPPFLAGS    pre-processing flags
+# AR          assembler
+# ARFLAGS     assembler flags
+# MK          make  
+# USER_INC    complete list of include files
+# USER_LIB    complete list of libraries to pass to the linker
+# CC          C compiler used to compile conv for AGRIF
+# CFLAGS      compiler flags used with CC
+#
+# Note that:
+#  - unix variables "$..." are accpeted and will be evaluated before calling fcm.
+#  - fcm variables are starting with a % (and not a $)
+#
+#options:
+#
+#debug   : g -C -qinitauto=7FBFFFFF -qfloat=nans -qflttrap=overflow:underflow:zerodivide:invalid:enable
+#portage : -qsource
+#format  : -qfree=f90 -qfixed -qsuffix=f=f90 -qsuffix=cpp=F90
+#others  : -qmaxmem=-1 -qsave -qlargepage 
+#
+%NCDF_INC            -I${NETCDF_INC1}
+%NCDF_LIB            -L${NETCDF_LIB1} -lnetcdff -lnetcdf -L${HDF5_LIB} -lhdf5_hl -lhdf5 -lz
+%XIOS_INC            -I${XIOS_INC}
+%XIOS_LIB            -L${XIOS_LIB} -lxios
+
+%XLF90_LIB           -lxlf90_r
+
+%CPP	             cpp
+%FC                  mpxlf90_r
+%FCFLAGS             -qsuffix=f=f90 -qsuffix=cpp=F90 -qfree=f90 -O3 -qrealsize=8 -qarch=auto -qtune=auto -qinitauto
+%FFLAGS              -qsuffix=f=f90 -qsuffix=cpp=F90 -qfixed    -O3 -qrealsize=8 -qarch=auto -qtune=auto -qinitauto
+%LD                  mpCC_r
+%FPPFLAGS
+%LDFLAGS             -O2
+%AR                  ar  
+%ARFLAGS             -r
+%MK                  gmake 
+%USER_INC            %XIOS_INC %NCDF_INC
+%USER_LIB            %XIOS_LIB %NCDF_LIB %XLF90_LIB
+
+%CC                  xlc
+%CFLAGS              -O -qcpluscmt

@@ -1,0 +1,29 @@
+# platine BULL cluster at french CCRT, http://www-ccrt.cea.fr/fr/moyen_de_calcul/platine.htm
+# NCDF_INC    netcdf include file
+# NCDF_LIB    netcdf library
+# FC          Fortran compiler command
+# FCFLAGS     Fortran compiler flags
+# FFLAGS      Fortran 77 compiler flags
+# LD          linker
+# LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
+# FPPFLAGS    pre-processing flags
+# AR          assembler
+# ARFLAGS     assembler flags
+# MK          make
+# USER_INC    additional include files for the compiler,  e.g. -I<include dir>
+# USER_LIB    additional libraries to pass to the linker, e.g. -l<library>
+
+
+%NCDF_INC        -I/usr/include 
+%NCDF_LIB        -L usr/lib -lnetcdf -lnetcdff
+%FC              mpif90
+%FCFLAGS         -i4 -r8 -automatic -align all -I/opt/mpi/current/include
+%FFLAGS          %FCFLAGS
+%LD              mpif90
+%LDFLAGS
+%FPPFLAGS        -P -C -traditional
+%AR              ar
+%ARFLAGS         rs
+%MK              gmake
+%USER_INC        %NCDF_INC
+%USER_LIB        %NCDF_LIB

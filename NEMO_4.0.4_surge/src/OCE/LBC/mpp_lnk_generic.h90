@@ -1,0 +1,394 @@
+#if defined MULTI
+#   define NAT_IN(k)                cd_nat(k)   
+#   define SGN_IN(k)                psgn(k)
+#   define F_SIZE(ptab)             kfld
+#   define OPT_K(k)                 ,ipf
+#   if defined DIM_2d
+#      define ARRAY_TYPE(i,j,k,l,f)    TYPE(PTR_2D)                , INTENT(inout) ::   ptab(f)
+#      define ARRAY_IN(i,j,k,l,f)      ptab(f)%pt2d(i,j)
+#      define K_SIZE(ptab)             1
+#      define L_SIZE(ptab)             1
+#   endif
+#   if defined DIM_3d
+#      define ARRAY_TYPE(i,j,k,l,f)    TYPE(PTR_3D)                , INTENT(inout) ::   ptab(f)
+#      define ARRAY_IN(i,j,k,l,f)      ptab(f)%pt3d(i,j,k)
+#      define K_SIZE(ptab)             SIZE(ptab(1)%pt3d,3)
+#      define L_SIZE(ptab)             1
+#   endif
+#   if defined DIM_4d
+#      define ARRAY_TYPE(i,j,k,l,f)    TYPE(PTR_4D)                , INTENT(inout) ::   ptab(f)
+#      define ARRAY_IN(i,j,k,l,f)      ptab(f)%pt4d(i,j,k,l)
+#      define K_SIZE(ptab)             SIZE(ptab(1)%pt4d,3)
+#      define L_SIZE(ptab)             SIZE(ptab(1)%pt4d,4)
+#   endif
+#else
+#   define ARRAY_TYPE(i,j,k,l,f)    REAL(wp)                    , INTENT(inout) ::   ARRAY_IN(i,j,k,l,f)
+#   define NAT_IN(k)                cd_nat
+#   define SGN_IN(k)                psgn
+#   define F_SIZE(ptab)             1
+#   define OPT_K(k)                 
+#   if defined DIM_2d
+#      define ARRAY_IN(i,j,k,l,f)   ptab(i,j)
+#      define K_SIZE(ptab)          1
+#      define L_SIZE(ptab)          1
+#   endif
+#   if defined DIM_3d
+#      define ARRAY_IN(i,j,k,l,f)   ptab(i,j,k)
+#      define K_SIZE(ptab)          SIZE(ptab,3)
+#      define L_SIZE(ptab)          1
+#   endif
+#   if defined DIM_4d
+#      define ARRAY_IN(i,j,k,l,f)   ptab(i,j,k,l)
+#      define K_SIZE(ptab)          SIZE(ptab,3)
+#      define L_SIZE(ptab)          SIZE(ptab,4)
+#   endif
+#endif
+
+#if defined MULTI
+   SUBROUTINE ROUTINE_LNK( cdname, ptab, cd_nat, psgn, kfld, kfillmode, pfillval, lsend, lrecv, ihlcom )
+      INTEGER             , INTENT(in   ) ::   kfld        ! number of pt3d arrays
+#else
+   SUBROUTINE ROUTINE_LNK( cdname, ptab, cd_nat, psgn      , kfillmode, pfillval, lsend, lrecv, ihlcom )
+#endif
+      ARRAY_TYPE(:,:,:,:,:)                                        ! array or pointer of arrays on which the boundary condition is applied
+      CHARACTER(len=*)              , INTENT(in   ) ::   cdname      ! name of the calling subroutine
+      CHARACTER(len=1)              , INTENT(in   ) ::   NAT_IN(:)   ! nature of array grid-points
+      REAL(wp)                      , INTENT(in   ) ::   SGN_IN(:)   ! sign used across the north fold boundary
+      INTEGER ,             OPTIONAL, INTENT(in   ) ::   kfillmode   ! filling method for halo over land (default = constant)
+      REAL(wp),             OPTIONAL, INTENT(in   ) ::   pfillval    ! background value (used at closed boundaries)
+      LOGICAL, DIMENSION(4),OPTIONAL, INTENT(in   ) ::   lsend, lrecv  ! communication with other 4 proc
+      INTEGER              ,OPTIONAL, INTENT(in   ) ::   ihlcom        ! number of ranks and rows to be communicated
+      !
+      INTEGER  ::    ji,  jj,  jk,  jl,  jf      ! dummy loop indices
+      INTEGER  ::   ipi, ipj, ipk, ipl, ipf      ! dimension of the input array
+      INTEGER  ::   isize, ishift, ishift2       ! local integers
+      INTEGER  ::   ireq_we, ireq_ea, ireq_so, ireq_no     ! mpi_request id
+      INTEGER  ::   ierr
+      INTEGER  ::   ifill_we, ifill_ea, ifill_so, ifill_no
+      INTEGER  ::   ihl                          ! number of ranks and rows to be communicated 
+      REAL(wp) ::   zland
+      INTEGER , DIMENSION(MPI_STATUS_SIZE)        ::   istat          ! for mpi_isend
+      REAL(wp), DIMENSION(:,:,:,:,:), ALLOCATABLE ::   zsnd_we, zrcv_we, zsnd_ea, zrcv_ea   ! east -west  & west - east  halos
+      REAL(wp), DIMENSION(:,:,:,:,:), ALLOCATABLE ::   zsnd_so, zrcv_so, zsnd_no, zrcv_no   ! north-south & south-north  halos
+      LOGICAL  ::   llsend_we, llsend_ea, llsend_no, llsend_so       ! communication send
+      LOGICAL  ::   llrecv_we, llrecv_ea, llrecv_no, llrecv_so       ! communication receive 
+      LOGICAL  ::   lldo_nfd                                     ! do north pole folding
+      !!----------------------------------------------------------------------
+      !
+      ! ----------------------------------------- !
+      !     0. local variables initialization     !
+      ! ----------------------------------------- !
+      !
+      ipk = K_SIZE(ptab)   ! 3rd dimension
+      ipl = L_SIZE(ptab)   ! 4th    -
+      ipf = F_SIZE(ptab)   ! 5th    -      use in "multi" case (array of pointers)
+      !
+      IF( PRESENT(ihlcom) ) THEN   ;   ihl = ihlcom
+      ELSE                         ;   ihl = 1
+      END IF
+      !
+      IF( narea == 1 .AND. numcom == -1 ) CALL mpp_report( cdname, ipk, ipl, ipf, ld_lbc = .TRUE. )
+      !
+      IF     ( PRESENT(lsend) .AND. PRESENT(lrecv) ) THEN
+         llsend_we = lsend(1)   ;   llsend_ea = lsend(2)   ;   llsend_so = lsend(3)   ;   llsend_no = lsend(4)
+         llrecv_we = lrecv(1)   ;   llrecv_ea = lrecv(2)   ;   llrecv_so = lrecv(3)   ;   llrecv_no = lrecv(4)
+      ELSE IF( PRESENT(lsend) .OR.  PRESENT(lrecv) ) THEN
+         WRITE(ctmp1,*) ' E R R O R : Routine ', cdname, '  is calling lbc_lnk with only one of the two arguments lsend or lrecv'
+         WRITE(ctmp2,*) ' ========== '
+         CALL ctl_stop( ' ', ctmp1, ctmp2, ' ' )
+      ELSE   ! send and receive with every neighbour
+         llsend_we = nbondi ==  1 .OR. nbondi == 0   ! keep for compatibility, should be defined in mppini
+         llsend_ea = nbondi == -1 .OR. nbondi == 0   ! keep for compatibility, should be defined in mppini
+         llsend_so = nbondj ==  1 .OR. nbondj == 0   ! keep for compatibility, should be defined in mppini
+         llsend_no = nbondj == -1 .OR. nbondj == 0   ! keep for compatibility, should be defined in mppini
+         llrecv_we = llsend_we   ;   llrecv_ea = llsend_ea   ;   llrecv_so = llsend_so   ;   llrecv_no = llsend_no
+      END IF
+         
+         
+      lldo_nfd = npolj /= 0                      ! keep for compatibility, should be defined in mppini
+
+      zland = 0._wp                                     ! land filling value: zero by default
+      IF( PRESENT( pfillval ) )   zland = pfillval      ! set land value
+
+      ! define the method we will use to fill the halos in each direction
+      IF(              llrecv_we ) THEN   ;   ifill_we = jpfillmpi
+      ELSEIF(           l_Iperio ) THEN   ;   ifill_we = jpfillperio
+      ELSEIF( PRESENT(kfillmode) ) THEN   ;   ifill_we = kfillmode
+      ELSE                                ;   ifill_we = jpfillcst
+      END IF
+      !
+      IF(              llrecv_ea ) THEN   ;   ifill_ea = jpfillmpi
+      ELSEIF(           l_Iperio ) THEN   ;   ifill_ea = jpfillperio
+      ELSEIF( PRESENT(kfillmode) ) THEN   ;   ifill_ea = kfillmode
+      ELSE                                ;   ifill_ea = jpfillcst
+      END IF
+      !
+      IF(              llrecv_so ) THEN   ;   ifill_so = jpfillmpi
+      ELSEIF(           l_Jperio ) THEN   ;   ifill_so = jpfillperio
+      ELSEIF( PRESENT(kfillmode) ) THEN   ;   ifill_so = kfillmode
+      ELSE                                ;   ifill_so = jpfillcst
+      END IF
+      !
+      IF(              llrecv_no ) THEN   ;   ifill_no = jpfillmpi
+      ELSEIF(           l_Jperio ) THEN   ;   ifill_no = jpfillperio
+      ELSEIF( PRESENT(kfillmode) ) THEN   ;   ifill_no = kfillmode
+      ELSE                                ;   ifill_no = jpfillcst
+      END IF
+      !
+#if defined PRINT_CAUTION
+      !
+      ! ================================================================================== !
+      ! CAUTION: semi-column notation is often impossible because of the cpp preprocessing !
+      ! ================================================================================== !
+      !
+#endif
+      !
+      ! -------------------------------------------------- !
+      !     1. Do east and west MPI exchange if needed     !
+      ! -------------------------------------------------- !
+      !
+      ! Must exchange the whole column (from 1 to jpj) to get the corners if we have no south/north neighbourg
+      isize = ihl * jpj * ipk * ipl * ipf      
+      !
+      ! Allocate local temporary arrays to be sent/received. Fill arrays to be sent
+      IF( llsend_we )   ALLOCATE( zsnd_we(ihl,jpj,ipk,ipl,ipf) )
+      IF( llsend_ea )   ALLOCATE( zsnd_ea(ihl,jpj,ipk,ipl,ipf) )
+      IF( llrecv_we )   ALLOCATE( zrcv_we(ihl,jpj,ipk,ipl,ipf) )
+      IF( llrecv_ea )   ALLOCATE( zrcv_ea(ihl,jpj,ipk,ipl,ipf) )
+      !
+      IF( llsend_we ) THEN   ! copy western side of the inner mpi domain in local temporary array to be sent by MPI
+         ishift = ihl
+         DO jf = 1, ipf   ;   DO jl = 1, ipl   ;   DO jk = 1, ipk   ;   DO jj = 1, jpj   ;   DO ji = 1, ihl
+            zsnd_we(ji,jj,jk,jl,jf) = ARRAY_IN(ishift+ji,jj,jk,jl,jf)   ! ihl + 1 -> 2*ihl
+         END DO   ;   END DO   ;   END DO   ;   END DO   ;   END DO
+      ENDIF
+      !
+      IF(llsend_ea  ) THEN   ! copy eastern side of the inner mpi domain in local temporary array to be sent by MPI
+         ishift = jpi - 2 * ihl
+         DO jf = 1, ipf   ;   DO jl = 1, ipl   ;   DO jk = 1, ipk   ;   DO jj = 1, jpj   ;   DO ji = 1, ihl
+            zsnd_ea(ji,jj,jk,jl,jf) = ARRAY_IN(ishift+ji,jj,jk,jl,jf)   ! jpi - 2*ihl + 1 -> jpi - ihl
+         END DO   ;   END DO   ;   END DO   ;   END DO   ;   END DO
+      ENDIF
+      !
+      IF( ln_timing ) CALL tic_tac(.TRUE.)
+      !
+      ! non-blocking send of the western/eastern side using local temporary arrays
+      IF( llsend_we )   CALL mppsend( 1, zsnd_we(1,1,1,1,1), isize, nowe, ireq_we )
+      IF( llsend_ea )   CALL mppsend( 2, zsnd_ea(1,1,1,1,1), isize, noea, ireq_ea )
+      ! blocking receive of the western/eastern halo in local temporary arrays
+      IF( llrecv_we )   CALL mpprecv( 2, zrcv_we(1,1,1,1,1), isize, nowe )
+      IF( llrecv_ea )   CALL mpprecv( 1, zrcv_ea(1,1,1,1,1), isize, noea )
+      !
+      IF( ln_timing ) CALL tic_tac(.FALSE.)
+      !
+      !
+      ! ----------------------------------- !
+      !     2. Fill east and west halos     !
+      ! ----------------------------------- !
+      !
+      ! 2.1 fill weastern halo
+      ! ----------------------
+      ! ishift = 0                         ! fill halo from ji = 1 to ihl
+      SELECT CASE ( ifill_we )
+      CASE ( jpfillnothing )               ! no filling 
+      CASE ( jpfillmpi   )                 ! use data received by MPI 
+         DO jf = 1, ipf   ;   DO jl = 1, ipl   ;   DO jk = 1, ipk   ;   DO jj = 1, jpj   ;   DO ji = 1, ihl
+            ARRAY_IN(ji,jj,jk,jl,jf) = zrcv_we(ji,jj,jk,jl,jf)   ! 1 -> ihl
+         END DO;   END DO   ;   END DO   ;   END DO   ;   END DO
+      CASE ( jpfillperio )                 ! use east-weast periodicity
+         ishift2 = jpi - 2 * ihl
+         DO jf = 1, ipf   ;   DO jl = 1, ipl   ;   DO jk = 1, ipk   ;   DO jj = 1, jpj   ;   DO ji = 1, ihl
+            ARRAY_IN(ji,jj,jk,jl,jf) = ARRAY_IN(ishift2+ji,jj,jk,jl,jf)
+         END DO;   END DO   ;   END DO   ;   END DO   ;   END DO
+      CASE ( jpfillcopy  )                 ! filling with inner domain values
+         DO jf = 1, ipf                               ! number of arrays to be treated
+            IF( .NOT. NAT_IN(jf) == 'F' ) THEN        ! do nothing for F point
+               DO jl = 1, ipl   ;   DO jk = 1, ipk   ;   DO jj = 1, jpj   ;   DO ji = 1, ihl
+                  ARRAY_IN(ji,jj,jk,jl,jf) = ARRAY_IN(ihl+1,jj,jk,jl,jf)
+               END DO   ;   END DO   ;   END DO   ;   END DO
+            ENDIF
+         END DO
+      CASE ( jpfillcst   )                 ! filling with constant value
+         DO jf = 1, ipf                               ! number of arrays to be treated
+            IF( .NOT. NAT_IN(jf) == 'F' ) THEN        ! do nothing for F point
+               DO jl = 1, ipl   ;   DO jk = 1, ipk   ;   DO jj = 1, jpj   ;   DO ji = 1, ihl
+                  ARRAY_IN(ji,jj,jk,jl,jf) = zland
+               END DO;   END DO   ;   END DO   ;   END DO
+            ENDIF
+         END DO
+      END SELECT
+      !
+      ! 2.2 fill eastern halo
+      ! ---------------------
+      ishift = jpi - ihl                ! fill halo from ji = jpi-ihl+1 to jpi 
+      SELECT CASE ( ifill_ea )
+      CASE ( jpfillnothing )               ! no filling 
+      CASE ( jpfillmpi   )                 ! use data received by MPI 
+         DO jf = 1, ipf   ;   DO jl = 1, ipl   ;   DO jk = 1, ipk   ;   DO jj = 1, jpj   ;   DO ji = 1, ihl
+            ARRAY_IN(ishift+ji,jj,jk,jl,jf) = zrcv_ea(ji,jj,jk,jl,jf)   ! jpi - ihl + 1 -> jpi
+         END DO   ;   END DO   ;   END DO   ;   END DO   ;   END DO
+      CASE ( jpfillperio )                 ! use east-weast periodicity
+         ishift2 = ihl
+         DO jf = 1, ipf   ;   DO jl = 1, ipl   ;   DO jk = 1, ipk   ;   DO jj = 1, jpj   ;   DO ji = 1, ihl
+            ARRAY_IN(ishift+ji,jj,jk,jl,jf) = ARRAY_IN(ishift2+ji,jj,jk,jl,jf)
+         END DO   ;   END DO   ;   END DO   ;   END DO   ;   END DO
+      CASE ( jpfillcopy  )                 ! filling with inner domain values
+         DO jf = 1, ipf   ;   DO jl = 1, ipl   ;   DO jk = 1, ipk   ;   DO jj = 1, jpj   ;   DO ji = 1, ihl
+            ARRAY_IN(ishift+ji,jj,jk,jl,jf) = ARRAY_IN(ishift,jj,jk,jl,jf)
+         END DO   ;   END DO   ;   END DO   ;   END DO   ;   END DO
+      CASE ( jpfillcst   )                 ! filling with constant value
+         DO jf = 1, ipf   ;   DO jl = 1, ipl   ;   DO jk = 1, ipk   ;   DO jj = 1, jpj   ;   DO ji = 1, ihl
+            ARRAY_IN(ishift+ji,jj,jk,jl,jf) = zland
+         END DO;   END DO   ;   END DO   ;   END DO   ;   END DO
+      END SELECT
+      !
+      ! ------------------------------- !
+      !     3. north fold treatment     !
+      ! ------------------------------- !
+      !
+      ! do it before south directions so concerned processes can do it without waiting for the comm with the sourthern neighbor
+      !
+      IF( lldo_nfd .AND. ifill_no /= jpfillnothing ) THEN
+         !
+         SELECT CASE ( jpni )
+         CASE ( 1 )     ;   CALL lbc_nfd( ptab, NAT_IN(:), SGN_IN(:) OPT_K(:) )   ! only 1 northern proc, no mpp
+         CASE DEFAULT   ;   CALL mpp_nfd( ptab, NAT_IN(:), SGN_IN(:) OPT_K(:) )   ! for all northern procs.
+         END SELECT
+         !
+         ifill_no = jpfillnothing  ! force to do nothing for the northern halo as we just done the north pole folding
+         !
+      ENDIF
+      !
+      ! ---------------------------------------------------- !
+      !     4. Do north and south MPI exchange if needed     !
+      ! ---------------------------------------------------- !
+      !
+      IF( llsend_so )   ALLOCATE( zsnd_so(jpi,ihl,ipk,ipl,ipf) )
+      IF( llsend_no )   ALLOCATE( zsnd_no(jpi,ihl,ipk,ipl,ipf) )
+      IF( llrecv_so )   ALLOCATE( zrcv_so(jpi,ihl,ipk,ipl,ipf) )
+      IF( llrecv_no )   ALLOCATE( zrcv_no(jpi,ihl,ipk,ipl,ipf) )
+      !
+      isize = jpi * ihl * ipk * ipl * ipf      
+
+      ! allocate local temporary arrays to be sent/received. Fill arrays to be sent
+      IF( llsend_so ) THEN   ! copy sourhern side of the inner mpi domain in local temporary array to be sent by MPI
+         ishift = ihl
+         DO jf = 1, ipf   ;   DO jl = 1, ipl   ;   DO jk = 1, ipk   ;   DO jj = 1, ihl   ;   DO ji = 1, jpi
+            zsnd_so(ji,jj,jk,jl,jf) = ARRAY_IN(ji,ishift+jj,jk,jl,jf)   ! ihl+1 -> 2*ihl
+         END DO   ;   END DO   ;   END DO   ;   END DO   ;   END DO
+      ENDIF
+      !
+      IF( llsend_no ) THEN   ! copy eastern side of the inner mpi domain in local temporary array to be sent by MPI
+         ishift = jpj - 2 * ihl
+         DO jf = 1, ipf   ;   DO jl = 1, ipl   ;   DO jk = 1, ipk   ;   DO jj = 1, ihl   ;   DO ji = 1, jpi
+            zsnd_no(ji,jj,jk,jl,jf) = ARRAY_IN(ji,ishift+jj,jk,jl,jf)   ! jpj-2*ihl+1 -> jpj-ihl
+         END DO   ;   END DO   ;   END DO   ;   END DO   ;   END DO
+      ENDIF
+      !
+      IF( ln_timing ) CALL tic_tac(.TRUE.)
+      !
+      ! non-blocking send of the southern/northern side
+      IF( llsend_so )   CALL mppsend( 3, zsnd_so(1,1,1,1,1), isize, noso, ireq_so )
+      IF( llsend_no )   CALL mppsend( 4, zsnd_no(1,1,1,1,1), isize, nono, ireq_no )
+      ! blocking receive of the southern/northern halo
+      IF( llrecv_so )   CALL mpprecv( 4, zrcv_so(1,1,1,1,1), isize, noso )
+      IF( llrecv_no )   CALL mpprecv( 3, zrcv_no(1,1,1,1,1), isize, nono )
+      !
+      IF( ln_timing ) CALL tic_tac(.FALSE.)
+      !
+      ! ------------------------------------- !
+      !     5. Fill south and north halos     !
+      ! ------------------------------------- !
+      !
+      ! 5.1 fill southern halo
+      ! ----------------------
+      ! ishift = 0                         ! fill halo from jj = 1 to ihl
+      SELECT CASE ( ifill_so )
+      CASE ( jpfillnothing )               ! no filling 
+      CASE ( jpfillmpi   )                 ! use data received by MPI 
+         DO jf = 1, ipf   ;   DO jl = 1, ipl   ;   DO jk = 1, ipk   ;   DO jj = 1, ihl   ;   DO ji = 1, jpi
+            ARRAY_IN(ji,jj,jk,jl,jf) = zrcv_so(ji,jj,jk,jl,jf)   ! 1 -> ihl
+         END DO;   END DO   ;   END DO   ;   END DO   ;   END DO
+      CASE ( jpfillperio )                 ! use north-south periodicity
+         ishift2 = jpj - 2 * ihl
+         DO jf = 1, ipf   ;   DO jl = 1, ipl   ;   DO jk = 1, ipk   ;   DO jj = 1, ihl   ;   DO ji = 1, jpi
+            ARRAY_IN(ji,jj,jk,jl,jf) = ARRAY_IN(ji,ishift2+jj,jk,jl,jf)
+         END DO;   END DO   ;   END DO   ;   END DO   ;   END DO
+      CASE ( jpfillcopy  )                 ! filling with inner domain values
+         DO jf = 1, ipf                               ! number of arrays to be treated
+            IF( .NOT. NAT_IN(jf) == 'F' ) THEN        ! do nothing for F point
+               DO jl = 1, ipl   ;   DO jk = 1, ipk   ;   DO jj = 1, ihl   ;   DO ji = 1, jpi
+                  ARRAY_IN(ji,jj,jk,jl,jf) = ARRAY_IN(ji,ihl+1,jk,jl,jf)
+               END DO   ;   END DO   ;   END DO   ;   END DO
+            ENDIF
+         END DO
+      CASE ( jpfillcst   )                 ! filling with constant value
+         DO jf = 1, ipf                               ! number of arrays to be treated
+            IF( .NOT. NAT_IN(jf) == 'F' ) THEN        ! do nothing for F point
+               DO jl = 1, ipl   ;   DO jk = 1, ipk   ;   DO jj = 1, ihl   ;   DO ji = 1, jpi 
+                  ARRAY_IN(ji,jj,jk,jl,jf) = zland
+               END DO;   END DO   ;   END DO   ;   END DO
+            ENDIF
+         END DO
+      END SELECT
+      !
+      ! 5.2 fill northern halo
+      ! ----------------------
+      ishift = jpj - ihl                ! fill halo from jj = jpj-ihl+1 to jpj 
+      SELECT CASE ( ifill_no )
+      CASE ( jpfillnothing )               ! no filling 
+      CASE ( jpfillmpi   )                 ! use data received by MPI 
+         DO jf = 1, ipf   ;   DO jl = 1, ipl   ;   DO jk = 1, ipk   ;   DO jj = 1, ihl   ;   DO ji = 1, jpi
+            ARRAY_IN(ji,ishift+jj,jk,jl,jf) = zrcv_no(ji,jj,jk,jl,jf)   ! jpj-ihl+1 -> jpj
+         END DO   ;   END DO   ;   END DO   ;   END DO   ;   END DO
+      CASE ( jpfillperio )                 ! use north-south periodicity
+         ishift2 = ihl
+         DO jf = 1, ipf   ;   DO jl = 1, ipl   ;   DO jk = 1, ipk   ;   DO jj = 1, ihl   ;   DO ji = 1, jpi
+            ARRAY_IN(ji,ishift+jj,jk,jl,jf) = ARRAY_IN(ji,ishift2+jj,jk,jl,jf)
+         END DO;   END DO   ;   END DO   ;   END DO   ;   END DO
+      CASE ( jpfillcopy  )                 ! filling with inner domain values
+         DO jf = 1, ipf   ;   DO jl = 1, ipl   ;   DO jk = 1, ipk   ;   DO jj = 1, ihl   ;   DO ji = 1, jpi
+            ARRAY_IN(ji,ishift+jj,jk,jl,jf) = ARRAY_IN(ji,ishift,jk,jl,jf)
+         END DO;   END DO   ;   END DO   ;   END DO   ;   END DO
+      CASE ( jpfillcst   )                 ! filling with constant value
+         DO jf = 1, ipf   ;   DO jl = 1, ipl   ;   DO jk = 1, ipk   ;   DO jj = 1, ihl   ;   DO ji = 1, jpi
+            ARRAY_IN(ji,ishift+jj,jk,jl,jf) = zland
+         END DO;   END DO   ;   END DO   ;   END DO   ;   END DO
+      END SELECT
+      !
+      ! -------------------------------------------- !
+      !     6. deallocate local temporary arrays     !
+      ! -------------------------------------------- !
+      !
+      IF( llsend_we ) THEN
+         CALL mpi_wait(ireq_we, istat, ierr )
+         DEALLOCATE( zsnd_we )
+      ENDIF
+      IF( llsend_ea )  THEN
+         CALL mpi_wait(ireq_ea, istat, ierr )
+         DEALLOCATE( zsnd_ea )
+      ENDIF
+      IF( llsend_so ) THEN
+         CALL mpi_wait(ireq_so, istat, ierr )
+         DEALLOCATE( zsnd_so )
+      ENDIF
+      IF( llsend_no ) THEN
+         CALL mpi_wait(ireq_no, istat, ierr )
+         DEALLOCATE( zsnd_no )
+      ENDIF
+      !
+      IF( llrecv_we )   DEALLOCATE( zrcv_we )
+      IF( llrecv_ea )   DEALLOCATE( zrcv_ea )
+      IF( llrecv_so )   DEALLOCATE( zrcv_so )
+      IF( llrecv_no )   DEALLOCATE( zrcv_no )
+      !
+   END SUBROUTINE ROUTINE_LNK
+
+#undef ARRAY_TYPE
+#undef NAT_IN
+#undef SGN_IN
+#undef ARRAY_IN
+#undef K_SIZE
+#undef L_SIZE
+#undef F_SIZE
+#undef OPT_K

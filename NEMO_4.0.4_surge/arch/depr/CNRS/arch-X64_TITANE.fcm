@@ -1,0 +1,28 @@
+# titane BULL at french CCRT, http://www-ccrt.cea.fr/fr/moyen_de_calcul/titane.htm
+# NCDF_INC    netcdf include file
+# NCDF_LIB    netcdf library
+# FC          Fortran compiler command
+# FCFLAGS     Fortran compiler flags
+# FFLAGS      Fortran 77 compiler flags
+# LD          linker
+# LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
+# FPPFLAGS    pre-processing flags
+# AR          assembler
+# ARFLAGS     assembler flags
+# MK          make
+# USER_INC    additional include files for the compiler,  e.g. -I<include dir>
+# USER_LIB    additional libraries to pass to the linker, e.g. -l<library>
+
+%NCDF_INC            -I$NETCDF_INC_DIR
+%NCDF_LIB            -L$NETCDF_LIB_DIR -lnetcdff -lnetcdf
+%FC                  mpif90 -c -cpp
+%FCFLAGS             -i4 -r8 -DCPP_PARA -O3 -automatic -align all
+%FFLAGS              %FCFLAGS
+%LD                  mpif90
+%LDFLAGS
+%FPPFLAGS            -P -C -traditional
+%AR                  ar
+%ARFLAGS             rs
+%MK                  gmake
+%USER_INC            %NCDF_INC
+%USER_LIB            %NCDF_LIB

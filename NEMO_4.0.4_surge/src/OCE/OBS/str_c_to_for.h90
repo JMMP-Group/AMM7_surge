@@ -1,0 +1,39 @@
+   !!----------------------------------------------------------------------
+   !! NEMO/OCE 4.0 , NEMO Consortium (2018)
+   !! $Id$
+   !! Software governed by the CeCILL license (see ./LICENSE)
+   !!----------------------------------------------------------------------
+
+   SUBROUTINE str_c_to_for( cd_str )
+      !!---------------------------------------------------------------------
+      !!   
+      !!                     *** ROUTINE str_c_to_for ***
+      !! 
+      !! ** Purpose : Loop over a string and replace all non-printable
+      !!              ASCII characters with spaces assuming English 
+      !!              characters only
+      !!
+      !! ** Method  : Loop over a string and replace all non-printable
+      !!              ASCII characters with spaces assuming English 
+      !!              characters only
+      !!
+      !! ** Action  : 
+      !! 
+      !! History :  
+      !!        ! : 06-05 (K. Mogensen) Original
+      !!        ! : 06-05 (A. Vidard) Cleaning up
+      !!        ! : 06-10 (A. Weaver) More cleaning
+      !!---------------------------------------------------------------------
+      !! * Arguments
+      CHARACTER(LEN=*), INTENT(INOUT) :: cd_str
+
+      !! * Local declarations
+      INTEGER :: &
+         & ji
+
+      DO ji = 1, LEN( cd_str )
+         IF (     ( IACHAR( cd_str(ji:ji) ) > 128 ) &
+            & .OR.( IACHAR( cd_str(ji:ji) ) < 32  ) ) cd_str(ji:ji) = ' '
+      END DO
+
+   END SUBROUTINE str_c_to_for

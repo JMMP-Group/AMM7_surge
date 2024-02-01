@@ -1,0 +1,22 @@
+=head1 NAME
+
+fcm delete (del, remove, rm)
+
+=head1 SYNOPSIS
+
+    fcm delete [options] [args]
+
+=head1 OPTIONS
+
+=over 4
+
+=item -c [--check]
+
+Check for any files or directories reported by "L<svn|svn> status" as missing
+and schedule them for removal.
+
+=back
+
+For other options, see output of "L<svn|svn> help delete".
+
+=cut

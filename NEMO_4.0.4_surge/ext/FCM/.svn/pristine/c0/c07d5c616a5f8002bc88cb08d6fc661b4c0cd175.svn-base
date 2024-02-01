@@ -1,0 +1,35 @@
+.\" Process this file with
+.\" groff -man -Tascii fcm.1
+.\"
+.TH fcm 1 "" "" "User Commands"
+.SH NAME
+fcm - command line client for the Flexible Configuration Management system
+.SH SYNOPSIS
+.B fcm
+.I command
+[
+.I options
+] [
+.I args
+]
+.SH OVERVIEW
+.B fcm
+is the command line client for code management commands, the extract system and
+the build system of the Flexible Configuration Management (FCM) system.
+For full detail of the system, please refer to the FCM user guide, which you
+should receive with this distribution in both HTML and PDF formats.
+.PP
+Run "fcm help" to access the built-in tool documentation.
+.SH AUTHOR
+FCM Team <fcm-team@metoffice.gov.uk>.
+Please feedback any bug reports or feature requests to us by e-mail.
+.SH COPYRIGHT
+British Crown Copyright \(co Met Office. All rights reserved.
+.PP
+You can use this release of
+.B FCM
+freely under the terms of the FCM LICENSE,
+which you should receive with this distribution.
+.SH SEE ALSO
+.BR svn (1),
+.BR perl (1)

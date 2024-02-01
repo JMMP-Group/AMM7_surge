@@ -1,0 +1,29 @@
+# IBM POWER6  UKMO
+# NCDF_INC    netcdf include file
+# NCDF_LIB    netcdf library
+# FC          Fortran compiler command
+# FCFLAGS     Fortran compiler flags
+# FFLAGS      Fortran 77 compiler flags
+# LD          linker
+# LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
+# FPPFLAGS    pre-processing flags
+# AR          assembler
+# ARFLAGS     assembler flags
+# MK          make
+# USER_INC    additional include files for the compiler,  e.g. -I<include dir>
+# USER_LIB    additional libraries to pass to the linker, e.g. -l<library>
+
+
+%NCDF_INC            -I/opt/netcdf/netcdf-3.6.0-p1_ec/include
+%NCDF_LIB            -L /opt/netcdf/netcdf-3.6.0-p1_ec/lib -lnetcdf
+%FC                  mpxlf90_r
+%FCFLAGS             -qrealsize=8 -qextname -qsuffix=f=f90 -qarch=pwr6 -NS32768 -I/opt/netcdf-3.6.0-p1_ex/include -qxflag=p6div:p6divmsg -g -O3 -qnostrict 
+%FFLAGS              -qrealsize=8 -qextname -qsuffix=f=f90 -qarch=pwr6 -NS32768 -I/opt/netcdf-3.6.0-p1_ex/include -qxflag=p6div:p6divmsg -g -O3 -qnostrict 
+%LD                  mpxlf90_r
+%LDFLAGS             -L /opt/netcdf/netcdf-3.6.0-p1_ec/lib -lnetcdf -O3 -L/projects/um1/lib -lsig -O3 -L MASS
+%FPPFLAGS            -E -P -traditional -I/usr/lpp/ppe.poe/include/thread64
+%AR                  ar
+%ARFLAGS             rs
+%MK                  gmake
+%USER_INC            %NCDF_INC
+%USER_LIB            %NCDF_LIB

@@ -1,0 +1,59 @@
+   !!----------------------------------------------------------------------
+   !! NEMO/OCE 4.0 , NEMO Consortium (2018)
+   !! $Id$
+   !! Software governed by the CeCILL license (see ./LICENSE)
+   !!----------------------------------------------------------------------
+
+   LOGICAL FUNCTION linquad( px, py, pxv, pyv )
+      !!----------------------------------------------------------------------
+      !!                    ***  FUNCTION linquad ***
+      !!
+      !! ** Purpose : Determine whether a point P(x,y) lies within or on the
+      !!              boundary of a quadrangle (ABCD) of any shape on a plane.
+      !!
+      !! ** Method  : Check if the vectorial products PA x PC, PB x PA, 
+      !!              PC x PD, and PD x PB are all negative.
+      !!
+      !! ** Action  : 
+      !!
+      !! History :
+      !!        !  2001-11  (N. Daget, A. Weaver)
+      !!        !  2006-08  (A. Weaver) NEMOVAR migration
+      !!        !  2006-10  (A. Weaver) Cleanup
+      !!----------------------------------------------------------------------
+
+      !! * Arguments
+      REAL(KIND=wp), INTENT(IN) :: px        ! (lon) of the point P(x,y) 
+      REAL(KIND=wp), INTENT(IN) :: py        ! (lat) of the point P(x,y)               
+      REAL(KIND=wp), DIMENSION(4), INTENT(IN) :: &
+         & pxv,  &                  ! (lon, lat) of the surrounding cell
+         & pyv                     
+  
+      !! * Local declarations
+      REAL(KIND=wp) :: zst1
+      REAL(KIND=wp) :: zst2
+      REAL(KIND=wp) :: zst3
+      REAL(KIND=wp) :: zst4
+
+      !-----------------------------------------------------------------------
+      ! Test to see if the point is within the cell
+      !-----------------------------------------------------------------------
+      linquad = .FALSE.
+      zst1 =   ( px - pxv(1) ) * ( py - pyv(4) ) &
+         &   - ( py - pyv(1) ) * ( px - pxv(4) )
+      IF ( zst1 <= 0.0 ) THEN
+         zst2 =   ( px - pxv(4) ) * ( py - pyv(3) ) &
+         &   - ( py - pyv(4) ) * ( px - pxv(3) )
+         IF ( zst2 <= 0.0 ) THEN
+            zst3 =   ( px - pxv(3) ) * ( py - pyv(2) ) &
+               &   - ( py - pyv(3) ) * ( px - pxv(2) )
+            IF ( zst3 <= 0.0) THEN
+               zst4 =   ( px - pxv(2) ) * ( py - pyv(1) ) &
+                  &   - ( py - pyv(2) ) * ( px - pxv(1) )
+               IF ( zst4 <= 0.0 ) linquad = .TRUE.
+            ENDIF
+         ENDIF
+      ENDIF
+
+   END FUNCTION linquad
+

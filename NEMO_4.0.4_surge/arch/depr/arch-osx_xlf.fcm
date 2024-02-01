@@ -1,0 +1,29 @@
+# generic xlf compiler options for OSX (ppc)
+# NCDF_INC    netcdf include file
+# NCDF_LIB    netcdf library
+# FC          Fortran compiler command
+# FCFLAGS     Fortran compiler flags
+# FFLAGS      Fortran 77 compiler flags
+# LD          linker
+# LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
+# FPPFLAGS    pre-processing flags
+# AR          assembler
+# ARFLAGS     assembler flags
+# MK          make
+# USER_INC    additional include files for the compiler,  e.g. -I<include dir>
+# USER_LIB    additional libraries to pass to the linker, e.g. -l<library>
+
+
+%NCDF_INC      -I/usr/local/XLF/netcdf/include
+%NCDF_LIB      -L/usr/local/XLF/netcdf/lib -lnetcf
+%FC            xlf90
+%FCFLAGS       -O3 -qrealsize=8 -qextname -qsuffix=f=f90 -qsuffix=cpp=F90
+%FFLAGS        -O3 -qrealsize=8 -qextname -qsuffix=f=f -qsuffix=cpp=F
+%FPPFLAGS        -P -C -traditional
+%LD            xlf90
+%LDFLAGS
+%AR            ar
+%ARFLAGS       rs
+%MK            make
+%USER_INC      %NCDF_INC
+%USER_LIB      %NCDF_LIB 
