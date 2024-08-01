@@ -80,11 +80,11 @@ Link executables to experiment directory (first remove any old existing placehol
 (N.B. sometimes the executable is expected to be called `opa` or `nemo.exe`)
 
 
-Populate the INPUTS directory according to the REAME. Then make a link between binaries and where they are expected to be found (first remove any old existing placeholder links, as appropriate)::
+Populate the INPUTS directory according to the README. Then make a link between binaries and where they are expected to be found (first remove any old existing placeholder links, as appropriate)::
 
     cd $EXP
     ln -s /work/n01/n01/shared/CO_AMM7/TIDE/FES               $EXP/bdydta
-    ln -s /work/n01/n01/shared/CO_AMM15/INPUTS/forcing/era5   $EXP/fluxes
+    ln -s /work/n01/n01/shared/AMM7-INPUTS-OLD/SBC/ATM	      $EXP/fluxes
     ln -s $INPUTS/coordinates.bdy.nc $EXP/coordinates.bdy.nc
     ln -s $INPUTS/bfr_coef.nc        $EXP/bfr_coef.nc
     ln -s $INPUTS/amm7_surge_domain_cfg.nc $EXP/amm7_surge_domain_cfg.nc
