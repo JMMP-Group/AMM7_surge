@@ -1,5 +1,18 @@
 # AMM7_surge
 
+**BRANCH feature/v4.0.4_fes2014_harmo HAS UPDATES TO THE DOI RELEASE BELOW THAT ADD IN HARMONIC ANALYSIS AND A TREATMENT OF FES TIDAL CONSTITUENT NAMES. THE DOI RELEASE IS THE OPERATIONAL VERSION AND THE CURRENT END POINT OF feature/v4.0.4.**
+
+**I WOULD LIKE TO MERGE THIS BRANCH BACK INTO feature/v4.0.4 WITH A CLEAR OPTION TO RUN OPERATIONAL VERSION OR WITH THESE INCREMENTS.
+THE DIFFERENCES ARE**:
+
+- MY_SRC/ (extra files)
+- cpp_AMM7_SURGE.fcm (extra keys)
+- EXP_harmo (a new experiment directory with new namelists and xml files)
+
+**AT THE PRESENT TIME, THE SCRIPTS AND HOW-TO, ON THIS BRANCH, STILL POINT TO FEATURE/V4.0.4 . IDEALLY THEY WOULD POINT TO THIS BRANCH BUT SINCE THIS BRANCH WILL PROBABLY BE MERGED BACK INTO feature/v4.0.4, KEEPING IT AS-IS MIGHT BE SIMPLER.**
+
+---------------
+
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10605585.svg)](https://doi.org/10.5281/zenodo.10605585)
 
 A 7km resolution Atlantic Margin Model 2D surge configuration, based on v4.0.4 of the [NEMO](https://www.nemo-ocean.eu) modelling framework.
