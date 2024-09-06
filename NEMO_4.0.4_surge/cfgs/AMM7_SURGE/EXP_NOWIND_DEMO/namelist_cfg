@@ -21,7 +21,7 @@
 !-----------------------------------------------------------------------
    cn_exp      =  "AMMSRG_no"  !  experience name
    nn_it000    =       1   !  first time step
-   nn_itend    =    7008 ! 52560   !  last  time step (std 1 day = 192)
+   nn_itend    =    192 ! 7008 ! 52560   !  last  time step (std 1 day = 192)
    nn_date0    =  20170101 !  date at nit_0000 (format yyyymmdd) used if ln_rstart=F or (ln_rstart=T and nn_rstctl=0 or 1)
    nn_leapy    =       1   !  Leap year calendar (1) or not (0)
    ln_rstart   =  .false.  !  start from rest (F) or from a restart file (T)
@@ -135,7 +135,7 @@
    ln_tide     = .true.
    clname(1)     =   'M2'   !  name of constituent
    clname(2)     =   'S2'
-   clname(3)     =   'K2'
+!   clname(3)     =   'K2'
 !   clname(1) ='2N2'
 !   clname(2)='EPS2'
 !   clname(3)='J1'
@@ -175,6 +175,8 @@
 &nambdy        !  unstructured open boundaries                          (default: OFF)
 !-----------------------------------------------------------------------
    ln_bdy     = .true.
+   ln_coords_file = .true.               !  =T : read bdy coordinates from file    
+      cn_coords_file = 'bdydta/coordinates.bdy.nc'  !  bdy coordinates files
    nb_bdy         = 1                    !  number of open boundary sets
    cn_dyn2d       = 'flather'            !
    nn_dyn2d_dta   =  2                   !  = 0, bdy data are equal to the initial state
@@ -189,7 +191,7 @@
 !-----------------------------------------------------------------------
 &nambdy_tide   !  tidal forcing at open boundaries
 !-----------------------------------------------------------------------
-   filtide      = 'bdydta/AMM7_surge_bdytide_rotT_'         !  file name root of tidal forcing files
+   filtide      = 'bdydta/AMM7_surge_bdytide_FES2014_'         !  file name root of tidal forcing files
    ln_bdytide_2ddta = .false. 
 /
 !!======================================================================
