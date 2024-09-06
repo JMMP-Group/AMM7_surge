@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+
+    <!-- 
+============================================================================================================
+=                                           output files definition                                        =
+=                                            Define your own files                                         =
+=                                         put the variables you want...                                    =
+============================================================================================================
+    -->
+    
+    <file_definition type="one_file" name="@expname@_@freq@_@startdate@_@enddate@" sync_freq="10d" min_digits="4">
+    
+      <file_group id="1ts" output_freq="1ts"  output_level="10" enabled=".TRUE."/> <!-- 1 time step files -->
+
+<!--
+      <file_group id="1h" output_freq="1h"  output_level="10" enabled=".TRUE."> 
+  	<file id="file19" name_suffix="_SSH" description="ocean T grid variables" >
+    	 <field field_ref="ssh"          name="zos"   />
+  	</file>
+      </file_group>
+-->
+
+      <file_group id="tidal_harmonics" output_freq="1h"  output_level="10" enabled=".TRUE."> 
+        <file id="tidalanalysis.grid_T" name="harmonic_grid_T" description="ocean T grid variables"  enabled=".TRUE.">
+
+         <!-- tidal composante diaharmana SSH -->
+	  <field field_ref="M2amp_ssh"         name="M2amp_ssh"       operation="instant" enabled=".TRUE." />
+          <field field_ref="M2pha_ssh"       name="M2pha_ssh"     operation="instant" enabled=".TRUE." />
+          <field field_ref="S2amp_ssh"         name="S2amp_ssh"       operation="instant" enabled=".TRUE." />
+          <field field_ref="S2pha_ssh"       name="S2pha_ssh"     operation="instant" enabled=".TRUE." />
+          <field field_ref="N2amp_ssh"         name="N2amp_ssh"       operation="instant" enabled=".TRUE." />
+          <field field_ref="N2pha_ssh"       name="N2pha_ssh"     operation="instant" enabled=".TRUE." />
+          <field field_ref="K1amp_ssh"         name="K1amp_ssh"       operation="instant" enabled=".TRUE." />
+          <field field_ref="K1pha_ssh"       name="K1pha_ssh"     operation="instant" enabled=".TRUE." />
+          <field field_ref="O1amp_ssh"         name="O1amp_ssh"       operation="instant" enabled=".TRUE." />
+          <field field_ref="O1pha_ssh"       name="O1pha_ssh"     operation="instant" enabled=".TRUE." />
+          <field field_ref="Q1amp_ssh"         name="Q1amp_ssh"       operation="instant" enabled=".TRUE." />
+          <field field_ref="Q1pha_ssh"       name="Q1pha_ssh"     operation="instant" enabled=".TRUE." />
+          <field field_ref="K2amp_ssh"         name="K2amp_ssh"       operation="instant" enabled=".TRUE." />
+          <field field_ref="K2pha_ssh"       name="K2pha_ssh"     operation="instant" enabled=".TRUE." />
+          <field field_ref="P1amp_ssh"         name="P1amp_ssh"       operation="instant" enabled=".TRUE." />
+          <field field_ref="P1pha_ssh"       name="P1pha_ssh"     operation="instant" enabled=".TRUE." />
+          <field field_ref="M4amp_ssh"         name="M4amp_ssh"       operation="instant" enabled=".TRUE." />
+          <field field_ref="M4pha_ssh"       name="M4pha_ssh"     operation="instant" enabled=".TRUE." />
+          <field field_ref="MS4amp_ssh"         name="MS4amp_ssh"       operation="instant" enabled=".TRUE." />
+          <field field_ref="MS4pha_ssh"       name="MS4pha_ssh"     operation="instant" enabled=".TRUE." />
+          <field field_ref="MN4amp_ssh"         name="MN4amp_ssh"       operation="instant" enabled=".TRUE." />
+          <field field_ref="MN4pha_ssh"       name="MN4pha_ssh"     operation="instant" enabled=".TRUE." />
+          <field field_ref="MFamp_ssh"         name="Mfamp_ssh"       operation="instant" enabled=".TRUE." />
+          <field field_ref="MFpha_ssh"       name="Mfpha_ssh"     operation="instant" enabled=".TRUE." />
+          <field field_ref="MMamp_ssh"         name="Mmamp_ssh"       operation="instant" enabled=".TRUE." />
+          <field field_ref="MMpha_ssh"       name="Mmpha_ssh"     operation="instant" enabled=".TRUE." />
+          <field field_ref="T2amp_ssh"         name="T2amp_ssh"       operation="instant" enabled=".TRUE." />
+          <field field_ref="T2pha_ssh"       name="T2pha_ssh"     operation="instant" enabled=".TRUE." />
+          <field field_ref="L2amp_ssh"         name="L2amp_ssh"       operation="instant" enabled=".TRUE." />
+          <field field_ref="L2pha_ssh"       name="L2pha_ssh"     operation="instant" enabled=".TRUE." />
+          <field field_ref="S1amp_ssh"         name="S1amp_ssh"       operation="instant" enabled=".TRUE." />
+          <field field_ref="S1pha_ssh"       name="S1pha_ssh"     operation="instant" enabled=".TRUE." />
+          <field field_ref="2N2amp_ssh"         name="2N2amp_ssh"       operation="instant" enabled=".TRUE." />
+          <field field_ref="2N2pha_ssh"       name="2N2pha_ssh"     operation="instant" enabled=".TRUE." />
+          <field field_ref="MU2amp_ssh"         name="MU2amp_ssh"       operation="instant" enabled=".TRUE." />
+          <field field_ref="MU2pha_ssh"       name="MU2pha_ssh"     operation="instant" enabled=".TRUE." />
+          <field field_ref="NU2amp_ssh"         name="NU2amp_ssh"       operation="instant" enabled=".TRUE." />
+          <field field_ref="NU2pha_ssh"       name="NU2pha_ssh"     operation="instant" enabled=".TRUE." />
+        </file>
+      </file_group>
+
+      <file_group id="2h" output_freq="2h"  output_level="10" enabled=".TRUE."/> <!-- 2h files -->
+      <file_group id="3h" output_freq="3h"  output_level="10" enabled=".TRUE."/> <!-- 3h files -->     
+      <file_group id="4h" output_freq="4h"  output_level="10" enabled=".TRUE."/> <!-- 4h files -->
+      <file_group id="6h" output_freq="6h"  output_level="10" enabled=".TRUE."/> <!-- 6h files -->     
+      <file_group id="1d" output_freq="1d"  output_level="10" enabled=".TRUE."/> <!-- 1d files -->
+      <file_group id="3d" output_freq="3d"  output_level="10" enabled=".TRUE."/> <!-- 3d files -->
+      <file_group id="5d" output_freq="5d"  output_level="10" enabled=".TRUE."/>  <!-- 5d files -->   
+
+
+
+
+
+
+
+      <file_group id="tidal_harmonics" output_freq="1h"  output_level="10" enabled=".TRUE."> <!-- 1d files -->
+<!--
+        <file id="tidalanalysis.grid_T" name="harmonic_grid_T" description="ocean T grid variables"  enabled=".TRUE.">
+
+          <field field_ref="O1amp"         name="O1amp"       operation="instant" enabled=".TRUE." />
+          <field field_ref="O1phase"       name="O1phase"     operation="instant" enabled=".TRUE." />
+          <field field_ref="K1amp"         name="K1amp"       operation="instant" enabled=".TRUE." />
+          <field field_ref="K1phase"       name="K1phase"     operation="instant" enabled=".TRUE." />
+          <field field_ref="Q1amp"         name="Q1amp"       operation="instant" enabled=".TRUE." />
+          <field field_ref="Q1phase"       name="Q1phase"     operation="instant" enabled=".TRUE." />
+          <field field_ref="P1amp"         name="P1amp"       operation="instant" enabled=".TRUE." />
+          <field field_ref="P1phase"       name="P1phase"     operation="instant" enabled=".TRUE." />
+          <field field_ref="M2amp"         name="M2amp"       operation="instant" enabled=".TRUE." />
+          <field field_ref="M2phase"       name="M2phase"     operation="instant" enabled=".TRUE." />
+          <field field_ref="S2amp"         name="S2amp"       operation="instant" enabled=".TRUE." />
+          <field field_ref="S2phase"       name="S2phase"     operation="instant" enabled=".TRUE." />
+          <field field_ref="N2amp"         name="N2amp"       operation="instant" enabled=".TRUE." />
+          <field field_ref="N2phase"       name="N2phase"     operation="instant" enabled=".TRUE." />
+          <field field_ref="K2amp"         name="K2amp"       operation="instant" enabled=".TRUE." />
+          <field field_ref="K2phase"       name="K2phase"     operation="instant" enabled=".TRUE." />
+          <field field_ref="M4amp"         name="M4amp"       operation="instant" enabled=".TRUE." />
+          <field field_ref="M4phase"       name="M4phase"     operation="instant" enabled=".TRUE." />
+        </file>
+-->
+      </file_group>
+
+
+      <file_group id="1m" output_freq="1mo" output_level="10" enabled=".TRUE."/> <!-- real monthly files -->
+      <file_group id="2m" output_freq="2mo" output_level="10" enabled=".TRUE."/> <!-- real 2m files -->
+      <file_group id="3m" output_freq="3mo" output_level="10" enabled=".TRUE."/> <!-- real 3m files -->
+      <file_group id="4m" output_freq="4mo" output_level="10" enabled=".TRUE."/> <!-- real 4m files -->
+      <file_group id="6m" output_freq="6mo" output_level="10" enabled=".TRUE."/> <!-- real 6m files -->
+      <file_group id="1y"  output_freq="1y" output_level="10" enabled=".TRUE."/> <!-- real yearly files -->
+      <file_group id="2y"  output_freq="2y" output_level="10" enabled=".TRUE."/> <!-- real 2y files -->
+      <file_group id="5y"  output_freq="5y" output_level="10" enabled=".TRUE."/> <!-- real 5y files -->
+      <file_group id="10y" output_freq="10y" output_level="10" enabled=".TRUE."/> <!-- real 10y files -->
+
+   </file_definition>
+    
