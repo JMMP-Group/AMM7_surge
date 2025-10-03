@@ -75,6 +75,7 @@ cp ../ARCH/ANEMONE/XIOS/* arch/
 ./make_xios --full --prod --arch anemone-ifort-impi --netcdf_lib netcdf4_par --job 10
 
 # compile nemo
+cd $CDIR
 echo "AMM7_SURGE OCE" >> ref_cfgs.txt
 cd $CDIR/..
 ./makenemo -m anemone-ifort-impi -r AMM7_SURGE -j 16
