@@ -1,0 +1,20 @@
+%CCOMPILER           mpiicc
+%FCOMPILER           mpiifort
+%LINKER              mpiifort -nofor-main
+
+%BASE_CFLAGS    -fPIC -std=c++98
+%PROD_CFLAGS    -O3 -D BOOST_DISABLE_ASSERTS
+%DEV_CFLAGS     -g
+%DEBUG_CFLAGS   -DBZ_DEBUG -g -fno-inline
+
+%BASE_FFLAGS    -fPIC -D__NONE__ -132
+%PROD_FFLAGS    -O3
+%DEV_FFLAGS     -g -O2 -traceback
+%DEBUG_FFLAGS   -g -traceback
+
+%BASE_INC       -D__NONE__
+%BASE_LD        -lstdc++
+
+%CPP            mpiicc -EP
+%FPP            cpp -P
+%MAKE           gmake
