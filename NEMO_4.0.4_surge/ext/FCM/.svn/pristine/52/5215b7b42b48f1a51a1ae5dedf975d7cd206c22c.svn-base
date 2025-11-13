@@ -1,0 +1,66 @@
+#!/usr/bin/env perl
+#-------------------------------------------------------------------------------
+# (C) Crown copyright Met Office. All rights reserved.
+# For further details please refer to the file COPYRIGHT.txt
+# which you should have received as part of this distribution.
+#-------------------------------------------------------------------------------
+use strict;
+use warnings;
+
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+use Fcm::CLI;
+use Fcm::Interactive;
+
+if (!caller()) {
+    main(@ARGV);
+}
+
+sub main {
+    local(@ARGV) = @_;
+    if (@ARGV && $ARGV[0] eq 'gui-internal') {
+        shift(@ARGV);
+        Fcm::Interactive::set_impl(
+            'Fcm::Interactive::InputGetter::GUI',
+            {geometry => shift(@ARGV)},
+        );
+    }
+    Fcm::CLI::invoke();
+}
+
+__END__
+
+=head1 NAME
+
+fcm
+
+=head1 SYNOPSIS
+
+fcm SUBCOMMAND [OPTIONS] [ARGUMENTS]
+
+=head1 OVERVIEW
+
+B<fcm> is the command line client for code management commands, the extract
+system and the build system of the Flexible Configuration Management (FCM)
+system.  For full detail of the system, please refer to the FCM user guide,
+which you should receive with this distribution in both HTML and PDF formats.
+
+Run "fcm help" to access the built-in tool documentation.
+
+=head1 AUTHOR
+
+FCM Team L<fcm-team@metoffice.gov.uk>.
+Please feedback any bug reports or feature requests to us by e-mail.
+
+=head1 SEE ALSO
+
+L<svn (1)|svn>,
+L<perl (1)| perl>,
+L<Fcm::CLI|Fcm::CLI>
+
+=head1 COPYRIGHT
+
+You can use this release of B<FCM> freely under the terms of the FCM LICENSE,
+which you should receive with this distribution.
+
+=cut

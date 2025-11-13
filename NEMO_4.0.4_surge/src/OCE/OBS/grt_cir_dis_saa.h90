@@ -1,0 +1,32 @@
+   !!----------------------------------------------------------------------
+   !! NEMO/OCE 4.0 , NEMO Consortium (2018)
+   !! $Id$
+   !! Software governed by the CeCILL license (see ./LICENSE)
+   !!----------------------------------------------------------------------
+
+   REAL(KIND=wp) FUNCTION grt_cir_dis_saa( pa, pb, pc )
+      !!----------------------------------------------------------------------
+      !!                     *** FUNCTION grt_cir_dis_saa ***
+      !!
+      !! ** Purpose : Great circle distance between pts (lat1,lon1) 
+      !!               & (lat2,lon2) with a small-angle approximation
+      !!
+      !! ** Method  : Geometry
+      !!
+      !! ** Action  :
+      !!
+      !! History
+      !!      !  95-12 (G. Madec, E. Durand, A. Weaver, N. Daget) Original 
+      !!      !  06-03 (A. Vidard) Migration to NEMOVAR 
+      !!      !  06-10 (A. Weaver) Cleanup
+      !!----------------------------------------------------------------------
+      
+      !! * Arguments
+      REAL(KIND=wp) :: pa   !  lon1 - lon2
+      REAL(KIND=wp) :: pb   !  lat1 - lat2
+      REAL(KIND=wp) :: pc   !  cos(lat2)
+
+      grt_cir_dis_saa = SQRT( pa * pa + ( pb * pc )**2 )
+
+   END FUNCTION grt_cir_dis_saa
+ 

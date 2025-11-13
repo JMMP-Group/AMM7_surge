@@ -1,0 +1,139 @@
+#if defined GLOBSUM_CODE
+!                          ! FUNCTION FUNCTION_GLOBSUM !
+#   if defined DIM_1d
+#      define ARRAY_TYPE(i,j,k)    REAL(wp)                 , INTENT(in   ) ::   ARRAY_IN(i,j,k)
+#      define ARRAY_IN(i,j,k)   ptab(i)
+#      define ARRAY2_IN(i,j,k)  ptab2(i)
+#      define J_SIZE(ptab)      1
+#      define K_SIZE(ptab)      1
+#      define MASK_ARRAY(i,j)   1.
+#   endif
+#   if defined DIM_2d
+#      define ARRAY_TYPE(i,j,k)    REAL(wp)                 , INTENT(in   ) ::   ARRAY_IN(i,j,k)
+#      define ARRAY_IN(i,j,k)   ptab(i,j)
+#      define ARRAY2_IN(i,j,k)  ptab2(i,j)
+#      define J_SIZE(ptab)      SIZE(ptab,2)
+#      define K_SIZE(ptab)      1
+#   endif
+#   if defined DIM_3d
+#      define ARRAY_TYPE(i,j,k)    REAL(wp)                 , INTENT(in   ) ::   ARRAY_IN(i,j,k)
+#      define ARRAY_IN(i,j,k)   ptab(i,j,k)
+#      define ARRAY2_IN(i,j,k)  ptab2(i,j,k)
+#      define J_SIZE(ptab)      SIZE(ptab,2)
+#      define K_SIZE(ptab)      SIZE(ptab,3)
+#   endif
+#   if defined OPERATION_GLOBSUM
+#      define MASK_ARRAY(i,j)   tmask_i(i,j)
+#   endif
+#   if defined OPERATION_FULL_GLOBSUM
+#      define MASK_ARRAY(i,j)   tmask_h(i,j)
+#   endif
+
+   FUNCTION FUNCTION_GLOBSUM( cdname, ptab )
+      !!----------------------------------------------------------------------
+      CHARACTER(len=*),  INTENT(in   ) ::   cdname  ! name of the calling subroutine
+      ARRAY_TYPE(:,:,:)                             ! array on which operation is applied
+      REAL(wp)   ::  FUNCTION_GLOBSUM
+      !
+      !!-----------------------------------------------------------------------
+      !
+      REAL(wp)                              ::   FUNCTION_GLOB_OP   ! global sum
+      !!
+      COMPLEX(wp)::   ctmp
+      REAL(wp)   ::   ztmp
+      INTEGER    ::   ji, jj, jk   ! dummy loop indices
+      INTEGER    ::   ipi, ipj, ipk    ! dimensions
+      !!-----------------------------------------------------------------------
+      !
+      ipi = SIZE(ptab,1)   ! 1st dimension
+      ipj = J_SIZE(ptab)   ! 2nd dimension
+      ipk = K_SIZE(ptab)   ! 3rd dimension
+      !
+      ctmp = CMPLX( 0.e0, 0.e0, wp )   ! warning ctmp is cumulated
+   
+      DO jk = 1, ipk
+        DO jj = 1, ipj
+          DO ji = 1, ipi
+             ztmp =  ARRAY_IN(ji,jj,jk) * MASK_ARRAY(ji,jj)
+             CALL DDPDD( CMPLX( ztmp, 0.e0, wp ), ctmp )
+          END DO
+        END DO
+      END DO
+      CALL mpp_sum( cdname, ctmp )   ! sum over the global domain
+      FUNCTION_GLOBSUM = REAL(ctmp,wp)
+
+   END FUNCTION FUNCTION_GLOBSUM
+
+#undef ARRAY_TYPE
+#undef ARRAY2_TYPE
+#undef ARRAY_IN
+#undef ARRAY2_IN
+#undef J_SIZE
+#undef K_SIZE
+#undef MASK_ARRAY
+!
+# endif
+#if defined GLOBMINMAX_CODE
+!                          ! FUNCTION FUNCTION_GLOBMINMAX !
+#   if defined DIM_2d
+#      define ARRAY_TYPE(i,j,k)    REAL(wp)                 , INTENT(in   ) ::   ARRAY_IN(i,j,k)
+#      define ARRAY_IN(i,j,k)   ptab(i,j)
+#      define ARRAY2_IN(i,j,k)  ptab2(i,j)
+#      define K_SIZE(ptab)      1
+#   endif
+#   if defined DIM_3d
+#      define ARRAY_TYPE(i,j,k)    REAL(wp)                 , INTENT(in   ) ::   ARRAY_IN(i,j,k)
+#      define ARRAY_IN(i,j,k)   ptab(i,j,k)
+#      define ARRAY2_IN(i,j,k)  ptab2(i,j,k)
+#      define K_SIZE(ptab)      SIZE(ptab,3)
+#   endif
+#   if defined OPERATION_GLOBMIN
+#      define SCALAR_OPERATION min
+#      define ARRAY_OPERATION minval
+#      define MPP_OPERATION mpp_min
+#   endif
+#   if defined OPERATION_GLOBMAX
+#      define SCALAR_OPERATION max
+#      define ARRAY_OPERATION maxval
+#      define MPP_OPERATION mpp_max
+#   endif
+
+   FUNCTION FUNCTION_GLOBMINMAX( cdname, ptab )
+      !!----------------------------------------------------------------------
+      CHARACTER(len=*),  INTENT(in   ) ::   cdname  ! name of the calling subroutine
+      ARRAY_TYPE(:,:,:)                             ! array on which operation is applied
+      REAL(wp)   ::  FUNCTION_GLOBMINMAX
+      !
+      !!-----------------------------------------------------------------------
+      !
+      REAL(wp)                              ::   FUNCTION_GLOB_OP   ! global sum
+      !!
+      COMPLEX(wp)::   ctmp
+      REAL(wp)   ::   ztmp
+      INTEGER    ::   jk       ! dummy loop indices
+      INTEGER    ::   ipk      ! dimensions
+      !!-----------------------------------------------------------------------
+      !
+      ipk = K_SIZE(ptab)   ! 3rd dimension
+      !
+      ztmp = ARRAY_OPERATION( ARRAY_IN(:,:,1)*tmask_i(:,:) )
+      DO jk = 2, ipk
+         ztmp = SCALAR_OPERATION(ztmp, ARRAY_OPERATION( ARRAY_IN(:,:,jk)*tmask_i(:,:) ))
+      ENDDO
+
+      CALL MPP_OPERATION( cdname, ztmp)
+
+      FUNCTION_GLOBMINMAX = ztmp
+
+
+   END FUNCTION FUNCTION_GLOBMINMAX
+
+#undef ARRAY_TYPE
+#undef ARRAY2_TYPE
+#undef ARRAY_IN
+#undef ARRAY2_IN
+#undef K_SIZE
+#undef SCALAR_OPERATION
+#undef ARRAY_OPERATION
+#undef MPP_OPERATION
+# endif

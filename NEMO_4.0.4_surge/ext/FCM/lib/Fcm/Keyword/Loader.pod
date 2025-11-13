@@ -1,0 +1,43 @@
+=head1 NAME
+
+Fcm::Keyword::Loader
+
+=head1 SYNOPSIS
+
+    $loader->load_to($entries);
+
+=head1 DESCRIPTION
+
+This is an interface of a class that loads FCM keywords into a
+L<Fcm::Keyword::Entries|Fcm::Keyword::Entries> object.
+
+=head1 METHODS
+
+=over 4
+
+=item get_source()
+
+The name of the source where this loader loads its FCM keywords from.
+
+=item load_to($entries)
+
+Loads FCM keywords into $entries, which should be a
+L<Fcm::Keyword::Entries|Fcm::Keyword::Entries> object. Returns the number of
+successfully loaded entries.
+
+=back
+
+=head1 SEE ALSO
+
+L<Fcm::Keyword|Fcm::Keyword>,
+L<Fcm::Keyword::Entries|Fcm::Keyword::Entries>,
+L<Fcm::Keyword::Entry|Fcm::Keyword::Entry>,
+L<Fcm::Keyword::Loader::Config::Location|Fcm::Keyword::Loader::Config::Location>,
+L<Fcm::Keyword::Loader::Config::Revision|Fcm::Keyword::Loader::Config::Revision>,
+L<Fcm::Keyword::Loader::VC::Revision|Fcm::Keyword::Loader::VC::Revision>
+
+=head1 COPYRIGHT
+
+E<169> Crown copyright Met Office. All rights reserved.
+
+=cut

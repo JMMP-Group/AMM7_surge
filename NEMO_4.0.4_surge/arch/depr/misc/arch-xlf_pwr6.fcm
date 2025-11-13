@@ -1,0 +1,29 @@
+# generic IBM SP
+# NCDF_INC    netcdf include file
+# NCDF_LIB    netcdf library
+# FC          Fortran compiler command
+# FCFLAGS     Fortran compiler flags
+# FFLAGS      Fortran 77 compiler flags
+# LD          linker
+# LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
+# FPPFLAGS    pre-processing flags
+# AR          assembler
+# ARFLAGS     assembler flags
+# MK          make
+# USER_INC    additional include files for the compiler,  e.g. -I<include dir>
+# USER_LIB    additional libraries to pass to the linker, e.g. -l<library>
+
+
+%NCDF_INC            -I/usr/local/pub/NetCDF/3.6.2/include
+%NCDF_LIB            -L /usr/local/pub/NetCDF/3.6.2/lib -lnetcdf
+%FC                  xlf90_r
+%FCFLAGS             -qsuffix=f=f90 -qrealsize=8 -qextname -qarch=pwr6 -qtune=pwr6 -NS32768 -qxflag=p6div:p6divmsg -qnostrict -O5 -d -qsmp=omp -qhot -qessl -qipa -qreport
+%FFLAGS              -qrealsize=8 -qextname -qarch=pwr6 -qtune=pwr6 -NS32768 -qxflag=p6div:p6divmsg -qnostrict -O5 -d -qsmp=omp -qhot -qessl -qipa -qreport 
+%LD                  xlf90_r
+%LDFLAGS
+%FPPFLAGS            -P -C
+%AR                  ar
+%ARFLAGS             rs
+%MK                  gmake
+%USER_INC            %NCDF_INC
+%USER_LIB            %NCDF_LIB

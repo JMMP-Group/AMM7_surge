@@ -1,0 +1,82 @@
+!                          !==  IN: ptab is an array  ==!
+#   if defined REAL_TYPE
+#      define ARRAY_TYPE(i)    REAL(wp)         , INTENT(inout) ::   ARRAY_IN(i)
+#      define TMP_TYPE(i)      REAL(wp)         , ALLOCATABLE   ::   work(i)
+#      define MPI_TYPE mpi_double_precision
+#   endif
+#   if defined INTEGER_TYPE
+#      define ARRAY_TYPE(i)    INTEGER          , INTENT(inout) ::   ARRAY_IN(i)
+#      define TMP_TYPE(i)      INTEGER          , ALLOCATABLE   ::   work(i)
+#      define MPI_TYPE mpi_integer
+#   endif
+#   if defined COMPLEX_TYPE
+#      define ARRAY_TYPE(i)    COMPLEX          , INTENT(inout) ::   ARRAY_IN(i)
+#      define TMP_TYPE(i)      COMPLEX          , ALLOCATABLE   ::   work(i)
+#      define MPI_TYPE mpi_double_complex
+#   endif
+#   if defined DIM_0d
+#      define ARRAY_IN(i)   ptab
+#      define I_SIZE(ptab)          1
+#   endif
+#   if defined DIM_1d
+#      define ARRAY_IN(i)   ptab(i)
+#      define I_SIZE(ptab)          SIZE(ptab,1)
+#   endif
+#   if defined OPERATION_MAX
+#      define MPI_OPERATION mpi_max
+#   endif
+#   if defined OPERATION_MIN
+#      define MPI_OPERATION mpi_min
+#   endif
+#   if defined OPERATION_SUM
+#      define MPI_OPERATION mpi_sum
+#   endif
+#   if defined OPERATION_SUM_DD
+#      define MPI_OPERATION mpi_sumdd
+#   endif
+
+   SUBROUTINE ROUTINE_ALLREDUCE( cdname, ptab, kdim, kcom )
+      !!----------------------------------------------------------------------
+      CHARACTER(len=*),                   INTENT(in   ) ::   cdname  ! name of the calling subroutine
+      ARRAY_TYPE(:)   ! array or pointer of arrays on which the boundary condition is applied
+      INTEGER, OPTIONAL, INTENT(in   ) ::   kdim        ! optional pointer dimension
+      INTEGER, OPTIONAL, INTENT(in   ) ::   kcom        ! optional communicator
+#if defined key_mpp_mpi
+      !
+      INTEGER :: ipi, ii, ierr
+      INTEGER :: ierror, ilocalcomm
+      TMP_TYPE(:)
+      !!-----------------------------------------------------------------------
+      !
+      IF( narea == 1 .AND. numcom == -1 ) CALL mpp_report( cdname, ld_glb = .TRUE. )
+      !
+      ilocalcomm = mpi_comm_oce
+      IF( PRESENT(kcom) )   ilocalcomm = kcom
+      !
+      IF( PRESENT(kdim) ) then
+         ipi = kdim
+      ELSE
+         ipi = I_SIZE(ptab)   ! 1st dimension
+      ENDIF
+      !
+      ALLOCATE(work(ipi))
+      IF( ln_timing ) CALL tic_tac(.TRUE., ld_global = .TRUE.)
+      CALL mpi_allreduce( ARRAY_IN(:), work, ipi, MPI_TYPE, MPI_OPERATION, ilocalcomm, ierror )
+      IF( ln_timing ) CALL tic_tac(.FALSE., ld_global = .TRUE.)
+      DO ii = 1, ipi
+         ARRAY_IN(ii) = work(ii)
+      ENDDO
+      DEALLOCATE(work)
+#else
+      ! nothing to do if non-mpp case
+      RETURN
+#endif
+
+   END SUBROUTINE ROUTINE_ALLREDUCE
+
+#undef ARRAY_TYPE
+#undef ARRAY_IN
+#undef I_SIZE
+#undef MPI_OPERATION
+#undef TMP_TYPE
+#undef MPI_TYPE

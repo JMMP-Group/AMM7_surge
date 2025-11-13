@@ -1,0 +1,109 @@
+!------------------------------------------------------------------------------!
+!              Flexible Configuration Management Software License              !
+!                                                                              !
+!     Please read this Software Licence as you will be bound by its terms      !
+!                           if you use the Software                            !
+!------------------------------------------------------------------------------!
+
+The Licensor:
+-------------
+
+The Met Office of FitzRoy Road, Exeter EX1 3PB, United Kingdom
+--------------------------------------------------------------------------------
+
+1. Licence.
+-----------
+
+The Met Office grants you a non-exclusive, royalty free; world-wide,
+transferable Licence to use, modify, copy and distribute the Flexible
+Configuration Management software ("the software") accompanying this License
+providing:
+
+a. you undertake to provide to the Met Office a copy of any modifications made
+   by you on the same terms contained within this licence agreement;
+
+b. modified files carry prominent notices stating that you changed the files
+   and the date of change;
+
+c. distribution of original or modified files is made free of charge under the
+   terms of this Licence;
+
+d. the appropriate copyright notices, the above copyright notice and a
+   disclaimer of warranty is included with the distribution.
+
+2. Ownership.
+-------------
+
+The Flexible Configuration Management software is Crown copyright and is
+reproduced with the permission of Met Office under delegated authority from
+the Controller of HMSO. The software and documentation are provided to you to
+allow you to exercise your rights under this License, which is granted to you.
+
+3. Duration.
+------------
+
+This license will remain in effect until terminated.
+ 
+4. Termination.
+---------------
+
+You may terminate this license at any time by removing all copies of the
+software from your system.  This License will terminate immediately without
+notice from us if you fail to comply with any of the provisions of this
+License or in the event of your breaching the terms of this licence you are
+given notice that the license has been terminated.  Upon termination you will
+delete all copies of the software and any related documentation.
+
+5. Disclaimer of Warranty.
+--------------------------
+
+a. THE MET OFFICE DISCLAIMS ALL WARRANTIES, REPRESENTATIONS AND PROMISES,
+   INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF SATISFACTORY QUALITY
+   AND FIT FOR THE PURPOSE.  NEITHER DOES THE MET OFFICE MAKE ANY
+   REPRESENTATIONS AS TO COMPATABILITY WITH YOUR OPERATING SYSTEMS AND
+   PLATFORMS.
+
+b. In no event does the Met Office warrant that the software or related
+   documentation will satisfy your requirements, that the software and
+   documentation will be without errors or defects or that the operation of
+   the software will be uninterrupted.
+
+c. IN NO EVENT WILL THE MET OFFICE BE LIABLE FOR ANY OTHER DAMAGES, INCLUDING
+   BUT NOT LIMITED TO DAMAGES FOR LOSS OF PROFITS DATA OR USE OF THE SOFTWARE
+   OR FOR ANY INDIRECT, INCIDENTAL OR CONSEQUENTIAL DAMAGES, EVEN IF THE MET
+   OFFICE HAS BEEN SPECIFICALLY ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+6. General Provisions.
+----------------------
+
+a. You will not do anything, relating to this software that will bring the Met
+   Office into disrepute.
+
+b. You will not use the name of the Met Office or any other contributor to
+   endorse or promote any products derived from the software without the
+   written permission of the Met Office.
+
+7. Acknowledgements.
+--------------------
+
+The logic to extract the calling interfaces of top level subroutines and
+functions from a Fortran source file is adapted from a script developed at
+ECMWF and is provided by kind permission of ECMWF under the same terms of this
+Licence.
+
+8. Entire Agreement.
+--------------------
+
+This License constitutes the entire agreement between us with respect to your
+rights or warranties for using the software and related documentation.  If any
+provision of this agreement is determined to be invalid or unenforceable the
+remaining provisions shall continue in full force.
+
+9. Governing Law.
+-----------------
+
+This Agreement is governed by and construed in accordance with the Laws of
+England.
+
+--------------------------------------------------------------------------------
+                                              © British Crown copyright 2006-10.

@@ -1,0 +1,80 @@
+SVN-fs-dump-format-version: 2
+
+UUID: 1a576f26-974a-0410-964b-c09797d35b3b
+
+Revision-number: 0
+Prop-content-length: 56
+Content-length: 56
+
+K 8
+svn:date
+V 27
+2008-04-11T11:22:32.220157Z
+PROPS-END
+
+Revision-number: 1
+Prop-content-length: 109
+Content-length: 109
+
+K 7
+svn:log
+V 10
+For test.
+
+K 10
+svn:author
+V 4
+frsn
+K 8
+svn:date
+V 27
+2008-04-11T11:31:10.571895Z
+PROPS-END
+
+Node-path: bar
+Node-kind: dir
+Node-action: add
+Prop-content-length: 73
+Content-length: 73
+
+K 12
+fcm:revision
+V 39
+bar3    = 3
+bar3.1  = 31
+bar3.14 = 314
+
+PROPS-END
+
+
+Node-path: baz
+Node-kind: dir
+Node-action: add
+Prop-content-length: 75
+Content-length: 75
+
+K 12
+fcm:revision
+V 41
+bear = 4
+
+
+
+bee = 6
+
+spider = 8
+
+mistake
+
+PROPS-END
+
+
+Node-path: foo
+Node-kind: dir
+Node-action: add
+Prop-content-length: 10
+Content-length: 10
+
+PROPS-END
+
+

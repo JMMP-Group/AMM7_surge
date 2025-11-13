@@ -1,0 +1,18 @@
+   !!----------------------------------------------------------------------
+   !!                   ***  vectopt_loop_substitute  ***
+   !!----------------------------------------------------------------------
+   !! ** purpose :   substitute the inner loop start/end indices with CPP macro
+   !!                allow unrolling of do-loop (useful with vector processors)
+   !!----------------------------------------------------------------------
+   !!----------------------------------------------------------------------
+   !! NEMO/OCE 4.0 , NEMO Consortium (2018)
+   !! $Id$
+   !! Software governed by the CeCILL license (see ./LICENSE)
+   !!----------------------------------------------------------------------
+#if defined key_vectopt_loop
+#  define   fs_2       1
+#  define   fs_jpim1   jpi
+#else
+#  define   fs_2       2
+#  define   fs_jpim1   jpim1
+#endif

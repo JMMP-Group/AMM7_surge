@@ -1,0 +1,60 @@
+   !!----------------------------------------------------------------------
+   !! NEMO/OCE 4.0 , NEMO Consortium (2018)
+   !! $Id$
+   !! Software governed by the CeCILL license (see ./LICENSE)
+   !!----------------------------------------------------------------------
+
+   SUBROUTINE find_obs_proc(kldi,klei,kldj,klej,kmyproc,kobsp,kobsi,kobsj,kno)
+      !!----------------------------------------------------------------------
+      !!               ***  ROUTINE find_obs_proc ***
+      !!          
+      !! ** Purpose : From the array kobsp containing the results of the grid
+      !!              grid search on each processor the processor return a
+      !!              decision of which processors should hold the observation.
+      !!
+      !! ** Method : Use i and j and halo regions to decide which processor to 
+      !!             put ob in. Intended to avoid the mpp calls required by
+      !!             obs_mpp_find_obs_proc
+      !!
+      !! History : 
+      !!! 03-08  (D. Lea)  Original code
+      !!-----------------------------------------------------------------------
+
+      !! * Arguments
+
+      INTEGER, INTENT(IN) :: kldi               ! Start of inner domain in i
+      INTEGER, INTENT(IN) :: klei               ! End of inner domain in i
+      INTEGER, INTENT(IN) :: kldj               ! Start of inner domain in j
+      INTEGER, INTENT(IN) :: klej               ! End of inner domain in j
+
+      INTEGER, INTENT(IN) :: kmyproc
+      INTEGER, INTENT(IN) :: kno
+
+      INTEGER, DIMENSION(kno), INTENT(IN) :: kobsi
+      INTEGER, DIMENSION(kno), INTENT(IN) :: kobsj
+      INTEGER, DIMENSION(kno), INTENT(INOUT) :: kobsp
+      
+      !! * local variables
+      INTEGER :: &
+         & ji
+          
+      ! first and last indoor i- and j-indexes      kldi, klei,   kldj, klej
+      ! exclude any obs in the bottom-left overlap region
+      ! also any obs outside to whole region (defined by nlci and nlcj)
+      ! I am assuming that kobsp does not need to be the correct processor 
+      ! number
+      
+      DO ji = 1, kno
+         IF (kobsi(ji) < kldi .OR. kobsj(ji) < kldj &
+            .OR. kobsi(ji) > klei  .OR. kobsj(ji) > klej) THEN
+            IF (lwp .AND. kobsp(ji) /= -1) WRITE(numout,*) &
+               & 'kobs: ',kobsi(ji), kobsj(ji), kobsp(ji)
+            kobsp(ji)=1000000
+         ENDIF
+      END DO
+
+      ! Ensure that observations not in processor are masked
+
+      WHERE(kobsp(:) /= kmyproc) kobsp(:)=1000000
+
+   END SUBROUTINE find_obs_proc

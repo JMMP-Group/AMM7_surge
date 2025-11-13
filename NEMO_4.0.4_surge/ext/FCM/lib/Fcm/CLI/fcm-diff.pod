@@ -1,0 +1,79 @@
+=head1 NAME
+
+fcm diff (di)
+
+=head1 SYNOPSIS
+
+    1. fcm diff --branch [OPTIONS] [TARGET]
+    2. fcm diff [OPTIONS] [ARGS]
+
+=over 4
+
+=item 1.
+
+Show differences relative to the base of the target branch, i.e. the changes
+available for merging from the target branch into its parent. If TARGET is
+specified, it must either be a URL or a working copy.  Otherwise, the target is
+the the current directory which must be a working copy. The target URL must be a
+branch in a standard FCM project.
+
+=item 2.
+
+See description of "L<svn|svn> diff" below.
+
+=back
+
+=head1 OPTIONS
+
+Valid options with --branch:
+
+=over 4
+
+=item --diff-cmd arg
+
+As described below in the help for "L<svn|svn> diff".
+
+=item -g [--graphical]
+
+As described below.
+
+=item --summarise
+
+As described below
+
+=item --summarize
+
+As described below in the help for "L<svn|svn> diff".
+
+=item -t [--trac]
+
+If TARGET is a URL, use Trac to display the diff.
+
+=item --wiki
+
+If TARGET is a URL, print Trac link for the diff.
+
+=item -x [--extensions] arg
+
+As described below in the help for "L<svn|svn> diff".
+
+=back
+
+Other options:
+
+=over 4
+
+=item -g [--graphical]
+
+Use a graphical diff tool to display the differences. This option should not be
+used in combination with --diff-cmd.
+
+=item --summarise
+
+Same as --summarize as described below.
+
+=back
+
+For other options, see output of "L<svn|svn> help diff".
+
+=cut

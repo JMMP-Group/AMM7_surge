@@ -1,0 +1,29 @@
+# ifort compiler options for CINES SGI-ALTIX Jade, http://www.cines.fr/spip.php?rubrique291
+# NCDF_INC    netcdf include file
+# NCDF_LIB    netcdf library
+# FC          Fortran compiler command
+# FCFLAGS     Fortran compiler flags
+# FFLAGS      Fortran 77 compiler flags
+# LD          linker
+# LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
+# FPPFLAGS    pre-processing flags
+# AR          assembler
+# ARFLAGS     assembler flags
+# MK          make
+# USER_INC    additional include files for the compiler,  e.g. -I<include dir>
+# USER_LIB    additional libraries to pass to the linker, e.g. -l<library>
+
+
+%NCDF_INC            -I/opt/software/SGI/netcdf/4.1.3/include
+%NCDF_LIB            -L/opt/software/SGI/netcdf/4.1.3/lib -lnetcdf -lnetcdff 
+%FC                  ifort -lmpi
+%FCFLAGS             -r8 -O3 -xSSE4.2 -automatic -static 
+%FFLAGS              %FCFLAGS   
+%LD                  %FC
+%FPPFLAGS            -P -C -traditional
+%LDFLAGS
+%AR                  ar 
+%ARFLAGS             -ruv
+%MK                  gmake
+%USER_INC            %NCDF_INC
+%USER_LIB            %NCDF_LIB

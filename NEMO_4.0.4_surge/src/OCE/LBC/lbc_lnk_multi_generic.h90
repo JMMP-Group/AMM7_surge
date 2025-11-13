@@ -1,0 +1,92 @@
+#if defined DIM_2d
+#   define ARRAY_TYPE(i,j,k,l)   REAL(wp), DIMENSION(i,j)
+#   define PTR_TYPE              TYPE(PTR_2D)
+#   define PTR_ptab              pt2d
+#endif
+#if defined DIM_3d
+#   define ARRAY_TYPE(i,j,k,l)   REAL(wp), DIMENSION(i,j,k)
+#   define PTR_TYPE              TYPE(PTR_3D)
+#   define PTR_ptab              pt3d
+#endif
+#if defined DIM_4d
+#   define ARRAY_TYPE(i,j,k,l)   REAL(wp), DIMENSION(i,j,k,l)
+#   define PTR_TYPE              TYPE(PTR_4D)
+#   define PTR_ptab              pt4d
+#endif
+
+   SUBROUTINE ROUTINE_MULTI( cdname                                                                               &
+      &                    , pt1 , cdna1 , psgn1 , pt2 , cdna2 , psgn2 , pt3 , cdna3 , psgn3 , pt4 , cdna4 , psgn4   &
+      &                    , pt5 , cdna5 , psgn5 , pt6 , cdna6 , psgn6 , pt7 , cdna7 , psgn7 , pt8 , cdna8 , psgn8   &
+      &                    , pt9 , cdna9 , psgn9 , pt10, cdna10, psgn10, pt11, cdna11, psgn11, pt12, cdna12, psgn12  &
+      &                    , pt13, cdna13, psgn13, pt14, cdna14, psgn14, pt15, cdna15, psgn15, pt16, cdna16, psgn16  &
+      &                    , kfillmode, pfillval, lsend, lrecv, ihlcom )
+      !!---------------------------------------------------------------------
+      CHARACTER(len=*)     ,                   INTENT(in   ) ::   cdname  ! name of the calling subroutine
+      ARRAY_TYPE(:,:,:,:)            , TARGET, INTENT(inout) ::   pt1     ! arrays on which the lbc is applied
+      ARRAY_TYPE(:,:,:,:)  , OPTIONAL, TARGET, INTENT(inout) ::   pt2   , pt3   , pt4   , pt5   , pt6   , pt7   , pt8   , pt9  , &
+         &                                                        pt10  , pt11  , pt12  , pt13  , pt14  , pt15  , pt16
+      CHARACTER(len=1)                       , INTENT(in   ) ::   cdna1   ! nature of pt2D. array grid-points
+      CHARACTER(len=1)     , OPTIONAL        , INTENT(in   ) ::   cdna2 , cdna3 , cdna4 , cdna5 , cdna6 , cdna7 , cdna8 , cdna9, &
+         &                                                        cdna10, cdna11, cdna12, cdna13, cdna14, cdna15, cdna16
+      REAL(wp)                               , INTENT(in   ) ::   psgn1   ! sign used across the north fold
+      REAL(wp)             , OPTIONAL        , INTENT(in   ) ::   psgn2 , psgn3 , psgn4 , psgn5 , psgn6 , psgn7 , psgn8 , psgn9, &
+         &                                                        psgn10, psgn11, psgn12, psgn13, psgn14, psgn15, psgn16
+      INTEGER              , OPTIONAL        , INTENT(in   ) ::   kfillmode   ! filling method for halo over land (default = constant)
+      REAL(wp)             , OPTIONAL        , INTENT(in   ) ::   pfillval    ! background value (used at closed boundaries)
+      LOGICAL, DIMENSION(4), OPTIONAL        , INTENT(in   ) ::   lsend, lrecv   ! indicate how communications are to be carried out
+      INTEGER              , OPTIONAL        , INTENT(in   ) ::   ihlcom         ! number of ranks and rows to be communicated
+      !!
+      INTEGER                          ::   kfld        ! number of elements that will be attributed
+      PTR_TYPE         , DIMENSION(16) ::   ptab_ptr    ! pointer array
+      CHARACTER(len=1) , DIMENSION(16) ::   cdna_ptr    ! nature of ptab_ptr grid-points
+      REAL(wp)         , DIMENSION(16) ::   psgn_ptr    ! sign used across the north fold boundary
+      !!---------------------------------------------------------------------
+      !
+      kfld = 0          ! initial array of pointer size
+      !
+      !                 ! Load the first array
+      CALL ROUTINE_LOAD( pt1, cdna1, psgn1, ptab_ptr, cdna_ptr, psgn_ptr, kfld )
+      !
+      !                 ! Look if more arrays are added
+      IF( PRESENT(psgn2 ) )   CALL ROUTINE_LOAD( pt2 , cdna2 , psgn2 , ptab_ptr, cdna_ptr, psgn_ptr, kfld )
+      IF( PRESENT(psgn3 ) )   CALL ROUTINE_LOAD( pt3 , cdna3 , psgn3 , ptab_ptr, cdna_ptr, psgn_ptr, kfld )
+      IF( PRESENT(psgn4 ) )   CALL ROUTINE_LOAD( pt4 , cdna4 , psgn4 , ptab_ptr, cdna_ptr, psgn_ptr, kfld )
+      IF( PRESENT(psgn5 ) )   CALL ROUTINE_LOAD( pt5 , cdna5 , psgn5 , ptab_ptr, cdna_ptr, psgn_ptr, kfld )
+      IF( PRESENT(psgn6 ) )   CALL ROUTINE_LOAD( pt6 , cdna6 , psgn6 , ptab_ptr, cdna_ptr, psgn_ptr, kfld )
+      IF( PRESENT(psgn7 ) )   CALL ROUTINE_LOAD( pt7 , cdna7 , psgn7 , ptab_ptr, cdna_ptr, psgn_ptr, kfld )
+      IF( PRESENT(psgn8 ) )   CALL ROUTINE_LOAD( pt8 , cdna8 , psgn8 , ptab_ptr, cdna_ptr, psgn_ptr, kfld )
+      IF( PRESENT(psgn9 ) )   CALL ROUTINE_LOAD( pt9 , cdna9 , psgn9 , ptab_ptr, cdna_ptr, psgn_ptr, kfld )
+      IF( PRESENT(psgn10) )   CALL ROUTINE_LOAD( pt10, cdna10, psgn10, ptab_ptr, cdna_ptr, psgn_ptr, kfld )
+      IF( PRESENT(psgn11) )   CALL ROUTINE_LOAD( pt11, cdna11, psgn11, ptab_ptr, cdna_ptr, psgn_ptr, kfld )
+      IF( PRESENT(psgn12) )   CALL ROUTINE_LOAD( pt12, cdna12, psgn12, ptab_ptr, cdna_ptr, psgn_ptr, kfld )
+      IF( PRESENT(psgn13) )   CALL ROUTINE_LOAD( pt13, cdna13, psgn13, ptab_ptr, cdna_ptr, psgn_ptr, kfld )
+      IF( PRESENT(psgn14) )   CALL ROUTINE_LOAD( pt14, cdna14, psgn14, ptab_ptr, cdna_ptr, psgn_ptr, kfld )
+      IF( PRESENT(psgn15) )   CALL ROUTINE_LOAD( pt15, cdna15, psgn15, ptab_ptr, cdna_ptr, psgn_ptr, kfld )
+      IF( PRESENT(psgn16) )   CALL ROUTINE_LOAD( pt16, cdna16, psgn16, ptab_ptr, cdna_ptr, psgn_ptr, kfld )
+      !
+      CALL lbc_lnk_ptr( cdname, ptab_ptr, cdna_ptr, psgn_ptr, kfld, kfillmode, pfillval, lsend, lrecv, ihlcom )
+      !
+   END SUBROUTINE ROUTINE_MULTI
+
+
+   SUBROUTINE ROUTINE_LOAD( ptab, cdna, psgn, ptab_ptr, cdna_ptr, psgn_ptr, kfld )
+      !!---------------------------------------------------------------------
+      ARRAY_TYPE(:,:,:,:)   , TARGET, INTENT(inout) ::   ptab       ! arrays on which the lbc is applied
+      CHARACTER(len=1)              , INTENT(in   ) ::   cdna       ! nature of pt2d array grid-points
+      REAL(wp)                      , INTENT(in   ) ::   psgn       ! sign used across the north fold boundary
+      PTR_TYPE        , DIMENSION(:), INTENT(inout) ::   ptab_ptr   ! array of pointers
+      CHARACTER(len=1), DIMENSION(:), INTENT(inout) ::   cdna_ptr   ! nature of pt2d_array array grid-points
+      REAL(wp)        , DIMENSION(:), INTENT(inout) ::   psgn_ptr   ! sign used across the north fold boundary
+      INTEGER                       , INTENT(inout) ::   kfld       ! number of elements that has been attributed
+      !!---------------------------------------------------------------------
+      !
+      kfld                    =  kfld + 1
+      ptab_ptr(kfld)%PTR_ptab => ptab
+      cdna_ptr(kfld)          =  cdna
+      psgn_ptr(kfld)          =  psgn
+      !
+   END SUBROUTINE ROUTINE_LOAD
+
+#undef ARRAY_TYPE
+#undef PTR_TYPE
+#undef PTR_ptab

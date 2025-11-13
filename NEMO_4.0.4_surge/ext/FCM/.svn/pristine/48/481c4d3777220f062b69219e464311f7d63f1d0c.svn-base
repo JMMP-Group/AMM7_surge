@@ -1,0 +1,47 @@
+#!/bin/sh
+# ------------------------------------------------------------------------------
+# NAME
+#   fcm_setup_konqueror
+#
+# SYNOPSIS
+#   fcm_setup_konqueror
+#
+# DESCRIPTION
+#   Set up Konqueror to use "fcm gui".
+#
+# COPYRIGHT
+#   (C) Crown copyright Met Office. All rights reserved.
+#   For further details please refer to the file COPYRIGHT.txt
+#   which you should have received as part of this distribution.
+# ------------------------------------------------------------------------------
+
+# Check number of arguments
+script=`basename $0`
+usage="$script: no argument required"
+if (( $# != 0 )); then
+  echo "$usage, abort..." >&2
+  exit 1
+fi
+
+filename=fcm_gui.desktop
+
+file=`dirname $0`
+if [[ `basename $file` = bin ]]; then
+  file=`dirname $file`
+fi
+file=$file/etc/$filename
+
+if [[ ! -f $file ]]; then
+  echo "$script: $file not found, abort..." >&2
+  exit 1
+fi
+
+dir=$HOME/.kde/share/applnk/.hidden
+mkdir -p $dir
+cd $dir
+rm -f $filename             # Always remove.
+ln -s $file .
+
+echo "$script: finished"
+
+#EOF

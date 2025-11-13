@@ -1,0 +1,43 @@
+   !!----------------------------------------------------------------------
+   !! NEMO/OCE 4.0 , NEMO Consortium (2018)
+   !! $Id$
+   !! Software governed by the CeCILL license (see ./LICENSE)
+   !!----------------------------------------------------------------------
+
+   SUBROUTINE ddatetoymdhms( ddate, kyea, kmon, kday, khou, kmin, ksec )
+      !!----------------------------------------------------------------------
+      !!
+      !!                    *** ROUTINE ddatetoymdhms ***
+      !!
+      !! ** Purpose : Convert YYYYMMDD.hhmmss to components
+      !!
+      !! ** Method  :
+      !!
+      !! ** Action  :
+      !!
+      !! History
+      !!----------------------------------------------------------------------
+      !! * Modules used
+
+      !! * Arguments
+      real(wp), INTENT(IN) :: ddate
+      INTEGER, INTENT(OUT) :: kyea
+      INTEGER, INTENT(OUT) :: kmon
+      INTEGER, INTENT(OUT) :: kday
+      INTEGER, INTENT(OUT) :: khou
+      INTEGER, INTENT(OUT) :: kmin
+      INTEGER, INTENT(OUT) :: ksec
+      !! * Local declarations
+      INTEGER :: iyymmdd
+      INTEGER :: ihhmmss
+      
+      iyymmdd = INT( ddate )
+      ihhmmss = INT( ( ddate - iyymmdd ) * 1000000 )
+      kyea = iyymmdd/10000
+      kmon = iyymmdd / 100 - 100 * kyea
+      kday = MOD( iyymmdd, 100 )
+      khou = ihhmmss/10000
+      kmin = ihhmmss / 100 - 100 * khou
+      ksec = MOD( ihhmmss, 100 )
+      
+   END SUBROUTINE ddatetoymdhms

@@ -1,0 +1,194 @@
+MODULE exampl
+   !!======================================================================
+   !!                       ***  MODULE  exampl  ***
+   !! Ocean physics:  brief description of the purpose of the module
+   !!                 (please no more than 2 lines)
+   !!======================================================================
+   !! History : 3.0  !  2008-06  (Author Names)  Original code
+   !!            -   !  2008-08  (Author names)  brief description of modifications
+   !!           3.3  !  2010-11  (Author names)        -              -
+   !!----------------------------------------------------------------------
+#if defined key_example
+   !!----------------------------------------------------------------------
+   !!   'key_example'  :                brief description of the key option
+   !!----------------------------------------------------------------------
+   !!   exa_mpl       : list of module subroutine (caution, never use the
+   !!   exa_mpl_init  : name of the module for a routine)
+   !!   exa_mpl_stp   : Please try to use 3 letter block for routine names
+   !!----------------------------------------------------------------------
+   USE module_name1   ! brief description of the used module
+   USE module_name2   ! ....
+
+   IMPLICIT NONE
+   PRIVATE
+
+   PUBLIC   exa_mpl        ! routine called in xxx.F90 module
+   PUBLIC   exa_mpl_init   ! routine called in nemogcm.F90 module
+
+   TYPE ::   FLD_E                !: Structure type definition
+      CHARACTER(lc) ::   clname      ! clname description (default length, lc, is 256, see par_kind.F90)
+      INTEGER       ::   nfreqh      ! nfreqh description 
+   END TYPE FLD_E 
+
+   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   var1         !: var1 description. CAUTION always use !: to describe
+   !                                                          !  a PUBLIC variable: simplify its search : 
+   !                                                          !  grep var1 *90 | grep '!:'
+   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   var2, var2   !: several variable on a same line OK, but 
+   !                                                          !  DO NOT use continuation lines in declaration
+
+   !                               !!* namelist nam_xxx *
+   LOGICAL   ::   ln_opt = .TRUE.   ! give the default value of each namelist parameter
+   CHARACTER ::   cn_tex = 'T'      ! short description  of the variable
+   INTEGER   ::   nn_opt = 1        ! please respect the DOCTOR norm for namelist variable
+   REAL(wp)  ::   rn_var = 2._wp    ! (it becomes easy to identify them in the code)
+   TYPE(FLD) ::   sn_ex             ! structure
+
+   INTEGER                          ::   nint    ! nint  description (local permanent variable)
+   REAL(wp)                         ::   var     ! var         -                -
+   REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   array   ! array       -                -
+
+   !! * Substitutions
+#  include "exampl_substitute.h90"
+   !!----------------------------------------------------------------------
+   !! NEMO/OCE 4.0 , NEMO Consortium (2018)
+   !! $Id: module_example 11536 2019-09-11 13:54:18Z smasson $ 
+   !! Software governed by the CeCILL license (see ./LICENSE)
+   !!----------------------------------------------------------------------
+CONTAINS
+
+   INTEGER FUNCTION exa_mpl_alloc()
+      !!----------------------------------------------------------------------
+      !!                ***  FUNCTION exa_mpl_alloc  ***
+      !!----------------------------------------------------------------------
+      ALLOCATE( array(jpi,jpj,jpk) , STAT= exa_mpl_alloc )   ! Module array                                                                
+      !
+      CALL mpp_sum ( 'module_example', exa_mpl_alloc )
+      IF( exa_mpl_alloc /= 0 )   CALL ctl_stop( 'STOP', 'exa_mpl_alloc: failed to allocate arrays' )
+      !
+   END FUNCTION exa_mpl_alloc
+   
+
+   SUBROUTINE exa_mpl( kt, pvar1, pvar2, ptab )
+      !!----------------------------------------------------------------------
+      !!                    ***  ROUTINE exa_mpl  ***
+      !!
+      !! ** Purpose :   Brief description of the routine
+      !!
+      !! ** Method  :   description of the methodoloy used to achieve the
+      !!                objectives of the routine. Be as clear as possible!
+      !!
+      !! ** Action  : - first action (share memory array/varible modified
+      !!                in this routine
+      !!              - second action .....
+      !!              - .....
+      !!
+      !! References :   Author et al., Short_name_review, Year
+      !!                Give references if exist otherwise suppress these lines
+      !!----------------------------------------------------------------------
+      INTEGER , INTENT(in   )                     ::   kt      ! short description 
+      INTEGER , INTENT(inout)                     ::   pvar1   !   -         -
+      REAL(wp), INTENT(  out)                     ::   pvar2   !   -         -
+      REAL(wp), INTENT(  out), DIMENSION(jpi,jpj) ::   pvar2   !   -         -
+      !!
+      INTEGER  ::   ji, jj, jk       ! dummy loop arguments  (DOCTOR : start with j, but not jp)
+      INTEGER  ::   itoto, itata     ! temporary integers    (DOCTOR : start with i
+      REAL(wp) ::   zmlmin, zbbrau   ! temporary scalars     (DOCTOR : start with z)
+      REAL(wp) ::   zfact1, zfact2   ! do not use continuation lines in declaration
+      REAL(wp), DIMENSION(jpi,jpj) ::   zwrk_2d   ! 2D workspace
+      !!--------------------------------------------------------------------
+      !
+      IF( kt == nit000  )   CALL exa_mpl_init    ! Initialization (first time-step only)
+
+      zmlmin = 1.e-8                             ! Local constant initialization
+      zbbrau =  .5 * ebb / rau0
+      zfact1 = -.5 * rdt * efave
+      zfact2 = 1.5 * rdt * ediss
+
+      SELECT CASE ( npdl )                       ! short description of the action
+      !
+      CASE ( 0 )                                      ! describe case 1
+         DO jk = 2, jpkm1
+            DO jj = 2, jpjm1
+               DO ji = fs_2, fs_jpim1   ! vector opt.
+                  avm(ji,jj,jk) = ....
+               END DO
+            END DO
+         END DO
+         !
+      CASE ( 1 )                                      ! describe case 2
+         DO jk = 2, jpkm1
+            DO jj = 2, jpjm1
+               DO ji = fs_2, fs_jpim1   ! vector opt.
+                  avm(ji,jj,jk) = ...
+               END DO
+            END DO
+         END DO
+         !
+      END SELECT
+      !
+      CALL lbc_lnk( 'module_example', avm, 'T', 1. )              ! Lateral boundary conditions (unchanged sign)
+      !
+   END SUBROUTINE exa_mpl
+
+
+   SUBROUTINE exa_mpl_init
+      !!----------------------------------------------------------------------
+      !!                  ***  ROUTINE exa_mpl_init  ***
+      !!                   
+      !! ** Purpose :   initialization of ....
+      !!
+      !! ** Method  :   blah blah blah ...
+      !!
+      !! ** input   :   Namlist namexa
+      !!
+      !! ** Action  :   ...  
+      !!----------------------------------------------------------------------
+      INTEGER ::   ji, jj, jk, jit   ! dummy loop indices
+      INTEGER  ::   ios              ! Local integer output status for namelist read
+      !!
+      NAMELIST/namexa/ exa_v1, exa_v2, nexa_0, sn_ex     
+      !!----------------------------------------------------------------------
+      !
+      REWIND( numnam_ref )              ! Namelist namexa in reference namelist : Example
+      READ  ( numnam_ref, namexa, IOSTAT = ios, ERR = 901)
+901   IF( ios /= 0 ) CALL ctl_nam ( ios , 'namexa in reference namelist' )
+      !
+      REWIND( numnam_cfg )              ! Namelist namexa in configuration namelist : Example
+      READ  ( numnam_cfg, namexa, IOSTAT = ios, ERR = 902 )
+902   IF( ios >  0 ) CALL ctl_nam ( ios , 'namexa in configuration namelist' )
+   ! Output namelist for control
+      WRITE ( numond, namexa )
+      !
+      IF(lwp) THEN                              ! Control print
+         WRITE(numout,*)
+         WRITE(numout,*) 'exa_mpl_init : example '
+         WRITE(numout,*) '~~~~~~~~~~~~'
+         WRITE(numout,*) '   Namelist namexa : set example parameters'
+         WRITE(numout,*) '      brief desciption               exa_v1  = ', exa_v1
+         WRITE(numout,*) '      brief desciption               exa_v2  = ', exa_v2
+         WRITE(numout,*) '      brief desciption               nexa_0  = ', nexa_0
+         WRITE(numout,*) '      brief desciption          sn_ex%clname = ', sn_ex%clname
+         WRITE(numout,*) '      brief desciption          sn_ex%nfreqh = ', sn_ex%nfreqh
+      ENDIF
+      !
+      !                              ! allocate exa_mpl arrays      
+      IF( exa_mpl_alloc() /= 0 )   CALL ctl_stop( 'STOP', 'exa_mpl_init : unable to allocate arrays' )
+      !                              ! Parameter control
+      IF( ln_opt      )   CALL ctl_stop( 'exa_mpl_init: this work and option xxx are incompatible'   )
+      IF( nn_opt == 2 )   CALL ctl_stop( 'STOP',  'exa_mpl_init: this work and option yyy may cause problems'  )
+      !
+   END SUBROUTINE exa_mpl_init
+
+#else
+   !!----------------------------------------------------------------------
+   !!   Default option :                                         NO example
+   !!----------------------------------------------------------------------
+CONTAINS
+   SUBROUTINE exa_mpl( kt, pvar1, pvar2, ptab )              ! Empty routine
+      REAL::   ptab(:,:)
+      WRITE(*,*) 'exa_mpl: You should not have seen this print! error?', kt, pvar1, pvar2, ptab(1,1)
+   END SUBROUTINE exa_mpl
+#endif
+
+   !!======================================================================
+END MODULE exampl

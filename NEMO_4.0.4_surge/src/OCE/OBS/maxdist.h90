@@ -1,0 +1,76 @@
+   !!----------------------------------------------------------------------
+   !! NEMO/OCE 4.0 , NEMO Consortium (2018)
+   !! $Id$
+   !! Software governed by the CeCILL license (see ./LICENSE)
+   !!----------------------------------------------------------------------
+
+   REAL FUNCTION maxdist( pxv, pyv )
+      !!----------------------------------------------------------------------
+      !!                    ***  FUNCTION maxdist ***
+      !!
+      !! ** Purpose : Compute the maximum distance between any points within
+      !!              a cell
+      !!
+      !! ** Method  : Call to grt_cir_dis
+      !!
+      !! ** Action  : 
+      !!
+      !! History :
+      !!        !  2006-08  (K. Mogensen)
+      !!        !  2006-10  (A. Weaver) Cleanup
+      !!----------------------------------------------------------------------
+
+      !! * Arguments
+      REAL(KIND=wp), DIMENSION(4), INTENT(IN) :: &
+          & pxv, &                 ! (lon, lat) of the surrounding cell
+          & pyv    
+
+      !! * Local declarations
+      REAL(KIND=wp), DIMENSION(4) :: &
+          &  zxv, &
+          &  zyv, &
+          &  za,  &
+          &  zb,  &
+          &  zc
+      REAL(KIND=wp) :: zdist
+      
+      INTEGER :: ji
+      INTEGER :: jj
+      
+      !-----------------------------------------------------------------------
+      ! Convert data to radians
+      !-----------------------------------------------------------------------
+      DO ji = 1, 4
+         zxv(ji) = pxv(ji) * rad
+         zyv(ji) = pyv(ji) * rad
+      END DO
+
+      !-----------------------------------------------------------------------
+      ! Prepare input to grt_cir_dis
+      !-----------------------------------------------------------------------
+      DO ji = 1, 4
+         za(ji) = SIN( zyv(ji) )
+         zb(ji) = COS( zyv(ji) ) * COS( zxv(ji) )
+         zc(ji) = COS( zyv(ji) ) * SIN( zxv(ji) )
+      END DO
+      
+      !-----------------------------------------------------------------------
+      ! Get max distance between any points in the area
+      !-----------------------------------------------------------------------
+      maxdist = 0.0
+      DO jj = 1, 4
+         DO ji = jj+1, 4
+            zdist = grt_cir_dis( za(jj), za(ji), zb(jj), &
+               &                 zb(ji), zc(jj), zc(ji))
+            IF ( zdist > maxdist ) THEN
+               maxdist = zdist
+            ENDIF
+         END DO
+      END DO
+      
+      !-----------------------------------------------------------------------
+      ! Convert to degrees.
+      !-----------------------------------------------------------------------
+      maxdist = maxdist / rad
+
+   END FUNCTION maxdist

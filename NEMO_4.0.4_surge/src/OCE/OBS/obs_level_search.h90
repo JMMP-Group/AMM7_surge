@@ -1,0 +1,51 @@
+   !!----------------------------------------------------------------------
+   !! NEMO/OCE 4.0 , NEMO Consortium (2018)
+   !! $Id$
+   !! Software governed by the CeCILL license (see ./LICENSE)
+   !!----------------------------------------------------------------------
+
+   SUBROUTINE obs_level_search( kgrd, pgrddep, kobs, pobsdep, kobsk )
+      !!----------------------------------------------------------------------
+      !!                    ***  ROUTINE obs_level_search ***
+      !!
+      !! ** Purpose : Search levels to find matching level to observed depth
+      !!
+      !! ** Method  : Straightforward search
+      !!
+      !! ** Action  : 
+      !!
+      !! History :
+      !!        !  2001-11  (N. Daget, A. Weaver)
+      !!        !  2006-03  (A. Weaver) NEMOVAR migration.
+      !!        !  2006-05  (K. Mogensen) Moved to to separate routine.
+      !!        !  2006-10  (A. Weaver) Cleanup
+      !!        !  2008-10  (K. Mogensen) Remove assumptions on grid.
+      !!----------------------------------------------------------------------
+
+      !! * Arguments
+      INTEGER, INTENT(IN) :: kgrd     ! Number of gridpoints
+      REAL(KIND=wp), DIMENSION(kgrd), INTENT(INOUT) :: &
+         &   pgrddep  ! Depths of gridpoints
+      INTEGER, INTENT(IN) :: &
+         &   kobs     ! Number of observations
+      REAL(KIND=wp), DIMENSION(kobs), INTENT(INOUT) :: &
+         &   pobsdep  ! Depths of observations
+      INTEGER ,DIMENSION(kobs), INTENT(OUT) :: &
+         &   kobsk    ! Level indices of observations
+  
+      !! * Local declarations
+      INTEGER :: ji
+      INTEGER :: jk
+
+      !------------------------------------------------------------------------
+      ! Search levels for each observations to find matching level
+      !------------------------------------------------------------------------
+      DO ji = 1, kobs 
+         kobsk(ji) = 1
+         depk: DO jk = 2, kgrd
+            IF ( pgrddep(jk) >= pobsdep(ji) ) EXIT depk
+         END DO depk
+         kobsk(ji) = jk
+      END DO
+
+   END SUBROUTINE obs_level_search

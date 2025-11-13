@@ -1,0 +1,173 @@
+=head1 NAME
+
+fcm branch (br)
+
+=head1 SYNOPSIS
+
+Create, delete or display information of a branch, or list branches in a
+project.
+
+    fcm branch [--info] [OPTIONS] [TARGET]
+    fcm branch --delete [OPTIONS] [TARGET]
+    fcm branch --create [OPTIONS] [SOURCE]
+    fcm branch --list   [OPTIONS] [SOURCE]
+
+=head1 ARGUMENTS
+
+TARGET (and SOURCE) can be an URL or a Subversion working copy. Otherwise,
+the current working directory must be a working copy. For --info and
+--delete, the specified URL (or the URL of the working copy) must be a URL
+under a valid branch in a standard FCM project. For --create and --list, it
+must be a URL under a standard FCM project.
+
+=head1 OPTIONS
+
+=over 4
+
+=item --info or -i
+
+Display information about a branch. This is the default option if --create,
+--delete and --list are not specified.
+
+=item --delete or -d
+
+Delete a branch.
+
+=item --create or -c
+
+Create a new branch from SOURCE. The --name option must be used to specify a
+short name for the new branch.
+
+=item --list or -l
+
+List all the branches owned by the current user in SOURCE. If the --user option
+is specified with a list of users, list all the branches owned by these users
+instead of the current user.
+
+=back
+
+Valid options with --info and --delete:
+
+=over 4
+
+=item -v [--verbose]
+
+Print extra information.
+
+=item -a [--show-all]
+
+Set --show-children, --show-other and --show-siblings.
+
+=item --show-children
+
+Report children of the current branch.
+
+=item --show-other
+
+Report custom/ reverse merges into the current branch.
+
+=item --show-siblings
+
+Report merges with siblings of the current branch.
+
+=back
+
+Valid options with --delete and --create:
+
+=over 4
+
+=item --non-interactive
+
+Do no interactive prompting. This option implies --svn-non-interactive.
+
+=item --password arg
+
+Specify a password for write access to the repository.
+
+=item --svn-non-interactive
+
+Do no interactive prompting at commit time. This option is implied by
+--non-interactive.
+
+=back
+
+Valid options with --create and --list:
+
+=over 4
+
+=item -r [--revision] arg
+
+Specify the operative revision of the SOURCE for creating the branch.
+
+=back
+
+Valid options with --create:
+
+=over 4
+
+=item --branch-of-branch
+
+If this option is specified and the SOURCE is a branch, it will create a new
+branch from the SOURCE branch. Otherwise, the branch is created from the trunk.
+
+=item -k [--ticket] arg
+
+Specify one (or more) Trac ticket. If specified, the command will add to the
+commit log the line "Relates to ticket #<ticket>". Multiple tickets can be set
+by specifying this option multiple times, or by specifying the tickets in a
+comma-separated list.
+
+=item -n [--name] arg
+
+Specify a short name for the branch, which should contain only characters in the
+set [A-Za-z0-9_-.].
+
+=item --rev-flag arg
+
+Specify a flag for determining the prefix of the branch name. The flag can be
+the the string "NORMAL", "NUMBER" or "NONE".  "NORMAL" is the default behaviour,
+in which the branch name will be prefixed with a Subversion revision number if
+the revision is not associated with a registered FCM revision keyword. If the
+revision is registered with a FCM revision keyword, the keyword will be used in
+place of the number. If "NUMBER" is specified, the branch name will always be
+prefixed with a Subversion revision number. If "NONE" is specified, the branch
+name will not be prefixed by a revision number or keyword.
+
+=item -t [--type] arg
+
+Specify the type of the branch to be created. It must be one of the following:
+
+ DEV::USER [DEV, USER] - a development branch for the user
+ DEV::SHARE [SHARE]    - a shared development branch
+ TEST::USER [TEST]     - a test branch for the user
+ TEST::SHARE           - a shared test branch
+ PKG::USER [PKG]       - a package branch for the user
+ PKG::SHARE            - a shared package branch
+ PKG::CONFIG [CONFIG]  - a configuration branch
+ PKG::REL [REL]        - a release branch
+
+If not specified, the default is to create a development branch for the current
+user, i.e.  DEV::USER.
+
+=back
+
+Valid options with --list:
+
+=over 4
+
+=item -a [--show-all]
+
+Print all branches.
+
+=item -u [--user] arg
+
+Specify a colon-separated list of users. List branches owned by these users
+instead of the current user.
+
+=item -v [--verbose]
+
+Print Subversion URL instead of FCM URL keywords.
+
+=back
+
+=cut

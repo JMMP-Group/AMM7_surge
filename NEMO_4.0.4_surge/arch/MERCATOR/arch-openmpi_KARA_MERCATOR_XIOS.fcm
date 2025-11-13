@@ -1,0 +1,39 @@
+# ifort compiler options for linux
+# NCDF_INC    netcdf include file
+# NCDF_LIB    netcdf library
+# FC          Fortran compiler command
+# FCFLAGS     Fortran compiler flags
+# FFLAGS      Fortran 77 compiler flags
+# LD          linker
+# LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
+# FPPFLAGS    pre-processing flags
+# AR          assembler
+# ARFLAGS     assembler flags
+# MK          make
+# USER_INC    additional include files for the compiler,  e.g. -I<include dir>
+# USER_LIB    additional libraries to pass to the linker, e.g. -l<library>
+# CC          C compiler used to compile conv for AGRIF
+# CFLAGS      compiler flags used with CC
+# debug: -g  -check bounds -check uninit -check pointers -traceback
+# #-xAVX
+#
+%NCDF_INC            -I$NETCDF_INC
+%NCDF_LIB            -L$NETCDF_LIB -lnetcdff -lnetcdf -L$HDF5_LIB -lhdf5_hl -lhdf5 -lz
+
+%CPP	             cpp
+%FC                  mpif90 -fpp 
+# norep 156 %FCFLAGS             -i4 -r8 -O3 -fp-model precise
+# norep 156 %FCFLAGS             -i4 -r8 -O2 -fp-model precise
+%FCFLAGS             -i4 -r8 -O0 -fp-model precise
+%FFLAGS              %FCFLAGS
+%LD                   mpif90
+%FPPFLAGS            -P -traditional
+%LDFLAGS             -O2
+%AR                  ar
+%ARFLAGS             -rs
+%MK                  gmake
+%USER_INC            -I$XIOS_INC %NCDF_INC
+%USER_LIB            -L$XIOS_LIB -lxios %NCDF_LIB -lstdc++
+
+%CC                  mpicc
+%CFLAGS              -O0

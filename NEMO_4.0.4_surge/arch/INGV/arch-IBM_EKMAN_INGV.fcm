@@ -1,0 +1,37 @@
+# EKMAN IBM Intel Sandy Bridge at INGV
+# NCDF_INC    netcdf include file
+# NCDF_LIB    netcdf library
+# XIOS_ROOT   root directory containing lib for XIOS
+# MPI_INTEL   directory for intel mpi library
+# FC          Fortran compiler command
+# FCFLAGS     Fortran compiler flags
+# FFLAGS      Fortran 77 compiler flags
+# LD          linker
+# LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
+# FPPFLAGS    pre-processing flags
+# AR          assembler
+# ARFLAGS     assembler flags
+# MK          make
+# USER_INC    additional include files for the compiler,  e.g. -I<include dir>
+# USER_LIB    additional libraries to pass to the linker, e.g. -l<library>
+# CC          C compiler used to compile conv for AGRIF
+# CFLAGS      compiler flags used with CC
+
+%NCDF_INC            -I/srv/lib/netcdf-x/include
+%NCDF_LIB            -L/srv/lib/netcdf-x/lib -lnetcdff -lnetcdf -lhdf5_hl -lhdf5 -lcurl -lstdc++
+%XIOS_ROOT           /home/delrosso/XIOS_1.0/xios-1.0
+%MPI_INTEL           -I/srv/intel/impi/4.1.0.024/include
+%CPP                 cpp
+%FC                  mpiifort
+%FCFLAGS             -r8 -O1 -g -traceback -fp-model precise
+%FFLAGS              %FCFLAGS
+%LD                  mpiifort
+%LDFLAGS
+%FPPFLAGS            -P -C -traditional
+%AR                  ar
+%ARFLAGS             rs
+%MK                  gmake
+%USER_INC            -I%XIOS_ROOT/inc %NCDF_INC %MPI_INTEL -I/srv/lib/zlib-last/include
+%USER_LIB            -L%XIOS_ROOT/lib -lxios %NCDF_LIB -L/srv/lib/zlib-last/lib -lz
+%CC                  icc
+%CFLAGS              -O0
