@@ -20,8 +20,8 @@
 &namrun        !   parameters of the run
 !-----------------------------------------------------------------------
    cn_exp      =  "AMMSRG_no"  !  experience name
-   nn_it000    =       1   !  first time step
-   nn_itend    =    192 ! 7008 ! 52560   !  last  time step (std 1 day = 192)
+   nn_it000    =     1   !  first time step
+   nn_itend    =    70080 ! 52560   !  last  time step (std 1 day = 192)
    nn_date0    =  20170101 !  date at nit_0000 (format yyyymmdd) used if ln_rstart=F or (ln_rstart=T and nn_rstctl=0 or 1)
    nn_leapy    =       1   !  Leap year calendar (1) or not (0)
    ln_rstart   =  .false.  !  start from rest (F) or from a restart file (T)
@@ -133,50 +133,49 @@
 &nam_tide      !   tide parameters                                      (default: OFF)
 !-----------------------------------------------------------------------
    ln_tide     = .true.
-   clname(1)     =   'M2'   !  name of constituent
-   clname(2)     =   'S2'
+   ln_tide_pot   = .false.                !  use tidal potential forcing  
+!   clname(1)     =   'M2'   !  name of constituent
+!   clname(2)     =   'S2'
 !   clname(3)     =   'K2'
-!   clname(1) ='2N2'
-!   clname(2)='EPS2'
-!   clname(3)='J1'
-!   clname(4)='K1'
-!   clname(5)='K2'
-!   clname(6)='L2'
-!   clname(7)='LA2'
-!   clname(8)='M2'
-!   clname(9)='M3'
-!   clname(10)='M4'
-!   clname(11)='M6'
-!   clname(12)='M8'
-!   clname(13)='MF'
-!   clname(14)='MKS2'
-!   clname(15)='MM'
-!   clname(16)='MN4'
-!   clname(17)='MS4'
-!   clname(18)='MSF'
-!   clname(19)='MSQM'
-!   clname(20)='MTM'
-!   clname(21)='MU2'
-!   clname(22)='N2'
-!   clname(23)='N4'
-!   clname(24)='NU2'
-!   clname(25)='O1'
-!   clname(26)='P1'
-!   clname(27)='Q1'
-!   clname(28)='R2'
-!   clname(29)='S1'
-!   clname(30)='S2'
-!   clname(31)='S4'
-!   clname(32)='SA'
-!   clname(33)='SSA'
-!   clname(34)='T2'
+   clname(1) ='2N2'
+   clname(2)='EPS2'
+   clname(3)='J1'
+   clname(4)='K1'
+   clname(5)='K2'
+   clname(6)='L2'
+   clname(7)='LA2'
+   clname(8)='M2'
+   clname(9)='M3'
+   clname(10)='M4'
+   clname(11)='M6'
+   clname(12)='M8'
+   clname(13)='MF'
+   clname(14)='MKS2'
+   clname(15)='MM'
+   clname(16)='MN4'
+   clname(17)='MS4'
+   clname(18)='MSF'
+   clname(19)='MSQM'
+   clname(20)='MTM'
+   clname(21)='MU2'
+   clname(22)='N2'
+   clname(23)='N4'
+   clname(24)='NU2'
+   clname(25)='O1'
+   clname(26)='P1'
+   clname(27)='Q1'
+   clname(28)='R2'
+   clname(29)='S1'
+   clname(30)='S2'
+   clname(31)='S4'
+   clname(32)='SA'
+   clname(33)='SSA'
+   clname(34)='T2'
 /
 !-----------------------------------------------------------------------
 &nambdy        !  unstructured open boundaries                          (default: OFF)
 !-----------------------------------------------------------------------
    ln_bdy     = .true.
-   ln_coords_file = .true.               !  =T : read bdy coordinates from file    
-      cn_coords_file = 'bdydta/coordinates.bdy.nc'  !  bdy coordinates files
    nb_bdy         = 1                    !  number of open boundary sets
    cn_dyn2d       = 'flather'            !
    nn_dyn2d_dta   =  2                   !  = 0, bdy data are equal to the initial state
@@ -193,6 +192,10 @@
 !-----------------------------------------------------------------------
    filtide      = 'bdydta/AMM7_surge_bdytide_FES2014_'         !  file name root of tidal forcing files
    ln_bdytide_2ddta = .false. 
+                                                ! Harmonic analysis with restart from polcom
+   !ln_harm_ana_compute=.true.                   ! Compute the harmonic analysis at the last time step
+   !ln_harm_ana_store=.false.                     ! Store the harmonic analysis at the last time step for restart
+   !ln_harmana_read=.false.                      ! Read haronic analyisis from a restart
 /
 !!======================================================================
 !!                ***  Top/Bottom boundary condition  ***             !!
@@ -333,6 +336,78 @@
 !-----------------------------------------------------------------------
 &nam_diatmb    !  Top Middle Bottom Output                              (default F)
 !-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&nam_diaharm   !   Harmonic analysis of tidal constituents              (default: OFF)
+!-----------------------------------------------------------------------
+    ln_diaharm = .true.   ! Choose tidal harmonic output or not        
+       nit000_han = 35041      !    First time step used for harmonic analysis
+       nitend_han = 70080     !    Last time step used for harmonic analysis
+       nstep_han  = 8     !    Time step frequency for harmonic analysis
+       tname(1)   = 'M2'   !    Name of tidal constituents
+       tname(2)   = 'S2'   !              ---                           
+/
+!-----------------------------------------------------------------------
+&nam_diaharm_fast   !   Harmonic analysis of tidal constituents               ("key_diaharm_fast")
+!-----------------------------------------------------------------------
+    ln_diaharm_store = .true.
+    ln_diaharm_compute = .true.
+    ln_diaharm_read_restart = .false.
+    ln_ana_ssh   = .true.
+    tname(1)='O1'
+    tname(2)='K1'
+    tname(3)='Q1'
+    tname(4)='P1'
+    tname(5)='M2'
+    tname(6)='S2'
+    tname(7)='K2'
+    tname(8)='N2'
+    tname(9)='M4'
+    tname(10)='MS4'
+    tname(11)='MN4'
+    tname(12)='MF'
+    tname(13)='MM'
+    tname(14)='T2'
+    tname(15)='L2'
+    tname(16)='S1'
+    tname(17)='2N2'
+    tname(18)='MU2'
+    tname(19)='NU2'
+!! FES2014 full list
+    !tname(1) ='2N2'
+    !tname(2)='EPS2'
+    !tname(3)='J1'
+    !tname(4)='K1'
+    !tname(5)='K2'
+    !tname(6)='L2'
+    !tname(7)='LA2'
+    !tname(8)='M2'
+    !tname(9)='M3'
+    !tname(10)='M4'
+    !tname(11)='M6'
+    !tname(12)='M8'
+    !tname(13)='MF'
+    !tname(14)='MKS2'
+    !tname(15)='MM'
+    !tname(16)='MN4'
+    !tname(17)='MS4'
+    !tname(18)='MSF'
+    !tname(19)='MSQM'
+    !tname(20)='MTM'
+    !tname(21)='MU2'
+    !tname(22)='N2'
+    !tname(23)='N4'
+    !tname(24)='NU2'
+    !tname(25)='O1'
+    !tname(26)='P1'
+    !tname(27)='Q1'
+    !tname(28)='R2'
+    !tname(29)='S1'
+    !tname(30)='S2'
+    !tname(31)='S4'
+    !tname(32)='SA'
+    !tname(33)='SSA'
+    !tname(34)='T2'
 /
 !-----------------------------------------------------------------------
 &nam_dia25h    !  25h Mean Output                                       (default F)
